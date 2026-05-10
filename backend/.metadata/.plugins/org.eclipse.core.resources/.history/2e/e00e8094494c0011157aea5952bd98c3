@@ -1,0 +1,493 @@
+//package com.neobank360app.service;
+//
+//import com.neobank360app.dto.*;
+//import com.neobank360app.entity.*;
+//import com.neobank360app.exception.DuplicateResourceException;
+//import com.neobank360app.exception.ResourceNotFoundException;
+//import com.neobank360app.repository.*;
+//import com.neobank360app.security.CustomUserPrincipal;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
+//import org.springframework.mail.SimpleMailMessage;
+//import org.springframework.mail.javamail.JavaMailSender;
+//import org.springframework.security.authentication.AuthenticationManager;
+//import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+//import org.springframework.security.core.Authentication;
+//import org.springframework.security.crypto.password.PasswordEncoder;
+//import org.springframework.stereotype.Service;
+//import org.springframework.transaction.annotation.Transactional;
+//
+//import java.math.BigDecimal;
+//import java.security.SecureRandom;
+//import java.util.HashSet;
+//import java.util.Set;
+//import java.util.stream.Collectors;
+//
+//@Service
+//public class AuthService {
+//
+//    private static final Logger log = LoggerFactory.getLogger(AuthService.class);
+//    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+//
+//    private final UserRepository userRepository;
+//    private final RoleRepository roleRepository;
+//    private final PasswordEncoder passwordEncoder;
+//    private final JwtService jwtService;
+//    private final AuthenticationManager authenticationManager;
+//    private final BranchRepository branchRepository;
+//    private final AccountRepository accountRepository;
+//    private final KycDetailsRepository kycDetailsRepository;
+//    private final OtpVerificationRepository otpVerificationRepository;
+//    private final JavaMailSender mailSender;
+//
+//    public AuthService(UserRepository userRepository, RoleRepository roleRepository,
+//                       PasswordEncoder passwordEncoder, JwtService jwtService,
+//                       AuthenticationManager authenticationManager,
+//                       BranchRepository branchRepository, AccountRepository accountRepository,
+//                       KycDetailsRepository kycDetailsRepository,
+//                       OtpVerificationRepository otpVerificationRepository,
+//                       JavaMailSender mailSender) {
+//        this.userRepository = userRepository;
+//        this.roleRepository = roleRepository;
+//        this.passwordEncoder = passwordEncoder;
+//        this.jwtService = jwtService;
+//        this.authenticationManager = authenticationManager;
+//        this.branchRepository = branchRepository;
+//        this.accountRepository = accountRepository;
+//        this.kycDetailsRepository = kycDetailsRepository;
+//        this.otpVerificationRepository = otpVerificationRepository;
+//        this.mailSender = mailSender;
+//    }
+//
+//    // ── STEP 1: Account Type Selection ───────────────────────────────────────
+//    public AccountTypeSelectionResponse selectAccountType(AccountTypeSelectionRequest request) {
+//        String type = request.getAccountType().toUpperCase();
+//        BigDecimal minBalance = getMinimumBalance(type);
+//        String description = switch (type) {
+//            case "SAVINGS" -> "Standard savings account. Minimum balance: ₹1,000";
+//            case "CURRENT" -> "Business current account. Minimum balance: ₹5,000";
+//            case "SALARY"  -> "Zero-balance salary account";
+//            default        -> "";
+//        };
+//        return new AccountTypeSelectionResponse(type, minBalance, description,
+//                "Account type selected. Please proceed to OTP verification.");
+//    }
+//
+//    // ── REGISTER ─────────────────────────────────────────────────────────────
+//    @Transactional
+//    public AuthResponse register(RegisterRequest request) {
+//        if (!request.getPassword().equals(request.getConfirmPassword()))
+//            throw new IllegalArgumentException("Passwords do not match.");
+//
+//        if (userRepository.existsByEmail(request.getEmail()))
+//            throw new DuplicateResourceException("Email is already registered.");
+//        if (userRepository.existsByPhone(request.getPhone()))
+//            throw new DuplicateResourceException("Phone number is already registered.");
+//        if (kycDetailsRepository.existsByAadhaarNumber(request.getAadhaarNumber()))
+//            throw new DuplicateResourceException("Aadhaar number is already registered.");
+//        if (kycDetailsRepository.existsByPanNumber(request.getPanNumber()))
+//            throw new DuplicateResourceException("PAN number is already registered.");
+//
+//        validateOtpVerified(request.getEmailOtpReference(), "EMAIL_OTP");
+//        validateOtpVerified(request.getMobileOtpReference(), "MOBILE_OTP");
+//
+//        Branch branch = branchRepository.findByBranchCode(request.getBranchCode())
+//                .orElseThrow(() -> new ResourceNotFoundException("Invalid branch selected."));
+//
+//        Role userRole = roleRepository.findByName("ROLE_USER")
+//                .orElseThrow(() -> new IllegalStateException("Default role not found. Contact admin."));
+//
+//        User user = new User();
+//        user.setFullName(request.getFullName());
+//        user.setEmail(request.getEmail());
+//        user.setPhone(request.getPhone());
+//        user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+//        user.setCustomerNo(generateCustomerId());
+//        user.setStatus("ACTIVE");
+//        user.setKycStatus("PENDING");
+//        Set<Role> roles = new HashSet<>();
+//        roles.add(userRole);
+//        user.setRoles(roles);
+//        User savedUser = userRepository.save(user);
+//
+//        KycDetails kyc = new KycDetails();
+//        kyc.setUser(savedUser);
+//        kyc.setAadhaarNumber(request.getAadhaarNumber());
+//        kyc.setPanNumber(request.getPanNumber());
+//        kyc.setAadhaarVerified(false);
+//        kyc.setPanVerified(false);
+//        kyc.setKycStatus("PENDING");
+//        kycDetailsRepository.save(kyc);
+//
+//        Account account = new Account();
+//        account.setAccountNo(generateAccountNo());
+//        account.setUser(savedUser);
+//        account.setAccountType(request.getAccountType().toUpperCase());
+//        account.setCurrency("INR");
+//        account.setAvailableBalance(getMinimumBalance(request.getAccountType()));
+//        account.setLedgerBalance(getMinimumBalance(request.getAccountType()));
+//        account.setBranch(branch);
+//        account.setStatus("ACTIVE");
+//        accountRepository.save(account);
+//
+//        sendWelcomeEmail(savedUser, account, branch);
+//
+//        String token = jwtService.generateToken(new CustomUserPrincipal(savedUser));
+//        log.info("User registered: customerId={}, accountType={}",
+//                savedUser.getCustomerNo(), account.getAccountType());
+//        return buildAuthResponse(token, savedUser, account, branch);
+//    }
+//
+//    // ── LOGIN ─────────────────────────────────────────────────────────────────
+//    public AuthResponse login(LoginRequest request) {
+//        Authentication auth = authenticationManager.authenticate(
+//                new UsernamePasswordAuthenticationToken(
+//                        request.getEmail(), request.getPassword()));
+//        CustomUserPrincipal principal = (CustomUserPrincipal) auth.getPrincipal();
+//        User user = principal.getUser();
+//        Account account = accountRepository.findByUserId(user.getId()).orElse(null);
+//        Branch branch = (account != null) ? account.getBranch() : null;
+//        String token = jwtService.generateToken(principal);
+//        log.info("User logged in: customerId={}", user.getCustomerNo());
+//        return buildAuthResponse(token, user, account, branch);
+//    }
+//
+//    // ── ME ────────────────────────────────────────────────────────────────────
+//    public MeResponse me(String email) {
+//        User user = userRepository.findByEmail(email)
+//                .orElseThrow(() -> new ResourceNotFoundException("User not found."));
+//        MeResponse response = new MeResponse();
+//        response.setUserId(user.getId());
+//        response.setFullName(user.getFullName());
+//        response.setEmail(user.getEmail());
+//        response.setPhone(user.getPhone());
+//        response.setCustomerId(user.getCustomerNo());
+//        response.setStatus(user.getStatus());
+//        response.setRoles(user.getRoles().stream()
+//                .map(Role::getName).collect(Collectors.toSet()));
+//        return response;
+//    }
+//
+//    // ── PRIVATE HELPERS ───────────────────────────────────────────────────────
+//
+//    private String generateCustomerId() {
+//        for (int i = 0; i < 10; i++) {
+//            String id = String.valueOf(SECURE_RANDOM.nextInt(9000000) + 1000000);
+//            if (!userRepository.existsByCustomerNo(id)) return id;
+//        }
+//        throw new IllegalStateException("Unable to generate unique Customer ID.");
+//    }
+//
+//    private String generateAccountNo() {
+//        for (int i = 0; i < 10; i++) {
+//            String no = "4001" + (SECURE_RANDOM.nextInt(90000000) + 10000000);
+//            if (!accountRepository.existsByAccountNo(no)) return no;
+//        }
+//        throw new IllegalStateException("Unable to generate unique Account Number.");
+//    }
+//
+//    private BigDecimal getMinimumBalance(String accountType) {
+//        return switch (accountType.toUpperCase()) {
+//            case "SAVINGS" -> new BigDecimal("1000.00");
+//            case "CURRENT" -> new BigDecimal("5000.00");
+//            default        -> BigDecimal.ZERO;
+//        };
+//    }
+//
+//    private void validateOtpVerified(String reference, String otpType) {
+//        boolean verified = otpVerificationRepository
+//                .existsByReferenceAndOtpTypeAndIsVerifiedTrue(reference, otpType);
+//        if (!verified)
+//            throw new IllegalArgumentException(
+//                    otpType.replace("_", " ") + " verification is incomplete.");
+//    }
+//
+//    private void sendWelcomeEmail(User user, Account account, Branch branch) {
+//        try {
+//            SimpleMailMessage msg = new SimpleMailMessage();
+//            msg.setTo(user.getEmail());
+//            msg.setSubject("Welcome to NEO BANK — Account Created Successfully");
+//            // ✅ FIXED — single \n for real line breaks
+//            msg.setText(
+//                "Dear " + user.getFullName() + ",\n\n" +
+//                "Welcome to NEO BANK! Your account has been created successfully.\n\n" +
+//                "Customer ID  : " + user.getCustomerNo() + "\n" +
+//                "Account No   : " + account.getAccountNo() + "\n" +
+//                "Account Type : " + account.getAccountType() + "\n" +
+//                "Branch       : " + branch.getBranchName() + "\n" +
+//                "IFSC Code    : " + branch.getIfscCode() + "\n" +
+//                "KYC Status   : PENDING\n\n" +
+//                "Please complete your KYC to unlock all features.\n\n" +
+//                "Regards,\nNEO BANK Team"
+//            );
+//            mailSender.send(msg);
+//        } catch (Exception e) {
+//            log.error("Welcome email failed for {}: {}", user.getEmail(), e.getMessage());
+//        }
+//    }
+//
+//    private AuthResponse buildAuthResponse(String token, User user,
+//                                            Account account, Branch branch) {
+//        Set<String> roleNames = user.getRoles().stream()
+//                .map(Role::getName).collect(Collectors.toSet());
+//        AuthResponse res = new AuthResponse(token, user.getId(), user.getFullName(),
+//                user.getEmail(), user.getCustomerNo(), roleNames);
+//        if (account != null) {
+//            res.setAccountNo(account.getAccountNo());
+//            res.setAccountType(account.getAccountType());
+//        }
+//        if (branch != null) {
+//            res.setBranchName(branch.getBranchName());
+//            res.setBranchCode(branch.getBranchCode());
+//            res.setIfscCode(branch.getIfscCode());
+//        }
+//        return res;
+//    }
+//}
+
+package com.neobank360app.service;
+
+import com.neobank360app.dto.*;
+import com.neobank360app.entity.*;
+import com.neobank360app.exception.DuplicateResourceException;
+import com.neobank360app.exception.ResourceNotFoundException;
+import com.neobank360app.repository.*;
+import com.neobank360app.security.CustomUserPrincipal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.security.SecureRandom;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+@Service
+public class AuthService {
+
+    private static final Logger log = LoggerFactory.getLogger(AuthService.class);
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
+    private final BranchRepository branchRepository;
+    private final AccountRepository accountRepository;
+    private final KycDetailsRepository kycDetailsRepository;
+    private final OtpVerificationRepository otpVerificationRepository;
+    private final JavaMailSender mailSender;
+
+    public AuthService(UserRepository userRepository, RoleRepository roleRepository,
+                       PasswordEncoder passwordEncoder, JwtService jwtService,
+                       AuthenticationManager authenticationManager,
+                       BranchRepository branchRepository, AccountRepository accountRepository,
+                       KycDetailsRepository kycDetailsRepository,
+                       OtpVerificationRepository otpVerificationRepository,
+                       JavaMailSender mailSender) {
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
+        this.authenticationManager = authenticationManager;
+        this.branchRepository = branchRepository;
+        this.accountRepository = accountRepository;
+        this.kycDetailsRepository = kycDetailsRepository;
+        this.otpVerificationRepository = otpVerificationRepository;
+        this.mailSender = mailSender;
+    }
+
+    // ── STEP 1: Account Type Selection ───────────────────────────────────────
+    public AccountTypeSelectionResponse selectAccountType(AccountTypeSelectionRequest request) {
+        String type = request.getAccountType().toUpperCase();
+        BigDecimal minBalance = getMinimumBalance(type);
+        String description = switch (type) {
+            case "SAVINGS" -> "Standard savings account. Minimum balance: ₹1,000";
+            case "CURRENT" -> "Business current account. Minimum balance: ₹5,000";
+            case "SALARY"  -> "Zero-balance salary account";
+            default        -> "";
+        };
+        return new AccountTypeSelectionResponse(type, minBalance, description,
+                "Account type selected. Please proceed to OTP verification.");
+    }
+
+    // ── REGISTER ─────────────────────────────────────────────────────────────
+    @Transactional
+    public AuthResponse register(RegisterRequest request) {
+        if (!request.getPassword().equals(request.getConfirmPassword()))
+            throw new IllegalArgumentException("Passwords do not match.");
+
+        if (userRepository.existsByEmail(request.getEmail()))
+            throw new DuplicateResourceException("Email is already registered.");
+        if (userRepository.existsByPhone(request.getPhone()))
+            throw new DuplicateResourceException("Phone number is already registered.");
+        if (kycDetailsRepository.existsByAadhaarNumber(request.getAadhaarNumber()))
+            throw new DuplicateResourceException("Aadhaar number is already registered.");
+        if (kycDetailsRepository.existsByPanNumber(request.getPanNumber()))
+            throw new DuplicateResourceException("PAN number is already registered.");
+
+        validateOtpVerified(request.getEmailOtpReference(), "EMAIL_OTP");
+        validateOtpVerified(request.getMobileOtpReference(), "MOBILE_OTP");
+
+        Branch branch = branchRepository.findByBranchCode(request.getBranchCode())
+                .orElseThrow(() -> new ResourceNotFoundException("Invalid branch selected."));
+
+        Role userRole = roleRepository.findByName("ROLE_USER")
+                .orElseThrow(() -> new IllegalStateException("Default role not found. Contact admin."));
+
+        User user = new User();
+        user.setFullName(request.getFullName());
+        user.setEmail(request.getEmail());
+        user.setPhone(request.getPhone());
+        user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+        user.setCustomerNo(generateCustomerId());
+        user.setStatus("ACTIVE");
+        user.setKycStatus("PENDING");
+        Set<Role> roles = new HashSet<>();
+        roles.add(userRole);
+        user.setRoles(roles);
+        User savedUser = userRepository.save(user);
+
+        KycDetails kyc = new KycDetails();
+        kyc.setUser(savedUser);
+        kyc.setAadhaarNumber(request.getAadhaarNumber());
+        kyc.setPanNumber(request.getPanNumber());
+        kyc.setAadhaarVerified(false);
+        kyc.setPanVerified(false);
+        kyc.setKycStatus("PENDING");
+        kycDetailsRepository.save(kyc);
+
+        Account account = new Account();
+        account.setAccountNo(generateAccountNo());
+        account.setUser(savedUser);
+        account.setAccountType(request.getAccountType().toUpperCase());
+        account.setCurrency("INR");
+        account.setAvailableBalance(getMinimumBalance(request.getAccountType()));
+        account.setLedgerBalance(getMinimumBalance(request.getAccountType()));
+        account.setBranch(branch);
+        account.setStatus("ACTIVE");
+        accountRepository.save(account);
+
+        sendWelcomeEmail(savedUser, account, branch);
+
+        String token = jwtService.generateToken(new CustomUserPrincipal(savedUser));
+        log.info("User registered: customerId={}, accountType={}",
+                savedUser.getCustomerNo(), account.getAccountType());
+        return buildAuthResponse(token, savedUser, account, branch);
+    }
+
+    // ── LOGIN ─────────────────────────────────────────────────────────────────
+    public AuthResponse login(LoginRequest request) {
+        Authentication auth = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(), request.getPassword()));
+        CustomUserPrincipal principal = (CustomUserPrincipal) auth.getPrincipal();
+        User user = principal.getUser();
+        Account account = accountRepository.findByUserId(user.getId()).orElse(null);
+        Branch branch = (account != null) ? account.getBranch() : null;
+        String token = jwtService.generateToken(principal);
+        log.info("User logged in: customerId={}", user.getCustomerNo());
+        return buildAuthResponse(token, user, account, branch);
+    }
+
+    // ── ME ────────────────────────────────────────────────────────────────────
+    public MeResponse me(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found."));
+        MeResponse response = new MeResponse();
+        response.setUserId(user.getId());
+        response.setFullName(user.getFullName());
+        response.setEmail(user.getEmail());
+        response.setPhone(user.getPhone());
+        response.setCustomerId(user.getCustomerNo());
+        response.setStatus(user.getStatus());
+        response.setRoles(user.getRoles().stream()
+                .map(Role::getName).collect(Collectors.toSet()));
+        return response;
+    }
+
+    // ── PRIVATE HELPERS ───────────────────────────────────────────────────────
+
+    private String generateCustomerId() {
+        for (int i = 0; i < 10; i++) {
+            String id = String.valueOf(SECURE_RANDOM.nextInt(9000000) + 1000000);
+            if (!userRepository.existsByCustomerNo(id)) return id;
+        }
+        throw new IllegalStateException("Unable to generate unique Customer ID.");
+    }
+
+    private String generateAccountNo() {
+        for (int i = 0; i < 10; i++) {
+            String no = "4001" + (SECURE_RANDOM.nextInt(90000000) + 10000000);
+            if (!accountRepository.existsByAccountNo(no)) return no;
+        }
+        throw new IllegalStateException("Unable to generate unique Account Number.");
+    }
+
+    private BigDecimal getMinimumBalance(String accountType) {
+        return switch (accountType.toUpperCase()) {
+            case "SAVINGS" -> new BigDecimal("1000.00");
+            case "CURRENT" -> new BigDecimal("5000.00");
+            default        -> BigDecimal.ZERO;
+        };
+    }
+
+    private void validateOtpVerified(String reference, String otpType) {
+        boolean verified = otpVerificationRepository
+                .existsByReferenceAndOtpTypeAndIsVerifiedTrue(reference, otpType);
+        if (!verified)
+            throw new IllegalArgumentException(
+                    otpType.replace("_", " ") + " verification is incomplete.");
+    }
+
+    private void sendWelcomeEmail(User user, Account account, Branch branch) {
+        try {
+            SimpleMailMessage msg = new SimpleMailMessage();
+            msg.setTo(user.getEmail());
+            msg.setSubject("Welcome to NEO BANK — Account Created Successfully");
+            // ✅ FIXED — single \n for real line breaks
+            msg.setText(
+                "Dear " + user.getFullName() + ",\n\n" +
+                "Welcome to NEO BANK! Your account has been created successfully.\n\n" +
+                "Customer ID  : " + user.getCustomerNo() + "\n" +
+                "Account No   : " + account.getAccountNo() + "\n" +
+                "Account Type : " + account.getAccountType() + "\n" +
+                "Branch       : " + branch.getBranchName() + "\n" +
+                "IFSC Code    : " + branch.getIfscCode() + "\n" +
+                "KYC Status   : PENDING\n\n" +
+                "Please complete your KYC to unlock all features.\n\n" +
+                "Regards,\nNEO BANK Team"
+            );
+            mailSender.send(msg);
+        } catch (Exception e) {
+            log.error("Welcome email failed for {}: {}", user.getEmail(), e.getMessage());
+        }
+    }
+
+    private AuthResponse buildAuthResponse(String token, User user,
+                                            Account account, Branch branch) {
+        Set<String> roleNames = user.getRoles().stream()
+                .map(Role::getName).collect(Collectors.toSet());
+        AuthResponse res = new AuthResponse(token, user.getId(), user.getFullName(),
+                user.getEmail(), user.getCustomerNo(), roleNames);
+        if (account != null) {
+            res.setAccountNo(account.getAccountNo());
+            res.setAccountType(account.getAccountType());
+        }
+        if (branch != null) {
+            res.setBranchName(branch.getBranchName());
+            res.setBranchCode(branch.getBranchCode());
+            res.setIfscCode(branch.getIfscCode());
+        }
+        return res;
+    }
+}

@@ -1,0 +1,97 @@
+package com.neobank360app.controller;
+
+import com.neobank360app.dto.TransferRequestDTO;
+import com.neobank360app.entity.Transaction;
+import com.neobank360app.service.TransactionService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/v1/transactions")
+public class TransactionController {
+
+    private final TransactionService transactionService;
+
+    public TransactionController(
+            TransactionService transactionService
+    ) {
+
+        this.transactionService = transactionService;
+    }
+
+    // ───────────────── DEPOSIT MONEY ─────────────────
+
+    @PostMapping("/deposit/{accountId}")
+    public ResponseEntity<Transaction> depositMoney(
+
+            @PathVariable Long accountId,
+
+            @RequestParam
+            @NotNull(message = "Amount is required")
+            @DecimalMin(
+                    value = "0.01",
+                    message = "Amount must be greater than zero"
+            )
+            BigDecimal amount,
+
+            @RequestParam(required = false)
+            String remarks
+    ) {
+
+        Transaction transaction =
+                transactionService.deposit(
+                        accountId,
+                        amount,
+                        remarks
+                );
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(transaction);
+    }
+
+    // ───────────────── TRANSFER MONEY ─────────────────
+
+    @PostMapping("/transfer/{accountId}")
+    public ResponseEntity<Transaction> transferMoney(
+
+            @PathVariable Long accountId,
+
+            @Valid
+            @RequestBody TransferRequestDTO requestDTO
+    ) {
+
+        Transaction transaction =
+                transactionService.transferMoney(
+                        accountId,
+                        requestDTO
+                );
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(transaction);
+    }
+
+    // ───────────────── GET ACCOUNT TRANSACTIONS ─────────────────
+
+    @GetMapping("/{accountId}")
+    public ResponseEntity<List<Transaction>> getTransactions(
+
+            @PathVariable Long accountId
+    ) {
+
+        List<Transaction> transactions =
+                transactionService.getAccountTransactions(
+                        accountId
+                );
+
+        return ResponseEntity.ok(transactions);
+    }
+}

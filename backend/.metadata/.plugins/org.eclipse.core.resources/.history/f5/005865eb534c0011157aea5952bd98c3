@@ -1,0 +1,255 @@
+package com.neobank360app.service;
+
+import com.neobank360app.dto.AccountRequestDTO;
+import com.neobank360app.dto.AccountResponseDTO;
+import com.neobank360app.entity.Account;
+import com.neobank360app.entity.AccountStatus;
+import com.neobank360app.entity.AccountType;
+import com.neobank360app.entity.Branch;
+import com.neobank360app.entity.User;
+import com.neobank360app.exception.ResourceNotFoundException;
+import com.neobank360app.exception.UnauthorizedAccountAccessException;
+import com.neobank360app.repository.AccountRepository;
+import com.neobank360app.repository.BranchRepository;
+import com.neobank360app.repository.UserRepository;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.security.SecureRandom;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class AccountService {
+
+    private static final SecureRandom SECURE_RANDOM =
+            new SecureRandom();
+
+    private final AccountRepository accountRepository;
+
+    private final UserRepository userRepository;
+
+    private final BranchRepository branchRepository;
+
+    public AccountService(
+            AccountRepository accountRepository,
+            UserRepository userRepository,
+            BranchRepository branchRepository
+    ) {
+
+        this.accountRepository = accountRepository;
+        this.userRepository = userRepository;
+        this.branchRepository = branchRepository;
+    }
+
+    // ───────────────── CREATE ACCOUNT ─────────────────
+
+    public AccountResponseDTO createAccount(
+            AccountRequestDTO requestDTO
+    ) {
+
+        User user =
+                getAuthenticatedUser();
+
+        Branch branch =
+                branchRepository.findById(
+                        requestDTO.getBranchId()
+                ).orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Branch not found."
+                        ));
+
+        Account account =
+                new Account();
+
+        account.setAccountNo(
+                generateAccountNo()
+        );
+
+        account.setUser(user);
+
+        account.setAccountType(
+                requestDTO.getAccountType()
+        );
+
+        account.setCurrency("INR");
+
+        BigDecimal openingBalance =
+                getMinimumBalance(
+                        requestDTO.getAccountType()
+                );
+
+        account.setAvailableBalance(
+                openingBalance
+        );
+
+        account.setLedgerBalance(
+                openingBalance
+        );
+
+        account.setStatus(
+                AccountStatus.ACTIVE
+        );
+
+        account.setBranch(branch);
+
+        Account savedAccount =
+                accountRepository.save(account);
+
+        return mapToDTO(savedAccount);
+    }
+
+    // ───────────────── GET MY ACCOUNTS ─────────────────
+
+    public List<AccountResponseDTO> getMyAccounts() {
+
+        User user =
+                getAuthenticatedUser();
+
+        return accountRepository.findByUser(user)
+                .stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
+    // ───────────────── GET ACCOUNT BY ID ─────────────────
+
+    public AccountResponseDTO getAccountById(
+            Long accountId
+    ) {
+
+        User user =
+                getAuthenticatedUser();
+
+        Account account =
+                accountRepository.findById(accountId)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Account not found."
+                                ));
+
+        if (!account.getUser()
+                .getId()
+                .equals(user.getId())) {
+
+            throw new UnauthorizedAccountAccessException(
+                    "You are not authorized to access this account."
+            );
+        }
+
+        return mapToDTO(account);
+    }
+
+    // ───────────────── PRIVATE HELPERS ─────────────────
+
+    private User getAuthenticatedUser() {
+
+        Authentication authentication =
+                SecurityContextHolder
+                        .getContext()
+                        .getAuthentication();
+
+        String email =
+                authentication.getName();
+
+        return userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "User not found."
+                        ));
+    }
+
+    private String generateAccountNo() {
+
+        for (int i = 0; i < 10; i++) {
+
+            String no =
+                    "4001" +
+                    (SECURE_RANDOM.nextInt(90000000)
+                            + 10000000);
+
+            if (!accountRepository.existsByAccountNo(no)) {
+
+                return no;
+            }
+        }
+
+        throw new IllegalStateException(
+                "Unable to generate unique Account Number."
+        );
+    }
+
+    private BigDecimal getMinimumBalance(
+            AccountType accountType
+    ) {
+
+        return switch (accountType) {
+
+            case SAVINGS ->
+                    new BigDecimal("1000.00");
+
+            case CURRENT ->
+                    new BigDecimal("5000.00");
+
+            case SALARY ->
+                    BigDecimal.ZERO;
+        };
+    }
+
+    private AccountResponseDTO mapToDTO(
+            Account account
+    ) {
+
+        AccountResponseDTO dto =
+                new AccountResponseDTO();
+
+        dto.setId(account.getId());
+
+        dto.setAccountNo(
+                account.getAccountNo()
+        );
+
+        dto.setAccountType(
+                account.getAccountType()
+        );
+
+        dto.setCurrency(
+                account.getCurrency()
+        );
+
+        dto.setAvailableBalance(
+                account.getAvailableBalance()
+        );
+
+        dto.setLedgerBalance(
+                account.getLedgerBalance()
+        );
+
+        dto.setStatus(
+                account.getStatus()
+        );
+
+        dto.setCreatedAt(
+                account.getCreatedAt()
+        );
+
+        if (account.getBranch() != null) {
+
+            dto.setBranchName(
+                    account.getBranch().getBranchName()
+            );
+
+            dto.setBranchCode(
+                    account.getBranch().getBranchCode()
+            );
+
+            dto.setIfscCode(
+                    account.getBranch().getIfscCode()
+            );
+        }
+
+        return dto;
+    }
+}
