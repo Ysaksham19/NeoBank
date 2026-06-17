@@ -1,0 +1,11 @@
+*.zip 
+node_modules/
+dist/
+.angular/
+target/
+.metadata/
+.settings/
+.project
+.classpath
+.vscode/
+*.log
