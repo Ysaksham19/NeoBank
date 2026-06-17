@@ -1,0 +1,95 @@
+<div class="users-page">
+
+    <h1>
+        Users Management
+    </h1>
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>Customer No</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>KYC</th>
+                <th>Status</th>
+                <th>Actions</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            @for(user of users; track user.id){
+
+            <tr>
+
+                <td>
+
+                    {{ user.customerNo }}
+
+                </td>
+
+                <td>
+
+                    {{ user.fullName }}
+
+                </td>
+
+                <td>
+
+                    {{ user.email }}
+
+                </td>
+
+                <td>
+
+                    {{ user.phone }}
+
+                </td>
+
+                <td>
+
+                    {{ user.kycStatus }}
+
+                </td>
+
+                <td>
+
+                    {{ user.status }}
+
+                </td>
+
+                <td>
+
+                    <button
+                      class="active-btn"
+                      (click)="updateStatus(user.id,'ACTIVE')">
+
+                        Activate
+
+                    </button>
+
+                    <button
+                      class="block-btn"
+                      (click)="updateStatus(user.id,'BLOCKED')">
+
+                        Block
+
+                    </button>
+
+                </td>
+
+            </tr>
+
+            }
+
+        </tbody>
+
+    </table>
+
+</div>

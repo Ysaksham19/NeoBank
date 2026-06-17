@@ -1,0 +1,58 @@
+<div class="overdue-page">
+
+    <div class="page-header">
+
+        <h1>
+            Overdue Bills
+        </h1>
+
+        <p>
+            Bills requiring immediate attention.
+        </p>
+
+    </div>
+
+    <div class="bill-grid">
+
+        @for(bill of overdueBills; track bill.id){
+
+        <div class="overdue-card">
+
+            <div class="badge">
+
+                OVERDUE
+
+            </div>
+
+            <h3>
+
+                {{ bill.billerName }}
+
+            </h3>
+
+            <div class="category">
+
+                {{ bill.category }}
+
+            </div>
+
+            <div class="amount">
+
+                ₹{{ bill.amount }}
+
+            </div>
+
+            <div class="due-date">
+
+                Due:
+                {{ bill.dueDate }}
+
+            </div>
+
+        </div>
+
+        }
+
+    </div>
+
+</div>

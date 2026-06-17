@@ -1,0 +1,216 @@
+<section class="login-page">
+
+  <!-- LEFT PANEL -->
+
+  <div class="login-left">
+
+    <div class="security-image">
+        <img src="/images/LeftSide.png" alt="LeftSide Image">
+    </div>
+
+    <div class="hero-content">
+
+      <h1>
+        Bank Smarter,<br>
+        <span>Live Better</span>
+      </h1>
+
+      <p>
+        Experience secure banking built for the future.
+      </p>
+
+    </div>
+
+    <div class="feature-strip">
+
+      <div class="feature-item">
+        <div class="feature-icon">🛡</div>
+        <div>
+          <h4>Bank with Confidence</h4>
+          <span>Your security is our top priority</span>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon">🔒</div>
+        <div>
+          <h4>Secure Transactions</h4>
+          <span>Advanced encryption always</span>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon">⚡</div>
+        <div>
+          <h4>Fast & Reliable</h4>
+          <span>Bank anytime, anywhere</span>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon">🎧</div>
+        <div>
+          <h4>24/7 Support</h4>
+          <span>We're here to help</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- RIGHT PANEL -->
+
+  <div class="login-right">
+
+    <div class="login-card">
+
+      <div class="brand" routerLink="/" style="cursor: pointer;">
+        NeoBank
+      </div>
+
+      <h2>Welcome Back</h2>
+
+      <p class="subtitle">
+        Login to access your NeoBank account
+      </p>
+
+      
+  <form
+    [formGroup]="loginForm"
+    (ngSubmit)="onSubmit()">
+
+    <!-- BACKEND ERROR -->
+
+    @if (errorMessage()) {
+
+      <div class="login-error">
+
+        {{ errorMessage() }}
+
+      </div>
+
+    }
+
+    <!-- EMAIL -->
+
+    <div class="input-group">
+
+      <label>Email</label>
+
+      <input
+        type="email"
+        formControlName="email"
+        placeholder="Enter your email">
+
+      @if (email?.touched && email?.errors?.['required']) {
+
+        <small class="field-error">
+          Email is required
+        </small>
+
+      }
+
+      @if (email?.touched && email?.errors?.['email']) {
+
+        <small class="field-error">
+          Enter a valid email address
+        </small>
+
+      }
+
+    </div>
+
+    <!-- PASSWORD -->
+
+    <div class="input-group">
+
+      <label>Password</label>
+
+      <div class="password-wrapper">
+
+        <input
+          [type]="hidePassword() ? 'password' : 'text'"
+          formControlName="password"
+          placeholder="Enter your password">
+
+        <button
+          type="button"
+          class="eye-btn"
+          (click)="togglePassword()">
+
+          {{ hidePassword() ? '👁️' : '🙈' }}
+
+        </button>
+
+      </div>
+
+      @if (password?.touched && password?.errors?.['required']) {
+
+        <small class="field-error">
+          Password is required
+        </small>
+
+      }
+
+      @if (password?.touched && password?.errors?.['minlength']) {
+
+        <small class="field-error">
+          Password must contain at least 6 characters
+        </small>
+
+      }
+
+    </div>
+
+    <!-- OPTIONS -->
+
+    <div class="options">
+
+      <label>
+
+        <input type="checkbox">
+
+        Remember Me
+
+      </label>
+
+      <a href="#">
+        Forgot Password?
+      </a>
+
+    </div>
+
+    <!-- LOGIN BUTTON -->
+
+    <button
+      type="submit"
+      class="login-btn"
+      [disabled]="loading()">
+
+      {{ loading() ? 'Logging in...' : 'Login' }}
+
+    </button>
+
+  </form>
+
+      <div class="divider">
+        <span>OR</span>
+      </div>
+
+      <button class="biometric-btn">
+        Login with Biometric
+      </button>
+
+      <div class="footer-text">
+        Don't have an account?
+        <a routerLink="/register">
+          Create Account
+        </a>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>

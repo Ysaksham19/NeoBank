@@ -1,0 +1,75 @@
+@if(account){
+
+<div class="details-page">
+
+    <div class="details-card">
+
+        <h1>
+            Account Details
+        </h1>
+
+        <div class="detail-row">
+
+            <span>Account Type</span>
+
+            <strong>
+
+                {{ account.accountType }}
+
+            </strong>
+
+        </div>
+
+        <div class="detail-row">
+
+            <span>Account Number</span>
+
+            <strong>
+
+                {{ maskAccount(account.accountNumber) }}
+
+            </strong>
+
+        </div>
+
+        <div class="detail-row">
+
+            <span>Available Balance</span>
+
+            <strong class="balance">
+
+                ₹{{ account.availableBalance | number:'1.2-2' }}
+
+            </strong>
+
+        </div>
+
+        <div class="detail-row">
+
+            <span>Status</span>
+
+            <strong class="status">
+
+                {{ account.status }}
+
+            </strong>
+
+        </div>
+
+        <div class="detail-row">
+
+            <span>Branch</span>
+
+            <strong>
+
+                NeoBank Main Branch
+
+            </strong>
+
+        </div>
+
+    </div>
+
+</div>
+
+}

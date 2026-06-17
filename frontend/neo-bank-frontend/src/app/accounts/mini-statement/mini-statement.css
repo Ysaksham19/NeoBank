@@ -1,0 +1,89 @@
+.statement-page {
+
+    background: #030d22;
+
+    min-height: 100vh;
+
+    padding: 40px;
+}
+
+.page-header h1 {
+
+    color: white;
+
+    font-size: 34px;
+
+    margin-bottom: 10px;
+}
+
+.page-header p {
+
+    color: #94a3b8;
+
+    margin-bottom: 30px;
+}
+
+.statement-card {
+
+    background:
+        linear-gradient(
+            180deg,
+            #07162e,
+            #051123
+        );
+
+    border: 1px solid rgba(255,255,255,.06);
+
+    border-radius: 24px;
+
+    overflow: hidden;
+}
+
+.transaction-row {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 25px;
+
+    border-bottom: 1px solid rgba(255,255,255,.05);
+}
+
+.transaction-row:last-child {
+
+    border-bottom: none;
+}
+
+.left-section h3 {
+
+    color: white;
+
+    margin-bottom: 8px;
+}
+
+.left-section span {
+
+    color: #94a3b8;
+
+    font-size: 14px;
+}
+
+.amount {
+
+    font-size: 18px;
+
+    font-weight: 700;
+}
+
+.credit {
+
+    color: #22c55e;
+}
+
+.debit {
+
+    color: #ef4444;
+}

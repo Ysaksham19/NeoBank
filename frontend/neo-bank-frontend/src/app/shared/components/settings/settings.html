@@ -1,0 +1,152 @@
+<div class="settings-page">
+
+    <div class="page-header">
+
+        <h1>
+            Settings
+        </h1>
+
+        <p>
+            Manage preferences, security and notifications.
+        </p>
+
+    </div>
+
+    <!-- Preferences -->
+
+    <div class="settings-card">
+
+        <h2>
+            Preferences
+        </h2>
+
+        <div class="setting-row">
+
+            <span>Language</span>
+
+            <select [(ngModel)]="selectedLanguage">
+
+                <option>English</option>
+                <option>Hindi</option>
+
+            </select>
+
+        </div>
+
+    </div>
+
+    <!-- Notifications -->
+
+    <div class="settings-card">
+
+        <h2>
+            Notifications
+        </h2>
+
+        <div class="setting-row">
+
+            <span>Email Alerts</span>
+
+            <input
+                type="checkbox"
+                [(ngModel)]="emailAlerts">
+
+        </div>
+
+        <div class="setting-row">
+
+            <span>SMS Alerts</span>
+
+            <input
+                type="checkbox"
+                [(ngModel)]="smsAlerts">
+
+        </div>
+
+        <div class="setting-row">
+
+            <span>Push Notifications</span>
+
+            <input
+                type="checkbox"
+                [(ngModel)]="pushNotifications">
+
+        </div>
+
+    </div>
+
+    <!-- Appearance -->
+
+    <div class="settings-card">
+
+        <h2>
+            Appearance
+        </h2>
+
+        <div class="setting-row">
+
+            <span>Dark Mode</span>
+
+            <input
+                type="checkbox"
+                [(ngModel)]="darkMode">
+
+        </div>
+
+    </div>
+
+    <!-- Privacy -->
+
+    <div class="settings-card">
+
+        <h2>
+            Privacy
+        </h2>
+
+        <div class="setting-row">
+
+            <span>Hide Account Balance</span>
+
+            <input
+                type="checkbox"
+                [(ngModel)]="hideBalance">
+
+        </div>
+
+    </div>
+
+    <!-- Security -->
+
+    <div class="settings-card">
+
+        <h2>
+            Security
+        </h2>
+
+        <button class="action-btn">
+
+            Change Password
+
+        </button>
+
+    </div>
+
+    <!-- Danger Zone -->
+
+    <div class="settings-card danger-card">
+
+        <h2>
+            Danger Zone
+        </h2>
+
+        <button
+            class="logout-btn"
+            (click)="logout()">
+
+            Logout
+
+        </button>
+
+    </div>
+
+</div>

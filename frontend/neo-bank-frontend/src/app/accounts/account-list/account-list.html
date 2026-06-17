@@ -1,0 +1,63 @@
+<div class="accounts-page">
+
+    <div class="page-header">
+
+        <h1>My Accounts</h1>
+
+        <p>
+            Manage and monitor your accounts.
+        </p>
+
+    </div>
+
+    <div class="accounts-grid">
+
+        @for(account of accounts; track account.id){
+
+        <div class="account-card">
+
+            <div class="top-row">
+
+                <div>
+
+                    <h3>
+
+                        {{ account.accountType }}
+
+                    </h3>
+
+                    <p>
+
+                        {{ maskAccount(account.accountNumber) }}
+
+                    </p>
+
+                </div>
+
+                <span class="status">
+
+                    {{ account.status }}
+
+                </span>
+
+            </div>
+
+            <div class="balance">
+
+                ₹{{ account.availableBalance | number:'1.2-2' }}
+
+            </div>
+
+            <div class="footer">
+
+                Available Balance
+
+            </div>
+
+        </div>
+
+        }
+
+    </div>
+
+</div>

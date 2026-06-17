@@ -1,0 +1,123 @@
+.notifications-card {
+
+    background:
+        linear-gradient(
+            180deg,
+            #07162e,
+            #051123
+        );
+
+    border-radius: 24px;
+
+    padding: 28px;
+
+    border: 1px solid rgba(255,255,255,.06);
+
+    height: 100%;
+}
+
+.card-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 25px;
+}
+
+.card-header h3 {
+
+    color: white;
+
+    font-size: 22px;
+
+    margin: 0;
+}
+
+.count-badge {
+
+    background: rgba(20,216,255,.15);
+
+    color: #14d8ff;
+
+    padding: 8px 14px;
+
+    border-radius: 20px;
+
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+.notification-item {
+
+    display: flex;
+
+    gap: 16px;
+
+    padding: 18px 0;
+
+    border-bottom: 1px solid rgba(255,255,255,.05);
+}
+
+.notification-item:last-child {
+
+    border-bottom: none;
+}
+
+.notification-icon {
+
+    width: 48px;
+
+    height: 48px;
+
+    border-radius: 14px;
+
+    background: rgba(20,216,255,.12);
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    font-size: 18px;
+
+    flex-shrink: 0;
+}
+
+.notification-content {
+
+    flex: 1;
+}
+
+.notification-content h4 {
+
+    color: white;
+
+    font-size: 15px;
+
+    margin-bottom: 8px;
+}
+
+.notification-content p {
+
+    color: #94a3b8;
+
+    font-size: 13px;
+
+    line-height: 1.6;
+
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+
+    .notifications-card {
+
+        padding: 20px;
+    }
+
+}

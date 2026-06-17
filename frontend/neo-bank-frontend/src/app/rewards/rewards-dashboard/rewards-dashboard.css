@@ -1,0 +1,51 @@
+.rewards-page {
+
+    min-height: 100vh;
+
+    background: #030d22;
+
+    padding: 40px;
+}
+
+.reward-card {
+
+    max-width: 450px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #07162e,
+            #051123
+        );
+
+    border-radius: 28px;
+
+    border: 1px solid rgba(255,255,255,.06);
+
+    padding: 40px;
+
+    text-align: center;
+}
+
+.icon {
+
+    font-size: 50px;
+
+    margin-bottom: 20px;
+}
+
+h2 {
+
+    color: white;
+
+    margin-bottom: 20px;
+}
+
+.amount {
+
+    font-size: 42px;
+
+    font-weight: 700;
+
+    color: #14d8ff;
+}

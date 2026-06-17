@@ -1,0 +1,92 @@
+<div class="budget-page">
+
+    <div class="page-header">
+
+        <h1>
+            Create Budget
+        </h1>
+
+        <p>
+            Set monthly spending limits by category.
+        </p>
+
+    </div>
+
+    <div class="budget-card">
+
+        <div class="field">
+
+            <label>Category</label>
+
+            <select [(ngModel)]="budgetRequest.category">
+
+                <option value="">
+                    Select Category
+                </option>
+
+                @for(category of categories; track category){
+
+                <option [value]="category">
+
+                    {{ category }}
+
+                </option>
+
+                }
+
+            </select>
+
+        </div>
+
+        <div class="field">
+
+            <label>Budget Month</label>
+
+            <input
+                type="month"
+                [(ngModel)]="budgetRequest.budgetMonth">
+
+        </div>
+
+        <div class="field">
+
+            <label>Limit Amount</label>
+
+            <input
+                type="number"
+                [(ngModel)]="budgetRequest.limitAmount"
+                placeholder="₹ Enter limit amount">
+
+        </div>
+
+        @if(errorMessage){
+
+        <div class="error-message">
+
+            {{ errorMessage }}
+
+        </div>
+
+        }
+
+        <button
+            class="create-btn"
+            (click)="createBudget()">
+
+            Create Budget
+
+        </button>
+
+    </div>
+
+</div>
+
+@if(showToast){
+
+<div class="success-toast">
+
+    ✅ Budget created successfully
+
+</div>
+
+}

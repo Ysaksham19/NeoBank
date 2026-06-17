@@ -1,0 +1,35 @@
+<div class="total-balance-card">
+
+    <div class="card-header">
+
+        <span class="title">
+            Total Balance
+        </span>
+
+        <span class="eye-icon">
+            👁️
+        </span>
+
+    </div>
+
+    <h2>
+        ₹{{ totalBalance | number:'1.2-2' }}
+    </h2>
+
+    <div class="growth">
+
+        <span class="positive">
+
+            + ₹{{ monthlyGrowth | number:'1.2-2' }}
+
+        </span>
+
+        <span class="month-text">
+
+            this month
+
+        </span>
+
+    </div>
+
+</div>

@@ -1,0 +1,106 @@
+
+.dashboard-page {
+    display: flex;
+    min-height: 100vh;
+    background:  #011025;
+    overflow-x: hidden;
+}
+
+/* Main content area */
+.dashboard-content {
+    flex: 1;
+    width: calc(100vw - 270px);
+    margin-left: 270px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Dashboard body */
+.dashboard-body {
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* ========================= */
+/* TOP GRID */
+/* ========================= */
+
+.top-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 2fr)
+        minmax(0, 1.2fr)
+        minmax(0, 1fr);
+
+    gap: 24px;
+
+    align-items: start;
+}
+
+/* Savings + Current cards */
+
+.account-column {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 20px;
+}
+
+/* ========================= */
+/* BOTTOM GRID */
+/* ========================= */
+
+.middle-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1.8fr)
+        minmax(0, 1.5fr)
+        minmax(0, 1fr);
+
+    gap: 24px;
+
+    align-items: start;
+}
+
+/* Prevent cards from overflowing */
+
+.top-grid > *,
+.middle-grid > * {
+    min-width: 0;
+}
+
+/* ========================= */
+/* RESPONSIVE */
+/* ========================= */
+
+@media (max-width: 1400px) {
+
+    .top-grid,
+    .middle-grid {
+
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-content {
+
+        margin-left: 0;
+
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .dashboard-body {
+
+        padding: 15px;
+    }
+}

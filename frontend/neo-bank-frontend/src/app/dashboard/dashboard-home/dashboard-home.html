@@ -1,0 +1,49 @@
+<div class="dashboard-page">
+
+  <!-- Sidebar -->
+  <app-sidebar></app-sidebar>
+
+  <!-- Main Content -->
+  <div class="dashboard-content">
+
+    <!-- Dashboard Header -->
+    <app-dashboard-navbar></app-dashboard-navbar>
+
+    <!-- Body -->
+    <div class="dashboard-body">
+
+      <app-welcome-card></app-welcome-card>
+
+      <!-- Top Row -->
+      <div class="top-grid">
+
+        <app-total-balance></app-total-balance>
+
+        <div class="account-column">
+
+          <app-savings-account-card></app-savings-account-card>
+
+          <app-current-account-card></app-current-account-card>
+
+        </div>
+
+        <app-quick-actions></app-quick-actions>
+
+      </div>
+
+      <!-- Bottom Row -->
+      <div class="middle-grid">
+
+        <app-recent-transactions></app-recent-transactions>
+
+        <app-analytics></app-analytics>
+
+        <app-notifications-panel></app-notifications-panel>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

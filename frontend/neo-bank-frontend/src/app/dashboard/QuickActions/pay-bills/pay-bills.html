@@ -1,0 +1,160 @@
+
+<div
+    class="quick-action-card"
+    (click)="openModal()">
+
+    <div class="card-top">
+
+        <div class="icon">
+            📄
+        </div>
+
+        <div class="arrow">
+            →
+        </div>
+
+    </div>
+
+    <div class="card-content">
+
+        <h3>
+            Pay Bills
+        </h3>
+
+        <p>
+            Electricity, water and recharge payments.
+        </p>
+
+    </div>
+
+</div>
+
+@if(showModal){
+
+<div class="modal-overlay">
+
+    <div class="bill-modal">
+
+        <div class="modal-header">
+
+            <div>
+
+                <h2>Pay Bills</h2>
+
+                <p>
+                    Fast and secure bill payments.
+                </p>
+
+            </div>
+
+            <button
+                class="close-btn"
+                (click)="closeModal()">
+
+                ✕
+
+            </button>
+
+        </div>
+
+        <div class="form-grid">
+
+            <div class="field">
+
+                <label>Bill Category</label>
+
+                <select [(ngModel)]="bill.category">
+
+                    <option>Electricity</option>
+                    <option>Water</option>
+                    <option>Mobile Recharge</option>
+                    <option>Broadband</option>
+                    <option>DTH</option>
+                    <option>Gas</option>
+                    <option>Rent</option>
+                    <option>Credit Card</option>
+
+                </select>
+
+            </div>
+
+            <div class="field">
+
+                <label>Provider Name</label>
+
+                <input
+                    [(ngModel)]="bill.provider"
+                    placeholder="Enter provider">
+
+            </div>
+
+            <div class="field">
+
+                <label>Consumer Number</label>
+
+                <input
+                    [(ngModel)]="bill.consumerNumber"
+                    placeholder="Enter consumer number">
+
+            </div>
+
+            <div class="field">
+
+                <label>Amount</label>
+
+                <input
+                    [(ngModel)]="bill.amount"
+                    placeholder="₹ Amount">
+
+            </div>
+
+            <div class="field">
+
+                <label>Pay From</label>
+
+                <select [(ngModel)]="bill.account">
+
+                    <option>Savings Account</option>
+                    <option>Current Account</option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+        <div class="button-row">
+
+            <button
+                class="cancel-btn"
+                (click)="closeModal()">
+
+                Cancel
+
+            </button>
+
+            <button
+                class="pay-btn"
+                (click)="payBill()">
+
+                Pay Now
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+}
+
+@if(showToast){
+
+<div class="success-toast">
+
+    ✅ Payment completed successfully
+
+</div>
+
+}

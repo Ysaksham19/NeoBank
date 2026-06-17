@@ -1,0 +1,57 @@
+<div class="budget-page">
+
+    <div class="page-header">
+
+        <h1>
+            Budget Dashboard
+        </h1>
+
+        <p>
+            View and manage your monthly budgets.
+        </p>
+
+    </div>
+
+    <div class="budget-grid">
+
+        @for(budget of budgets; track budget.id){
+
+        <div class="budget-card">
+
+            <div class="card-header">
+
+                <h3>
+
+                    {{ budget.category }}
+
+                </h3>
+
+                <button
+                    class="delete-btn"
+                    (click)="deleteBudget(budget.id)">
+
+                    🗑
+
+                </button>
+
+            </div>
+
+            <div class="budget-month">
+
+                {{ budget.budgetMonth }}
+
+            </div>
+
+            <div class="budget-amount">
+
+                ₹{{ budget.limitAmount | number:'1.2-2' }}
+
+            </div>
+
+        </div>
+
+        }
+
+    </div>
+
+</div>

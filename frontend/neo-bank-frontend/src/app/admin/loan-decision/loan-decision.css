@@ -1,0 +1,85 @@
+.loan-decision-page {
+
+    padding: 40px;
+
+    background: #030d22;
+
+    min-height: 100vh;
+}
+
+.loan-decision-page h1 {
+
+    color: white;
+
+    margin-bottom: 30px;
+}
+
+table {
+
+    width: 100%;
+
+    background: #07162e;
+
+    border-collapse: collapse;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+}
+
+th {
+
+    color: #94a3b8;
+
+    padding: 20px;
+}
+
+td {
+
+    color: white;
+
+    padding: 18px;
+
+    border-top: 1px solid rgba(255,255,255,.05);
+}
+
+input {
+
+    width: 100%;
+
+    height: 40px;
+
+    border-radius: 10px;
+
+    border: none;
+
+    padding: 0 12px;
+}
+
+.approve-btn {
+
+    background: #22c55e;
+
+    color: white;
+
+    border: none;
+
+    padding: 10px 15px;
+
+    border-radius: 10px;
+
+    margin-right: 10px;
+}
+
+.reject-btn {
+
+    background: #ef4444;
+
+    color: white;
+
+    border: none;
+
+    padding: 10px 15px;
+
+    border-radius: 10px;
+}

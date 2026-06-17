@@ -1,0 +1,34 @@
+.history-card {
+
+    background: #07162e;
+
+    border-radius: 24px;
+
+    padding: 30px;
+
+    border: 1px solid rgba(255,255,255,.06);
+}
+
+.history-card h2 {
+
+    color: white;
+
+    margin-bottom: 25px;
+}
+
+table {
+
+    width: 100%;
+
+    border-collapse: collapse;
+}
+
+td {
+
+    color: white;
+
+    padding: 18px 0;
+
+    border-top:
+      1px solid rgba(255,255,255,.05);
+}

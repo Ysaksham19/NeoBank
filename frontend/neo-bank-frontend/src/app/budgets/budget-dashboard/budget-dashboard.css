@@ -1,0 +1,102 @@
+.budget-page {
+
+    min-height: 100vh;
+
+    background: #030d22;
+
+    padding: 40px;
+}
+
+.page-header {
+
+    margin-bottom: 30px;
+}
+
+.page-header h1 {
+
+    color: white;
+
+    font-size: 34px;
+
+    margin-bottom: 10px;
+}
+
+.page-header p {
+
+    color: #94a3b8;
+}
+
+.budget-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fit, minmax(300px, 1fr));
+
+    gap: 20px;
+}
+
+.budget-card {
+
+    background:
+        linear-gradient(
+            180deg,
+            #07162e,
+            #051123
+        );
+
+    border: 1px solid rgba(255,255,255,.06);
+
+    border-radius: 24px;
+
+    padding: 25px;
+}
+
+.card-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 20px;
+}
+
+.card-header h3 {
+
+    color: white;
+}
+
+.delete-btn {
+
+    border: none;
+
+    background: rgba(239,68,68,.15);
+
+    color: #ffb4b4;
+
+    width: 40px;
+
+    height: 40px;
+
+    border-radius: 12px;
+
+    cursor: pointer;
+}
+
+.budget-month {
+
+    color: #94a3b8;
+
+    margin-bottom: 15px;
+}
+
+.budget-amount {
+
+    color: #14d8ff;
+
+    font-size: 26px;
+
+    font-weight: 700;
+}

@@ -7,6 +7,9 @@ import com.neobank360app.exception.UnauthorizedAccountAccessException;
 import com.neobank360app.repository.AccountRepository;
 import com.neobank360app.repository.TransactionRepository;
 import com.neobank360app.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -15,10 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.util.List;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 @Service
 public class TransactionService {
@@ -32,15 +31,23 @@ public class TransactionService {
 
     private final UserRepository userRepository;
 
+    private final RewardService rewardService;
+
+    private final NotificationService notificationService;
+
     public TransactionService(
             TransactionRepository transactionRepository,
             AccountRepository accountRepository,
-            UserRepository userRepository
+            UserRepository userRepository,
+            RewardService rewardService,
+            NotificationService notificationService
     ) {
 
         this.transactionRepository = transactionRepository;
         this.accountRepository = accountRepository;
         this.userRepository = userRepository;
+        this.rewardService = rewardService;
+        this.notificationService = notificationService;
     }
 
     // ───────────────── DEPOSIT MONEY ─────────────────
@@ -109,7 +116,41 @@ public class TransactionService {
 
         transaction.setRemarks(remarks);
 
-        return transactionRepository.save(transaction);
+        Transaction savedTransaction =
+                transactionRepository.save(transaction);
+
+        // ───────────────── REWARD ENGINE ─────────────────
+
+        if (amount.compareTo(
+                BigDecimal.valueOf(5000)
+        ) >= 0) {
+
+            rewardService.createReward(
+
+                    account.getUser(),
+
+                    RewardType.REWARD_POINTS,
+
+                    BigDecimal.valueOf(10),
+
+                    "Deposit reward points"
+            );
+        }
+
+        // ───────────────── NOTIFICATION ─────────────────
+
+        notificationService.createNotification(
+
+                account.getUser(),
+
+                NotificationType.TRANSACTION,
+
+                "₹" + amount +
+                        " deposited successfully into account " +
+                        account.getAccountNo()
+        );
+
+        return savedTransaction;
     }
 
     // ───────────────── TRANSFER MONEY ─────────────────
@@ -226,78 +267,57 @@ public class TransactionService {
                 requestDTO.getRemarks()
         );
 
-        return transactionRepository.save(transaction);
-    }
+        Transaction savedTransaction =
+                transactionRepository.save(transaction);
 
-    // ───────────────── GET ACCOUNT TRANSACTIONS ─────────────────
+        // ───────────────── REWARD ENGINE ─────────────────
 
-    public List<Transaction> getAccountTransactions(
-            Long accountId
-    ) {
+        if (requestDTO.getAmount().compareTo(
+                BigDecimal.valueOf(1000)
+        ) >= 0) {
 
-        Account account =
-                getValidatedAccount(accountId);
+            rewardService.createReward(
 
-        return transactionRepository
-                .findByAccountOrderByCreatedAtDesc(
-                        account
-                );
-    }
+                    senderAccount.getUser(),
 
-    // ───────────────── PRIVATE HELPERS ─────────────────
+                    RewardType.REWARD_POINTS,
 
-    private Account getValidatedAccount(
-            Long accountId
-    ) {
+                    BigDecimal.valueOf(25),
 
-        User user =
-                getAuthenticatedUser();
-
-        Account account =
-                accountRepository.findById(accountId)
-                        .orElseThrow(() ->
-                                new ResourceNotFoundException(
-                                        "Account not found."
-                                ));
-
-        if (!account.getUser()
-                .getId()
-                .equals(user.getId())) {
-
-            throw new UnauthorizedAccountAccessException(
-                    "You are not authorized to access this account."
+                    "Transfer reward points"
             );
         }
 
-        return account;
+        // ───────────────── SENDER NOTIFICATION ─────────────────
+
+        notificationService.createNotification(
+
+                senderAccount.getUser(),
+
+                NotificationType.TRANSACTION,
+
+                "₹" + requestDTO.getAmount() +
+                        " transferred to account " +
+                        receiverAccount.getAccountNo()
+        );
+
+        // ───────────────── RECEIVER NOTIFICATION ─────────────────
+
+        notificationService.createNotification(
+
+                receiverAccount.getUser(),
+
+                NotificationType.TRANSACTION,
+
+                "₹" + requestDTO.getAmount() +
+                        " received from account " +
+                        senderAccount.getAccountNo()
+        );
+
+        return savedTransaction;
     }
 
-    private User getAuthenticatedUser() {
-
-        Authentication authentication =
-                SecurityContextHolder
-                        .getContext()
-                        .getAuthentication();
-
-        String email =
-                authentication.getName();
-
-        return userRepository.findByEmail(email)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "User not found."
-                        ));
-    }
-
-    private String generateTransactionRef() {
-
-        return "TXN" +
-                (SECURE_RANDOM.nextInt(90000000)
-                        + 10000000);
-    }
-    
-    
- // ───────────────── WITHDRAW MONEY ─────────────────
+    // ───────────────── WITHDRAW MONEY ─────────────────
 
     @Transactional
     public Transaction withdraw(
@@ -367,7 +387,38 @@ public class TransactionService {
 
         transaction.setRemarks(remarks);
 
-        return transactionRepository.save(transaction);
+        Transaction savedTransaction =
+                transactionRepository.save(transaction);
+
+        // ───────────────── NOTIFICATION ─────────────────
+
+        notificationService.createNotification(
+
+                account.getUser(),
+
+                NotificationType.TRANSACTION,
+
+                "₹" + amount +
+                        " withdrawn from account " +
+                        account.getAccountNo()
+        );
+
+        return savedTransaction;
+    }
+
+    // ───────────────── GET ACCOUNT TRANSACTIONS ─────────────────
+
+    public List<Transaction> getAccountTransactions(
+            Long accountId
+    ) {
+
+        Account account =
+                getValidatedAccount(accountId);
+
+        return transactionRepository
+                .findByAccountOrderByCreatedAtDesc(
+                        account
+                );
     }
 
     // ───────────────── MINI STATEMENT ─────────────────
@@ -384,9 +435,8 @@ public class TransactionService {
                         account
                 );
     }
-    
-    
- // ───────────────── PAGINATED TRANSACTIONS ─────────────────
+
+    // ───────────────── PAGINATED TRANSACTIONS ─────────────────
 
     public Page<Transaction> getPaginatedTransactions(
             Long accountId,
@@ -404,5 +454,57 @@ public class TransactionService {
                 account,
                 pageable
         );
+    }
+
+    // ───────────────── PRIVATE HELPERS ─────────────────
+
+    private Account getValidatedAccount(
+            Long accountId
+    ) {
+
+        User user =
+                getAuthenticatedUser();
+
+        Account account =
+                accountRepository.findById(accountId)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Account not found."
+                                ));
+
+        if (!account.getUser()
+                .getId()
+                .equals(user.getId())) {
+
+            throw new UnauthorizedAccountAccessException(
+                    "You are not authorized to access this account."
+            );
+        }
+
+        return account;
+    }
+
+    private User getAuthenticatedUser() {
+
+        Authentication authentication =
+                SecurityContextHolder
+                        .getContext()
+                        .getAuthentication();
+
+        String email =
+                authentication.getName();
+
+        return userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "User not found."
+                        ));
+    }
+
+    private String generateTransactionRef() {
+
+        return "TXN" +
+                (SECURE_RANDOM.nextInt(90000000)
+                        + 10000000);
     }
 }

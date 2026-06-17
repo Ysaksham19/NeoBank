@@ -1,0 +1,70 @@
+<div class="pay-bill-page">
+
+    <div class="page-header">
+
+        <h1>
+            Pay Bills
+        </h1>
+
+        <p>
+            Complete your pending bill payments.
+        </p>
+
+    </div>
+
+    <div class="bill-grid">
+
+        @for(bill of pendingBills; track bill.id){
+
+        <div class="bill-card">
+
+            <h3>
+
+                {{ bill.billerName }}
+
+            </h3>
+
+            <div class="category">
+
+                {{ bill.category }}
+
+            </div>
+
+            <div class="amount">
+
+                ₹{{ bill.amount }}
+
+            </div>
+
+            <div class="due-date">
+
+                Due:
+                {{ bill.dueDate }}
+
+            </div>
+
+            <button
+                class="pay-btn"
+                (click)="payBill(bill.id)">
+
+                Pay Now
+
+            </button>
+
+        </div>
+
+        }
+
+    </div>
+
+</div>
+
+@if(showToast){
+
+<div class="success-toast">
+
+    ✅ Bill paid successfully
+
+</div>
+
+}

@@ -1,0 +1,398 @@
+<section class="register-page">
+
+  <!-- LEFT PANEL -->
+  <div class="register-left">
+    <div class="security-image">
+      <img src="/images/LeftSide.png" alt="LeftSide Image">
+    </div>
+
+    <div class="hero-content">
+      <h1>
+        Create Your<br>
+        <span>NeoBank Life</span>
+      </h1>
+
+      <p>
+        Experience secure banking built for the future.
+      </p>
+    </div>
+
+    <div class="feature-strip">
+      <div class="feature-item">
+        <div class="feature-icon">🛡</div>
+        <div>
+          <h4>Bank with Confidence</h4>
+          <span>Your security is our top priority</span>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon">🔒</div>
+        <div>
+          <h4>Secure Transactions</h4>
+          <span>Advanced encryption always</span>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon">⚡</div>
+        <div>
+          <h4>Fast & Reliable</h4>
+          <span>Bank anytime, anywhere</span>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon">🎧</div>
+        <div>
+          <h4>24/7 Support</h4>
+          <span>We're here to help</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="register-right">
+    <div class="register-card">
+      <div class="brand" routerLink="/" style="cursor: pointer;">
+        NeoBank
+      </div>
+
+      <h2>Create Account</h2>
+      <p class="subtitle">
+        Join NeoBank today in 4 easy steps
+      </p>
+
+      <!-- STEP INDICATOR -->
+      <div class="steps-indicator">
+        <div class="step-item" [class.active]="currentStep === 1" [class.completed]="currentStep > 1">
+          <div class="step-num">1</div>
+          <span class="step-label">Account</span>
+        </div>
+        <div class="step-line" [class.active]="currentStep > 1"></div>
+        
+        <div class="step-item" [class.active]="currentStep === 2" [class.completed]="currentStep > 2">
+          <div class="step-num">2</div>
+          <span class="step-label">KYC</span>
+        </div>
+        <div class="step-line" [class.active]="currentStep > 2"></div>
+
+        <div class="step-item" [class.active]="currentStep === 3" [class.completed]="currentStep > 3">
+          <div class="step-num">3</div>
+          <span class="step-label">Verify</span>
+        </div>
+        <div class="step-line" [class.active]="currentStep > 3"></div>
+
+        <div class="step-item" [class.active]="currentStep === 4" [class.completed]="currentStep > 4">
+          <div class="step-num">4</div>
+          <span class="step-label">Security</span>
+        </div>
+      </div>
+
+      <!-- ALERTS -->
+      <div class="alert alert-danger" *ngIf="errorMessage()">
+        <span>⚠️</span> {{ errorMessage() }}
+      </div>
+      <div class="alert alert-success" *ngIf="successMessage()">
+        <span>✅</span> {{ successMessage() }}
+      </div>
+
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+
+        <!-- STEP 1: ACCOUNT DETAILS -->
+        <div class="step-content" *ngIf="currentStep === 1">
+          <div class="input-group">
+            <label>Select Account Type</label>
+            <div class="account-types-grid">
+              <div 
+                *ngFor="let at of accountTypes" 
+                class="account-type-card" 
+                [class.selected]="registerForm.get('accountType')?.value === at.type"
+                (click)="selectAccountType(at.type)">
+                <div class="card-radio">
+                  <div class="radio-dot"></div>
+                </div>
+                <div class="card-details">
+                  <h4>{{ at.title }}</h4>
+                  <p class="min-bal">Min Balance: {{ at.minBalance }}</p>
+                  <p class="desc">{{ at.desc }}</p>
+                </div>
+              </div>
+            </div>
+            <div class="error-msg" *ngIf="f['accountType'].touched && f['accountType'].errors?.['required']">
+              Account type is required.
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="branchCode">Select Home Branch</label>
+            <select id="branchCode" formControlName="branchCode" class="form-select">
+              <option value="" disabled selected>Choose a branch...</option>
+              <option *ngFor="let b of branches" [value]="b.branchCode">
+                {{ b.branchName }} ({{ b.branchCode }} - {{ b.ifscCode }})
+              </option>
+            </select>
+            <div class="error-msg" *ngIf="f['branchCode'].touched && f['branchCode'].errors?.['required']">
+              Please select a banking branch.
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 2: PERSONAL & KYC DETAILS -->
+        <div class="step-content" *ngIf="currentStep === 2">
+          <div class="input-group">
+            <label for="fullName">Full Name</label>
+            <input 
+              id="fullName" 
+              type="text" 
+              formControlName="fullName"
+              placeholder="Enter your full name as in Aadhaar"
+              [class.is-invalid]="f['fullName'].touched && f['fullName'].invalid">
+            <div class="error-msg" *ngIf="f['fullName'].touched && f['fullName'].invalid">
+              <span *ngIf="f['fullName'].errors?.['required']">Full name is required.</span>
+              <span *ngIf="f['fullName'].errors?.['pattern']">Name must be 3-50 letters without special characters.</span>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="aadhaarNumber">Aadhaar Card Number</label>
+            <input 
+              id="aadhaarNumber" 
+              type="text" 
+              formControlName="aadhaarNumber"
+              placeholder="Enter 12-digit Aadhaar number"
+              maxlength="12"
+              [class.is-invalid]="f['aadhaarNumber'].touched && f['aadhaarNumber'].invalid">
+            <div class="error-msg" *ngIf="f['aadhaarNumber'].touched && f['aadhaarNumber'].invalid">
+              <span *ngIf="f['aadhaarNumber'].errors?.['required']">Aadhaar number is required.</span>
+              <span *ngIf="f['aadhaarNumber'].errors?.['pattern']">Aadhaar must be exactly 12 digits.</span>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="panNumber">PAN Card Number</label>
+            <input 
+              id="panNumber" 
+              type="text" 
+              formControlName="panNumber"
+              placeholder="Enter PAN (e.g. ABCDE1234F)"
+              maxlength="10"
+              style="text-transform: uppercase;"
+              [class.is-invalid]="f['panNumber'].touched && f['panNumber'].invalid">
+            <div class="error-msg" *ngIf="f['panNumber'].touched && f['panNumber'].invalid">
+              <span *ngIf="f['panNumber'].errors?.['required']">PAN card number is required.</span>
+              <span *ngIf="f['panNumber'].errors?.['pattern']">Invalid PAN format (e.g. ABCDE1234F).</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 3: OTP VERIFICATIONS -->
+        <div class="step-content" *ngIf="currentStep === 3">
+          
+          <!-- EMAIL VERIFICATION -->
+          <div class="verification-box">
+            <div class="verification-header">
+              <div class="icon">📧</div>
+              <div class="details">
+                <h4>Email Address Verification</h4>
+                <p>Verify your email to receive bank notices</p>
+              </div>
+              <div class="verified-badge" *ngIf="emailVerified()">✓ Verified</div>
+            </div>
+
+            <div class="verification-body" *ngIf="!emailVerified()">
+              <div class="field-row">
+                <input 
+                  type="email" 
+                  formControlName="email"
+                  placeholder="Enter email address"
+                  [readonly]="emailOtpSent()"
+                  [class.is-invalid]="f['email'].touched && f['email'].invalid">
+                <button 
+                  type="button" 
+                  class="action-link-btn"
+                  [disabled]="emailCooldown() > 0 || emailOtpLoading()"
+                  (click)="sendEmailOtp()">
+                  <span *ngIf="emailOtpLoading()">Sending...</span>
+                  <span *ngIf="!emailOtpLoading() && !emailOtpSent()">Get OTP</span>
+                  <span *ngIf="!emailOtpLoading() && emailOtpSent()">Resend ({{ emailCooldown() }}s)</span>
+                </button>
+              </div>
+              <div class="error-msg" *ngIf="f['email'].touched && f['email'].invalid">
+                Please enter a valid email address.
+              </div>
+
+              <!-- OTP Code Input -->
+              <div class="otp-input-row" *ngIf="emailOtpSent()">
+                <div class="otp-hint" *ngIf="devEmailOtp()">
+                  <span>⚙️ Dev Mode OTP:</span> <strong>{{ devEmailOtp() }}</strong>
+                </div>
+                <div class="otp-field-container">
+                  <input 
+                    type="text" 
+                    formControlName="emailOtpCode"
+                    placeholder="Enter 6-digit Email OTP"
+                    maxlength="6">
+                  <button 
+                    type="button" 
+                    class="verify-action-btn"
+                    [disabled]="emailVerifyLoading()"
+                    (click)="verifyEmailOtp()">
+                    <span *ngIf="emailVerifyLoading()">Verifying...</span>
+                    <span *ngIf="!emailVerifyLoading()">Verify OTP</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="verification-footer" *ngIf="emailVerified()">
+              <p>Email verified: <strong>{{ registerForm.get('email')?.value }}</strong></p>
+            </div>
+          </div>
+
+          <!-- MOBILE VERIFICATION -->
+          <div class="verification-box">
+            <div class="verification-header">
+              <div class="icon">📱</div>
+              <div class="details">
+                <h4>Mobile Number Verification</h4>
+                <p>Verify your phone number for transaction OTPs</p>
+              </div>
+              <div class="verified-badge" *ngIf="mobileVerified()">✓ Verified</div>
+            </div>
+
+            <div class="verification-body" *ngIf="!mobileVerified()">
+              <div class="field-row">
+                <input 
+                  type="text" 
+                  formControlName="phone"
+                  placeholder="Enter 10-digit phone number"
+                  maxlength="10"
+                  [readonly]="mobileOtpSent()"
+                  [class.is-invalid]="f['phone'].touched && f['phone'].invalid">
+                <button 
+                  type="button" 
+                  class="action-link-btn"
+                  [disabled]="mobileCooldown() > 0 || mobileOtpLoading()"
+                  (click)="sendMobileOtp()">
+                  <span *ngIf="mobileOtpLoading()">Sending...</span>
+                  <span *ngIf="!mobileOtpLoading() && !mobileOtpSent()">Get OTP</span>
+                  <span *ngIf="!mobileOtpLoading() && mobileOtpSent()">Resend ({{ mobileCooldown() }}s)</span>
+                </button>
+              </div>
+              <div class="error-msg" *ngIf="f['phone'].touched && f['phone'].invalid">
+                Please enter a valid 10-digit Indian phone number (starting 6-9).
+              </div>
+
+              <!-- OTP Code Input -->
+              <div class="otp-input-row" *ngIf="mobileOtpSent()">
+                <div class="otp-hint" *ngIf="devMobileOtp()">
+                  <span>⚙️ Dev Mode OTP:</span> <strong>{{ devMobileOtp() }}</strong>
+                </div>
+                <div class="otp-field-container">
+                  <input 
+                    type="text" 
+                    formControlName="mobileOtpCode"
+                    placeholder="Enter 6-digit SMS OTP"
+                    maxlength="6">
+                  <button 
+                    type="button" 
+                    class="verify-action-btn"
+                    [disabled]="mobileVerifyLoading()"
+                    (click)="verifyMobileOtp()">
+                    <span *ngIf="mobileVerifyLoading()">Verifying...</span>
+                    <span *ngIf="!mobileVerifyLoading()">Verify OTP</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="verification-footer" *ngIf="mobileVerified()">
+              <p>Mobile number verified: <strong>{{ registerForm.get('phone')?.value }}</strong></p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- STEP 4: PASSWORD & SECURITY -->
+        <div class="step-content" *ngIf="currentStep === 4">
+          <div class="input-group password-group">
+            <label for="password">Choose Password</label>
+            <div class="password-wrapper">
+              <input 
+                id="password" 
+                [type]="hidePassword() ? 'password' : 'text'" 
+                formControlName="password"
+                placeholder="Must be at least 8 characters"
+                [class.is-invalid]="f['password'].touched && f['password'].invalid">
+              <span class="password-toggle-icon" (click)="togglePassword()">
+                {{ hidePassword() ? '👁️' : '🙈' }}
+              </span>
+            </div>
+            <div class="error-msg" *ngIf="f['password'].touched && f['password'].invalid">
+              Password must be at least 8 characters.
+            </div>
+          </div>
+
+          <div class="input-group password-group">
+            <label for="confirmPassword">Confirm Password</label>
+            <div class="password-wrapper">
+              <input 
+                id="confirmPassword" 
+                [type]="hideConfirmPassword() ? 'password' : 'text'" 
+                formControlName="confirmPassword"
+                placeholder="Re-enter your password"
+                [class.is-invalid]="f['confirmPassword'].touched && f['confirmPassword'].invalid">
+              <span class="password-toggle-icon" (click)="toggleConfirmPassword()">
+                {{ hideConfirmPassword() ? '👁️' : '🙈' }}
+              </span>
+            </div>
+            <div class="error-msg" *ngIf="f['confirmPassword'].touched && f['confirmPassword'].invalid">
+              <span *ngIf="f['confirmPassword'].errors?.['required']">Please confirm your password.</span>
+              <span *ngIf="f['confirmPassword'].errors?.['passwordMismatch']">Passwords do not match.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- FORM CONTROLS -->
+        <div class="form-actions">
+          <button 
+            type="button" 
+            class="back-btn" 
+            *ngIf="currentStep > 1" 
+            (click)="prevStep()">
+            Back
+          </button>
+          
+          <button 
+            type="button" 
+            class="next-btn" 
+            *ngIf="currentStep < 4" 
+            (click)="nextStep()">
+            Continue
+          </button>
+
+          <button 
+            type="submit" 
+            class="submit-btn" 
+            *ngIf="currentStep === 4"
+            [disabled]="loading()">
+            <span *ngIf="loading()" class="btn-spinner"></span>
+            <span *ngIf="!loading()">Open Account</span>
+          </button>
+        </div>
+
+      </form>
+
+      <div class="footer-text">
+        Already have an account?
+        <a routerLink="/login">
+          Sign In
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+</section>

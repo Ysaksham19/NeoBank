@@ -1,0 +1,13 @@
+html {
+  scroll-behavior: smooth;
+}
+
+.content-padding {
+  padding-top: 110px;
+}
+
+@media (max-width: 992px) {
+  .content-padding {
+    padding-top: 85px;
+  }
+}

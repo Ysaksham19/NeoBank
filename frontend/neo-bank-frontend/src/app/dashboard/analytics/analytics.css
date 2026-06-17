@@ -1,0 +1,24 @@
+.analytics-card {
+
+    background: #07162e;
+
+    border-radius: 24px;
+
+    padding: 25px;
+
+    border: 1px solid rgba(255,255,255,.06);
+}
+
+.analytics-card h3 {
+
+    color: white;
+
+    margin-bottom: 25px;
+}
+
+canvas {
+
+    width: 100% !important;
+
+    max-height: 300px;
+} 

@@ -1,0 +1,134 @@
+.transaction-page {
+
+    background: #030d22;
+
+    min-height: 100vh;
+
+    padding: 40px;
+}
+
+.page-header h1 {
+
+    color: white;
+
+    font-size: 34px;
+
+    margin-bottom: 10px;
+}
+
+.page-header p {
+
+    color: #94a3b8;
+
+    margin-bottom: 30px;
+}
+
+.search-box input {
+
+    width: 100%;
+
+    height: 56px;
+
+    border-radius: 18px;
+
+    border: 1px solid rgba(255,255,255,.08);
+
+    background: rgba(255,255,255,.03);
+
+    color: white;
+
+    padding: 0 20px;
+
+    margin-bottom: 25px;
+}
+
+.filter-row {
+
+    display: flex;
+
+    gap: 15px;
+
+    margin-bottom: 30px;
+}
+
+.filter-row button {
+
+    border: none;
+
+    padding: 12px 22px;
+
+    border-radius: 14px;
+
+    cursor: pointer;
+
+    background: rgba(255,255,255,.05);
+
+    color: white;
+}
+
+.filter-row button.active {
+
+    background: #14d8ff;
+
+    color: #07162e;
+}
+
+.transaction-list {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 20px;
+}
+
+.transaction-card {
+
+    background:
+        linear-gradient(
+            180deg,
+            #07162e,
+            #051123
+        );
+
+    border: 1px solid rgba(255,255,255,.06);
+
+    border-radius: 22px;
+
+    padding: 25px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+}
+
+.transaction-card h3 {
+
+    color: white;
+
+    margin-bottom: 8px;
+}
+
+.transaction-card p {
+
+    color: #94a3b8;
+}
+
+.amount {
+
+    font-size: 22px;
+
+    font-weight: 700;
+}
+
+.credit {
+
+    color: #22c55e;
+}
+
+.debit {
+
+    color: #ef4444;
+}

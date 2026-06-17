@@ -29,4 +29,6 @@ public interface TransactionRepository
             Account account,
             Pageable pageable
     );
+    
+    List<Transaction> findByAccountUserId(Long userId);
 }

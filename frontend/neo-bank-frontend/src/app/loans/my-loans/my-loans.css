@@ -1,0 +1,88 @@
+.my-loans-page {
+
+    min-height: 100vh;
+
+    background: #030d22;
+
+    padding: 40px;
+}
+
+.page-header {
+
+    margin-bottom: 35px;
+}
+
+.page-header h1 {
+
+    color: white;
+
+    font-size: 34px;
+
+    margin-bottom: 10px;
+}
+
+.page-header p {
+
+    color: #94a3b8;
+}
+
+.loan-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fit, minmax(340px, 1fr));
+
+    gap: 25px;
+}
+
+.loan-card {
+
+    background:
+        linear-gradient(
+            180deg,
+            #07162e,
+            #051123
+        );
+
+    border-radius: 28px;
+
+    border: 1px solid rgba(255,255,255,.06);
+
+    padding: 30px;
+}
+
+.loan-card h3 {
+
+    color: white;
+
+    margin-bottom: 25px;
+}
+
+.info-row {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    margin-bottom: 18px;
+}
+
+.info-row span {
+
+    color: #94a3b8;
+}
+
+.info-row strong {
+
+    color: white;
+}
+
+.status {
+
+    margin-top: 20px;
+
+    color: #14d8ff;
+
+    font-weight: 600;
+}

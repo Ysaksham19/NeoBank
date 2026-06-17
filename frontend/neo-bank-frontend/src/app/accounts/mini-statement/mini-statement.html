@@ -1,0 +1,62 @@
+<div class="statement-page">
+
+    <div class="page-header">
+
+        <h1>
+            Mini Statement
+        </h1>
+
+        <p>
+            Last 5 account transactions
+        </p>
+
+    </div>
+
+    <div class="statement-card">
+
+        @for(transaction of transactions; track transaction){
+
+        <div class="transaction-row">
+
+            <div class="left-section">
+
+                <h3>
+
+                    {{ transaction.description }}
+
+                </h3>
+
+                <span>
+
+                    {{ transaction.date }}
+
+                </span>
+
+            </div>
+
+            <div
+                class="amount"
+                [class.credit]="transaction.type === 'CREDIT'"
+                [class.debit]="transaction.type === 'DEBIT'">
+
+                @if(transaction.type === 'CREDIT'){
+
+                    + ₹{{ transaction.amount }}
+
+                }
+
+                @if(transaction.type === 'DEBIT'){
+
+                    - ₹{{ transaction.amount }}
+
+                }
+
+            </div>
+
+        </div>
+
+        }
+
+    </div>
+
+</div>

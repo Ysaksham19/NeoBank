@@ -1,0 +1,98 @@
+.overdue-page {
+
+    min-height: 100vh;
+
+    background: #030d22;
+
+    padding: 40px;
+}
+
+.page-header {
+
+    margin-bottom: 30px;
+}
+
+.page-header h1 {
+
+    color: white;
+
+    font-size: 34px;
+
+    margin-bottom: 10px;
+}
+
+.page-header p {
+
+    color: #94a3b8;
+}
+
+.bill-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fit, minmax(320px,1fr));
+
+    gap: 20px;
+}
+
+.overdue-card {
+
+    background:
+        linear-gradient(
+            180deg,
+            #07162e,
+            #051123
+        );
+
+    border: 1px solid rgba(239,68,68,.25);
+
+    border-radius: 24px;
+
+    padding: 25px;
+}
+
+.badge {
+
+    display: inline-block;
+
+    background: rgba(239,68,68,.15);
+
+    color: #ffb4b4;
+
+    padding: 8px 14px;
+
+    border-radius: 12px;
+
+    margin-bottom: 20px;
+}
+
+.overdue-card h3 {
+
+    color: white;
+
+    margin-bottom: 15px;
+}
+
+.category {
+
+    color: #94a3b8;
+
+    margin-bottom: 15px;
+}
+
+.amount {
+
+    color: #ef4444;
+
+    font-size: 28px;
+
+    font-weight: 700;
+
+    margin-bottom: 15px;
+}
+
+.due-date {
+
+    color: white;
+}

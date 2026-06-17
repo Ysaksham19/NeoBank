@@ -1,0 +1,54 @@
+.account-card {
+
+    background: #07162e;
+
+    border-radius: 22px;
+
+    padding: 25px;
+
+    border: 1px solid rgba(255,255,255,.06);
+
+    box-shadow:
+      0 10px 25px rgba(0,0,0,.25);
+}
+
+.account-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+}
+
+.account-type {
+
+    color: white;
+
+    font-weight: 600;
+}
+
+.status {
+
+    color: #14d8ff;
+
+    font-size: .85rem;
+}
+
+.account-number {
+
+    margin-top: 20px;
+
+    color: #94a3b8;
+}
+
+.balance {
+
+    margin-top: 25px;
+
+    font-size: 2rem;
+
+    font-weight: 700;
+
+    color: white;
+}

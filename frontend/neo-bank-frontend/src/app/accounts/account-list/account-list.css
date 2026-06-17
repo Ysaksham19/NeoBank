@@ -1,0 +1,108 @@
+.accounts-page {
+
+    padding: 40px;
+
+    background: #030d22;
+
+    min-height: 100vh;
+}
+
+.page-header h1 {
+
+    color: white;
+
+    font-size: 34px;
+
+    margin-bottom: 10px;
+}
+
+.page-header p {
+
+    color: #94a3b8;
+}
+
+.accounts-grid {
+
+    display: grid;
+
+    grid-template-columns: repeat(auto-fit,minmax(320px,1fr));
+
+    gap: 25px;
+
+    margin-top: 30px;
+}
+
+.account-card {
+
+    background:
+        linear-gradient(
+            180deg,
+            #07162e,
+            #051123
+        );
+
+    border: 1px solid rgba(255,255,255,.06);
+
+    border-radius: 24px;
+
+    padding: 30px;
+
+    transition: .3s;
+}
+
+.account-card:hover {
+
+    border-color: #14d8ff;
+
+    transform: translateY(-4px);
+}
+
+.top-row {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+}
+
+.top-row h3 {
+
+    color: white;
+
+    margin-bottom: 8px;
+}
+
+.top-row p {
+
+    color: #94a3b8;
+}
+
+.status {
+
+    background: rgba(34,197,94,.15);
+
+    color: #22c55e;
+
+    padding: 8px 14px;
+
+    border-radius: 12px;
+}
+
+.balance {
+
+    margin-top: 35px;
+
+    font-size: 36px;
+
+    color: white;
+
+    font-weight: 700;
+}
+
+.footer {
+
+    margin-top: 10px;
+
+    color: #94a3b8;
+}

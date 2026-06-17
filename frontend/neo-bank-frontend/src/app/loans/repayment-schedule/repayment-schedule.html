@@ -1,0 +1,125 @@
+<div class="repayment-page">
+
+    <div class="page-header">
+
+        <h1>
+            Repayment Schedule
+        </h1>
+
+        <p>
+            View and manage your EMI payments.
+        </p>
+
+    </div>
+
+    <div class="search-card">
+
+        <input
+            type="number"
+            [(ngModel)]="loanAccountId"
+            placeholder="Enter Loan Account ID">
+
+        <button
+            (click)="loadRepayments()">
+
+            Load Schedule
+
+        </button>
+
+    </div>
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>EMI #</th>
+                <th>Due Date</th>
+                <th>EMI Amount</th>
+                <th>Principal</th>
+                <th>Interest</th>
+                <th>Status</th>
+                <th>Action</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            @for(item of repayments; track item.id){
+
+            <tr>
+
+                <td>
+
+                    {{ item.installmentNumber }}
+
+                </td>
+
+                <td>
+
+                    {{ item.dueDate }}
+
+                </td>
+
+                <td>
+
+                    ₹{{ item.emiAmount }}
+
+                </td>
+
+                <td>
+
+                    ₹{{ item.principalComponent }}
+
+                </td>
+
+                <td>
+
+                    ₹{{ item.interestComponent }}
+
+                </td>
+
+                <td>
+
+                    {{ item.status }}
+
+                </td>
+
+                <td>
+
+                    @if(item.status !== 'PAID'){
+
+                    <button
+                        class="pay-btn"
+                        (click)="markAsPaid(item.id)">
+
+                        Pay
+
+                    </button>
+
+                    }
+
+                </td>
+
+            </tr>
+
+            }
+
+        </tbody>
+
+    </table>
+
+</div>
+
+@if(showToast){
+
+<div class="success-toast">
+
+    ✅ EMI paid successfully
+
+</div>
+
+}

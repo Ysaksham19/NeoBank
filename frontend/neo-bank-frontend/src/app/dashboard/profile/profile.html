@@ -1,0 +1,89 @@
+<div class="profile-page">
+
+    <div class="profile-card">
+
+        <div class="profile-header">
+
+            <img
+                src="assets/profile.png"
+                alt="Profile Image">
+
+            <div>
+
+                <h1>
+
+                    {{ user?.fullName }}
+
+                </h1>
+
+                <p>
+
+                    NeoBank Customer
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="details-grid">
+
+            <div class="detail-box">
+
+                <label>Email</label>
+
+                <span>
+
+                    {{ user?.email }}
+
+                </span>
+
+            </div>
+
+            <div class="detail-box">
+
+                <label>Phone Number</label>
+
+                <span>
+
+                    {{ user?.phoneNumber }}
+
+                </span>
+
+            </div>
+
+            <div class="detail-box">
+
+                <label>Customer ID</label>
+
+                <span>
+
+                    {{ user?.id }}
+
+                </span>
+
+            </div>
+
+            <div class="detail-box">
+
+                <label>Status</label>
+
+                <span class="active-status">
+
+                    Active
+
+                </span>
+
+            </div>
+
+        </div>
+
+        <button class="edit-btn">
+
+            Edit Profile
+
+        </button>
+
+    </div>
+
+</div>

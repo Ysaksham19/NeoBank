@@ -1,0 +1,40 @@
+.quick-action-card {
+
+    background: #07162e;
+
+    border-radius: 20px;
+
+    padding: 25px;
+
+    border: 1px solid rgba(255,255,255,.06);
+
+    cursor: pointer;
+
+    transition: .3s;
+}
+
+.quick-action-card:hover {
+
+    transform: translateY(-3px);
+
+    border-color: #14d8ff;
+}
+
+.icon {
+
+    font-size: 2rem;
+
+    margin-bottom: 15px;
+}
+
+h3 {
+
+    color: white;
+
+    margin-bottom: 10px;
+}
+
+p {
+
+    color: #94a3b8;
+}

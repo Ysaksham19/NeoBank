@@ -1,0 +1,87 @@
+<div class="my-loans-page">
+
+    <div class="page-header">
+
+        <h1>
+            My Loans
+        </h1>
+
+        <p>
+            Track your active loan accounts.
+        </p>
+
+    </div>
+
+    <div class="loan-grid">
+
+        @for(loan of loans; track loan.id){
+
+        <div class="loan-card">
+
+            <h3>
+
+                {{ loan.loanProductName }}
+
+            </h3>
+
+            <div class="info-row">
+
+                <span>Principal</span>
+
+                <strong>
+
+                    ₹{{ loan.principalAmount }}
+
+                </strong>
+
+            </div>
+
+            <div class="info-row">
+
+                <span>EMI</span>
+
+                <strong>
+
+                    ₹{{ loan.emiAmount }}
+
+                </strong>
+
+            </div>
+
+            <div class="info-row">
+
+                <span>Tenure</span>
+
+                <strong>
+
+                    {{ loan.tenureMonths }} Months
+
+                </strong>
+
+            </div>
+
+            <div class="info-row">
+
+                <span>Outstanding</span>
+
+                <strong>
+
+                    ₹{{ loan.outstandingAmount }}
+
+                </strong>
+
+            </div>
+
+            <div class="status">
+
+                {{ loan.status }}
+
+            </div>
+
+        </div>
+
+        }
+
+    </div>
+
+</div>

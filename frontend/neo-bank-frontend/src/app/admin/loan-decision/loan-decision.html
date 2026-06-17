@@ -1,0 +1,99 @@
+<div class="loan-decision-page">
+
+    <h1>
+
+        Loan Applications
+
+    </h1>
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>ID</th>
+                <th>Product</th>
+                <th>Amount</th>
+                <th>Tenure</th>
+                <th>Status</th>
+                <th>Remarks</th>
+                <th>Actions</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            @for(app of applications; track app.applicationId){
+
+            <tr>
+
+                <td>
+
+                    {{ app.applicationId }}
+
+                </td>
+
+                <td>
+
+                    {{ app.productName }}
+
+                </td>
+
+                <td>
+
+                    ₹{{ app.requestedAmount }}
+
+                </td>
+
+                <td>
+
+                    {{ app.requestedTenureMonths }} Months
+
+                </td>
+
+                <td>
+
+                    {{ app.status }}
+
+                </td>
+
+                <td>
+
+                    <input
+                        [(ngModel)]="remarks[app.applicationId]"
+                        placeholder="Remarks">
+
+                </td>
+
+                <td>
+
+                    <button
+                        class="approve-btn"
+                        (click)="approve(app.applicationId)">
+
+                        Approve
+
+                    </button>
+
+                    <button
+                        class="reject-btn"
+                        (click)="reject(app.applicationId)">
+
+                        Reject
+
+                    </button>
+
+                </td>
+
+            </tr>
+
+            }
+
+        </tbody>
+
+    </table>
+
+</div>

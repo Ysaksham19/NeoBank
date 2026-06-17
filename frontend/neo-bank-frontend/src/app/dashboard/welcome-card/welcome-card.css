@@ -1,0 +1,43 @@
+.welcome-card {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 25px;
+}
+
+.welcome-left h1 {
+
+    color: rgb(247, 243, 243);
+
+    font-size: 2.4rem;
+
+    font-weight: 700;
+
+    margin-bottom: 10px;
+}
+
+.welcome-left p {
+
+    color: #6699db;
+
+    font-size: 1rem;
+}
+
+.date-box {
+
+    padding: 12px 20px;
+
+    border-radius: 14px;
+
+    background: rgba(255,255,255,.04);
+
+    border: 1px solid rgba(255,255,255,.06);
+
+    color: #14d8ff;
+
+    font-weight: 600;
+}

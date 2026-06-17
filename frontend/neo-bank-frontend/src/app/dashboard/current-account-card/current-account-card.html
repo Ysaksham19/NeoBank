@@ -1,0 +1,33 @@
+<div
+  class="account-card"
+  *ngIf="currentAccount">
+
+    <div class="account-header">
+
+        <span class="account-type">
+
+            {{ currentAccount.accountType }}
+
+        </span>
+
+        <span class="status">
+
+            {{ currentAccount.status }}
+
+        </span>
+
+    </div>
+
+    <div class="account-number">
+
+        ****{{ currentAccount.accountNumber.slice(-4) }}
+
+    </div>
+
+    <div class="balance">
+
+        ₹{{ currentAccount.availableBalance | number:'1.2-2' }}
+
+    </div>
+
+</div>

@@ -1,0 +1,89 @@
+<div class="bills-page">
+
+    <div class="page-header">
+
+        <h1>
+            Bills
+        </h1>
+
+        <p>
+            Manage and pay your upcoming bills.
+        </p>
+
+    </div>
+
+    <div class="bill-grid">
+
+        @for(bill of bills; track bill.id){
+
+        <div class="bill-card">
+
+            <div class="card-header">
+
+                <h3>
+
+                    {{ bill.billerName }}
+
+                </h3>
+
+                <span
+                    class="status"
+                    [class.paid]="bill.status === 'PAID'"
+                    [class.pending]="bill.status === 'PENDING'">
+
+                    {{ bill.status }}
+
+                </span>
+
+            </div>
+
+            <div class="category">
+
+                {{ bill.category }}
+
+            </div>
+
+            <div class="amount">
+
+                ₹{{ bill.amount }}
+
+            </div>
+
+            <div class="due-date">
+
+                Due:
+                {{ bill.dueDate }}
+
+            </div>
+
+            <div class="actions">
+
+                @if(bill.status !== 'PAID'){
+
+                <button
+                    class="pay-btn"
+                    (click)="payBill(bill.id)">
+
+                    Pay Bill
+
+                </button>
+
+                }
+
+                <button
+                    class="delete-btn"
+                    (click)="deleteBill(bill.id)">
+
+                    Delete
+
+                </button>
+
+            </div>
+
+        </div>
+
+        }
+
+    </div>
+
+</div>

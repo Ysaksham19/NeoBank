@@ -1,0 +1,45 @@
+<div class="dashboard-navbar">
+
+  <div class="left-section">
+
+    <div class="search-box">
+
+      <span class="search-icon">🔍</span>
+
+      <input
+        type="text"
+        placeholder="Search transactions, accounts..." />
+
+    </div>
+
+  </div>
+
+  <div class="right-section">
+
+    <div class="notification-icon">
+
+      🔔
+
+      <span class="badge"> {{ notifications.length }} </span>
+
+    </div>
+
+    <div class="profile-section">
+
+        <img
+            src="images/profile.png"
+            alt="Profile">
+
+        <div class="user-info">
+
+            <h4>
+            {{ user?.fullName || user?.name || 'User' }}
+            </h4>
+
+        </div>
+
+        </div>
+
+  </div>
+
+</div>

@@ -1,0 +1,203 @@
+.sidebar {
+
+    position: fixed;
+    left: 0;
+    top: 0;
+
+    width: 270px;
+    height: 100vh;
+
+    background: linear-gradient(
+        180deg,
+        #051123 0%,
+        #07162e 100%
+    );
+
+    border-right: 1px solid rgba(255,255,255,.06);
+
+    padding: 28px 20px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    overflow-y: auto;
+
+    z-index: 1000;
+}
+
+/* ========================= */
+/* LOGO */
+/* ========================= */
+
+.logo {
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    color: white;
+
+    font-size: 28px;
+    font-weight: 800;
+
+    margin-bottom: 40px;
+}
+
+.logo-icon {
+
+    width: 46px;
+    height: 46px;
+
+    border-radius: 14px;
+
+    background: linear-gradient(
+        135deg,
+        #14d8ff,
+        #4f46e5
+    );
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 22px;
+    font-weight: 700;
+}
+
+/* ========================= */
+/* MENU */
+/* ========================= */
+
+.menu {
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+.menu a {
+
+    text-decoration: none;
+
+    color: #94a3b8;
+
+    padding: 15px 18px;
+
+    border-radius: 18px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+
+    transition: .3s ease;
+}
+
+.menu a:hover {
+
+    background: rgba(20,216,255,.08);
+
+    color: white;
+}
+
+.menu a.active {
+
+    background: linear-gradient(
+        90deg,
+        rgba(20,216,255,.18),
+        rgba(79,70,229,.18)
+    );
+
+    border: 1px solid rgba(20,216,255,.3);
+
+    color: white;
+}
+
+/* ========================= */
+/* FOOTER */
+/* ========================= */
+
+.sidebar-footer {
+
+    margin-top: 30px;
+}
+
+/* ========================= */
+/* LOGOUT */
+/* ========================= */
+
+.logout-btn {
+
+    width: 100%;
+
+    height: 52px;
+
+    border: none;
+
+    border-radius: 16px;
+
+    background: rgba(239,68,68,.15);
+
+    color: #ffb4b4;
+
+    cursor: pointer;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    transition: .3s ease;
+}
+
+.logout-btn:hover {
+
+    background: rgba(239,68,68,.25);
+
+    transform: translateY(-2px);
+}
+
+/* ========================= */
+/* SCROLLBAR */
+/* ========================= */
+
+.sidebar::-webkit-scrollbar {
+
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+
+    background: rgba(255,255,255,.15);
+
+    border-radius: 20px;
+}
+
+/* ========================= */
+/* RESPONSIVE */
+/* ========================= */
+
+@media (max-width: 992px) {
+
+    .sidebar {
+
+        width: 90px;
+    }
+
+    .logo span,
+    .menu a {
+
+        font-size: 0;
+    }
+
+    .menu a span {
+
+        font-size: 20px;
+    }
+
+    .sidebar-footer {
+
+        display: none;
+    }
+}

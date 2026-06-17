@@ -1,0 +1,121 @@
+.loan-products-page {
+
+    min-height: 100vh;
+
+    background: #030d22;
+
+    padding: 40px;
+}
+
+.page-header {
+
+    margin-bottom: 35px;
+}
+
+.page-header h1 {
+
+    color: white;
+
+    font-size: 34px;
+
+    margin-bottom: 10px;
+}
+
+.page-header p {
+
+    color: #94a3b8;
+}
+
+.product-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fit, minmax(340px, 1fr));
+
+    gap: 25px;
+}
+
+.product-card {
+
+    background:
+        linear-gradient(
+            180deg,
+            #07162e,
+            #051123
+        );
+
+    border: 1px solid rgba(255,255,255,.06);
+
+    border-radius: 28px;
+
+    padding: 30px;
+
+    transition: .3s;
+}
+
+.product-card:hover {
+
+    transform: translateY(-4px);
+
+    border-color: rgba(20,216,255,.25);
+}
+
+.card-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 30px;
+}
+
+.card-header h3 {
+
+    color: white;
+
+    font-size: 22px;
+}
+
+.rate {
+
+    background: rgba(20,216,255,.15);
+
+    color: #14d8ff;
+
+    padding: 10px 16px;
+
+    border-radius: 14px;
+
+    font-weight: 600;
+}
+
+.details {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 20px;
+}
+
+.detail-row {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+}
+
+.detail-row span {
+
+    color: #94a3b8;
+}
+
+.detail-row strong {
+
+    color: white;
+}

@@ -1,0 +1,32 @@
+<div class="account-card">
+
+    <div class="account-header">
+
+        <span class="account-type">
+
+            {{ savingsAccount?.accountType }}
+
+        </span>
+
+        <span class="status">
+
+            {{ savingsAccount?.status }}
+
+        </span>
+
+    </div>
+
+    <div class="account-number">
+
+        ****
+        {{ savingsAccount?.accountNumber?.slice(-4) }}
+
+    </div>
+
+    <div class="balance">
+
+        ₹{{ savingsAccount?.availableBalance | number:'1.2-2' }}
+
+    </div>
+
+</div>

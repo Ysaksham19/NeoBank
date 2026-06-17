@@ -1,0 +1,163 @@
+.dashboard-navbar {
+
+    height: 90px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 0 30px;
+
+    border-bottom: 1px solid rgba(255,255,255,.05);
+
+    background: #030d22;
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 100;
+}
+
+/* LEFT */
+
+.left-section {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 20px;
+}
+
+.menu-btn {
+
+    border: none;
+
+    background: transparent;
+
+    color: white;
+
+    font-size: 24px;
+
+    cursor: pointer;
+}
+
+.search-box {
+
+    width: 450px;
+
+    height: 52px;
+
+    background: rgba(255,255,255,.04);
+
+    border: 1px solid rgba(255,255,255,.08);
+
+    border-radius: 18px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 0 20px;
+}
+
+.search-icon {
+
+    color: #94a3b8;
+}
+
+.search-box input {
+
+    flex: 1;
+
+    border: none;
+
+    outline: none;
+
+    background: transparent;
+
+    color: white;
+
+    font-size: 14px;
+}
+
+/* RIGHT */
+
+.right-section {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 24px;
+}
+
+.notification-icon {
+
+    position: relative;
+
+    font-size: 20px;
+
+    cursor: pointer;
+}
+
+.badge {
+
+    position: absolute;
+
+    top: -8px;
+
+    right: -8px;
+
+    width: 18px;
+
+    height: 18px;
+
+    border-radius: 50%;
+
+    background: red;
+
+    color: white;
+
+    font-size: 11px;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+}
+
+.profile-section {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+}
+
+.profile-section img {
+
+    width: 44px;
+
+    height: 44px;
+
+    border-radius: 50%;
+
+    object-fit: cover;
+}
+
+.user-info h4 {
+
+    margin: 0;
+
+    color: white;
+
+    font-size: 15px;
+}

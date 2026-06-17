@@ -1,0 +1,42 @@
+<div class="history-card">
+
+    <h2>
+
+        Reward History
+
+    </h2>
+
+    <table>
+
+        <tr
+            *ngFor="let reward of rewards">
+
+            <td>
+
+                {{ reward.rewardType }}
+
+            </td>
+
+            <td>
+
+                {{ reward.description }}
+
+            </td>
+
+            <td>
+
+                ₹{{ reward.amount }}
+
+            </td>
+
+            <td>
+
+                {{ reward.createdAt | date:'dd MMM yyyy' }}
+
+            </td>
+
+        </tr>
+
+    </table>
+
+</div>

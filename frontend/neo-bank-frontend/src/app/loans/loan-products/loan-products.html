@@ -1,0 +1,89 @@
+<div class="loan-products-page">
+
+    <div class="page-header">
+
+        <h1>
+            Loan Products
+        </h1>
+
+        <p>
+            Explore available loan options tailored for you.
+        </p>
+
+    </div>
+
+    <div class="product-grid">
+
+        @for(product of products; track product.id){
+
+        <div class="product-card">
+
+            <div class="card-header">
+
+                <h3>
+
+                    {{ product.productName }}
+
+                </h3>
+
+                <div class="rate">
+
+                    {{ product.interestRate }}%
+
+                </div>
+
+            </div>
+
+            <div class="details">
+
+                <div class="detail-row">
+
+                    <span>
+                        Minimum Amount
+                    </span>
+
+                    <strong>
+
+                        ₹{{ product.minimumAmount | number:'1.0-0' }}
+
+                    </strong>
+
+                </div>
+
+                <div class="detail-row">
+
+                    <span>
+                        Maximum Amount
+                    </span>
+
+                    <strong>
+
+                        ₹{{ product.maximumAmount | number:'1.0-0' }}
+
+                    </strong>
+
+                </div>
+
+                <div class="detail-row">
+
+                    <span>
+                        Tenure
+                    </span>
+
+                    <strong>
+
+                        {{ product.maximumTenureMonths }} Months
+
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        }
+
+    </div>
+
+</div>

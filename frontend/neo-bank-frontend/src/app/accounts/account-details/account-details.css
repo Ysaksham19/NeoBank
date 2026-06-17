@@ -1,0 +1,64 @@
+.details-page {
+
+    background: #030d22;
+
+    min-height: 100vh;
+
+    padding: 40px;
+}
+
+.details-card {
+
+    max-width: 700px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #07162e,
+            #051123
+        );
+
+    border: 1px solid rgba(255,255,255,.06);
+
+    border-radius: 28px;
+
+    padding: 40px;
+}
+
+.details-card h1 {
+
+    color: white;
+
+    margin-bottom: 35px;
+}
+
+.detail-row {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    padding: 20px 0;
+
+    border-bottom: 1px solid rgba(255,255,255,.05);
+}
+
+.detail-row span {
+
+    color: #94a3b8;
+}
+
+.detail-row strong {
+
+    color: white;
+}
+
+.balance {
+
+    color: #14d8ff;
+}
+
+.status {
+
+    color: #22c55e;
+}

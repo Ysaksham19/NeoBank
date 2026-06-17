@@ -1,0 +1,44 @@
+<div class="transactions-card">
+
+    <div class="card-title">
+
+        Recent Transactions
+
+    </div>
+
+    <table>
+
+        <tr
+          *ngFor="let tx of transactions">
+
+            <td class="description">
+
+                {{ tx.description }}
+
+            </td>
+
+            <td>
+
+                {{ tx.transactionDate | date:'dd MMM' }}
+
+            </td>
+
+            <td
+              [class.credit]="tx.transactionType === 'CREDIT'"
+              [class.debit]="tx.transactionType === 'DEBIT'">
+
+                ₹{{ tx.amount | number:'1.2-2' }}
+
+            </td>
+
+            <td>
+
+                {{ tx.status }}
+
+            </td>
+
+        </tr>
+
+    </table>
+
+</div>

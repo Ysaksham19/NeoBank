@@ -1,0 +1,30 @@
+.quick-actions-container {
+
+    background: #07162e;
+
+    border-radius: 24px;
+
+    padding: 25px;
+
+    border: 1px solid rgba(255,255,255,.06);
+}
+
+.quick-actions-container h3 {
+
+    color: white;
+
+    margin-bottom: 20px;
+
+    font-size: 1.2rem;
+
+    font-weight: 700;
+}
+
+.actions-grid {
+
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 20px;
+}

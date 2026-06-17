@@ -1,0 +1,74 @@
+.total-balance-card {
+
+    background: #07162e;
+
+    border-radius: 24px;
+
+    border: 1px solid rgba(255,255,255,.06);
+
+    padding: 30px;
+
+    min-height: 280px;
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,.25);
+}
+
+.card-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+}
+
+.title {
+
+    color: white;
+
+    font-size: 1rem;
+
+    font-weight: 600;
+}
+
+.eye-icon {
+
+    font-size: 1.2rem;
+
+    cursor: pointer;
+}
+
+.total-balance-card h2 {
+
+    color: white;
+
+    font-size: 3rem;
+
+    margin-top: 30px;
+
+    font-weight: 700;
+}
+
+.growth {
+
+    margin-top: 25px;
+
+    display: flex;
+
+    gap: 10px;
+
+    align-items: center;
+}
+
+.positive {
+
+    color: #14d8ff;
+
+    font-weight: 700;
+}
+
+.month-text {
+
+    color: #94a3b8;
+}

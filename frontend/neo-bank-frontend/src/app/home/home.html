@@ -1,0 +1,426 @@
+<!-- ===================================================== -->
+<!-- HERO SECTION -->
+<!-- ===================================================== -->
+
+<section class="hero-section">
+
+  <!-- BACKGROUND BLUR -->
+
+  <div class="blur blur-1"></div>
+
+  <div class="blur blur-2"></div>
+
+  <!-- HERO CONTENT -->
+
+  <div class="hero-content">
+
+    <!-- LEFT -->
+
+    <div class="hero-left">
+
+      <div class="tag">
+
+        🚀 Next Generation Digital Banking
+
+      </div>
+
+      <h1>
+
+        Banking That’s
+
+        <span>
+          Smarter
+        </span>
+
+        Faster & Secure
+
+      </h1>
+
+      <p>
+
+        NeoBank360 helps you manage accounts,
+        transfer money, track spending,
+        pay bills, and monitor analytics —
+        all in one intelligent banking platform.
+
+      </p>
+
+      <!-- BUTTONS -->
+
+      <div class="hero-buttons">
+
+        <button
+          class="primary-btn"
+          routerLink="/register">
+
+          Get Started
+
+        </button>
+
+        <a
+          href="#features"
+          class="secondary-btn">
+
+          Learn More
+
+        </a>
+      </div>
+
+      <!-- STATS -->
+
+      <div class="stats-container">
+
+        @for (stat of stats; track stat.label) {
+
+          <div class="stat-card">
+
+            <h2>
+              {{ stat.value }}
+            </h2>
+
+            <p>
+              {{ stat.label }}
+            </p>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+
+    <div class="hero-right">
+
+      <div class="dashboard-card">
+
+        <!-- HEADER -->
+
+        <div class="card-header">
+
+          <div class="user">
+
+            <div class="avatar"></div>
+
+            <div>
+
+              <h3>
+                Welcome Back
+              </h3>
+
+              <p>
+                John Doe
+              </p>
+            </div>
+          </div>
+
+          <div class="live-badge">
+
+            ● Live
+
+          </div>
+        </div>
+
+        <!-- BALANCE -->
+
+        <div class="balance-card">
+
+          <p>
+            Total Balance
+          </p>
+
+          <h1>
+            ₹ 5,42,840
+          </h1>
+        </div>
+
+        <!-- TRANSACTIONS -->
+
+        <div class="transactions">
+
+          <div class="transaction success">
+
+            <span>
+              Salary Credit
+            </span>
+
+            <strong>
+              + ₹85,000
+            </strong>
+          </div>
+
+          <div class="transaction expense">
+
+            <span>
+              Netflix Subscription
+            </span>
+
+            <strong>
+              - ₹799
+            </strong>
+          </div>
+
+          <div class="transaction success">
+
+            <span>
+              Cashback Reward
+            </span>
+
+            <strong>
+              + ₹2,400
+            </strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===================================================== -->
+<!-- FEATURES -->
+<!-- ===================================================== -->
+
+<section
+  id="features"
+  class="features-section">
+
+  <div class="section-header">
+
+    <h2>
+      Why Choose NeoBank360
+    </h2>
+
+    <p>
+      Powerful digital banking features built
+      for modern users.
+    </p>
+  </div>
+
+  <div class="features-grid">
+
+    @for (feature of features; track feature.title) {
+
+      <div class="feature-card">
+
+        <div class="icon">
+
+          {{ feature.icon }}
+
+        </div>
+
+        <h3>
+          {{ feature.title }}
+        </h3>
+
+        <p>
+          {{ feature.description }}
+        </p>
+      </div>
+    }
+  </div>
+</section>
+
+
+<!-- ===================================================== -->
+<!-- ABOUT -->
+<!-- ===================================================== -->
+
+<section
+  id="about"
+  class="about-section">
+
+  <div class="about-content">
+
+    <!-- LEFT -->
+
+    <div class="about-left">
+
+      <div class="section-tag">
+
+        ABOUT US
+
+      </div>
+
+      <h2>
+
+        Building The Future
+        Of Digital Banking
+
+      </h2>
+
+      <p>
+
+        NeoBank is a next-generation fintech
+        banking platform focused on secure,
+        intelligent, and seamless financial
+        experiences for modern users.
+
+      </p>
+
+      <div class="about-list">
+
+        @for (item of aboutFeatures; track item) {
+
+          <div class="about-item">
+
+            ✅ {{ item }}
+
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+
+    <div class="about-right">
+
+      <div class="about-card">
+
+        <h3>
+          Trusted Banking Platform
+        </h3>
+
+        <p>
+
+          NeoBank360 delivers intelligent banking
+          solutions powered by modern technology,
+          analytics, and enterprise-grade security.
+
+        </p>
+
+        <div class="growth">
+
+          📈 240% Growth This Year
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===================================================== -->
+<!-- SECURITY -->
+<!-- ===================================================== -->
+
+<section
+  id="security"
+  class="security-section">
+
+  <div class="section-header">
+
+    <h2>
+      Security First Banking
+    </h2>
+
+    <p>
+
+      Your money and data are protected
+      using enterprise-grade security.
+
+    </p>
+  </div>
+
+  <div class="security-grid">
+
+    @for (security of securityFeatures; track security.title) {
+
+      <div class="security-card">
+
+        <div class="security-icon">
+
+          {{ security.icon }}
+
+        </div>
+
+        <h3>
+
+          {{ security.title }}
+
+        </h3>
+
+        <p>
+
+          {{ security.description }}
+
+        </p>
+      </div>
+    }
+  </div>
+</section>
+
+
+<!-- ===================================================== -->
+<!-- CONTACT -->
+<!-- ===================================================== -->
+
+<section
+  id="contact"
+  class="contact-section">
+
+  <div class="contact-container">
+
+    <!-- LEFT -->
+
+    <div class="contact-left">
+
+      <div class="section-tag">
+
+        CONTACT US
+
+      </div>
+
+      <h2>
+
+        Let’s Build
+        Better Banking Together
+
+      </h2>
+
+      <p>
+
+        Have questions or feedback?
+        Our support team is available
+        24/7 to help you.
+
+      </p>
+
+      <div class="contact-info">
+
+        <div>
+          📍 India
+        </div>
+
+        <div>
+          📧 support@neobank360.com
+        </div>
+
+        <div>
+          📞 +91 9876003210
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+
+    <div class="contact-form">
+
+      <input
+        type="text"
+        placeholder="Full Name">
+
+      <input
+        type="email"
+        placeholder="Email Address">
+
+      <textarea
+        rows="5"
+        placeholder="Your Message"></textarea>
+
+      <button>
+
+        Send Message
+
+      </button>
+    </div>
+  </div>
+</section>

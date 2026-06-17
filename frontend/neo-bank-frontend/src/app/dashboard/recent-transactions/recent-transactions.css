@@ -1,0 +1,59 @@
+.transactions-card {
+
+    background: #07162e;
+
+    border-radius: 24px;
+
+    padding: 25px;
+
+    border: 1px solid rgba(255,255,255,.06);
+}
+
+.card-title {
+
+    color: white;
+
+    font-size: 1.2rem;
+
+    font-weight: 700;
+
+    margin-bottom: 20px;
+}
+
+table {
+
+    width: 100%;
+
+    border-collapse: collapse;
+}
+
+tr {
+
+    border-bottom: 1px solid rgba(255,255,255,.05);
+}
+
+td {
+
+    padding: 16px 0;
+
+    color: white;
+}
+
+.description {
+
+    font-weight: 600;
+}
+
+.credit {
+
+    color: #22c55e;
+
+    font-weight: 700;
+}
+
+.debit {
+
+    color: #ef4444;
+
+    font-weight: 700;
+}

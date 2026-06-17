@@ -1,0 +1,45 @@
+<div class="notifications-card">
+
+    <div class="card-header">
+
+        <h3>
+            Notifications
+        </h3>
+
+        <span class="count-badge">
+
+            {{ notifications.length }}
+
+        </span>
+
+    </div>
+
+    <div
+        class="notification-item"
+        *ngFor="let notification of notifications">
+
+        <div class="notification-icon">
+
+            🔔
+
+        </div>
+
+        <div class="notification-content">
+
+            <h4>
+
+                {{ notification.title }}
+
+            </h4>
+
+            <p>
+
+                {{ notification.message }}
+
+            </p>
+
+        </div>
+
+    </div>
+
+</div>

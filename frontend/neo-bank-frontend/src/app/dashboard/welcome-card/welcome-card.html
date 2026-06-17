@@ -1,0 +1,24 @@
+<div class="welcome-card">
+
+  <div class="welcome-left">
+
+    <h1>
+      Welcome,
+      {{ user?.fullName || 'User' }} 👋
+    </h1>
+
+    <p>
+      Here's what's happening with your accounts today.
+    </p>
+
+  </div>
+
+  <div class="welcome-right">
+
+    <div class="date-box">
+      {{ today | date:'dd MMM yyyy' }}
+    </div>
+
+  </div>
+
+</div>

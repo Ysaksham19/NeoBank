@@ -1,0 +1,76 @@
+.users-page {
+
+    background: #030d22;
+
+    min-height: 100vh;
+
+    padding: 40px;
+}
+
+.users-page h1 {
+
+    color: white;
+
+    margin-bottom: 30px;
+}
+
+table {
+
+    width: 100%;
+
+    border-collapse: collapse;
+
+    background: #07162e;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+}
+
+th {
+
+    color: #94a3b8;
+
+    padding: 20px;
+}
+
+td {
+
+    color: white;
+
+    padding: 18px;
+
+    border-top: 1px solid rgba(255,255,255,.05);
+}
+
+.active-btn {
+
+    background: #22c55e;
+
+    color: white;
+
+    border: none;
+
+    padding: 10px 16px;
+
+    border-radius: 10px;
+
+    margin-right: 10px;
+
+    cursor: pointer;
+}
+
+.block-btn {
+
+    background: #ef4444;
+
+    color: white;
+
+    border: none;
+
+    padding: 10px 16px;
+
+    border-radius: 10px;
+
+    cursor: pointer;
+}

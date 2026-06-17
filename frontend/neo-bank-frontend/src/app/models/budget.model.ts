@@ -1,0 +1,11 @@
+export interface Budget {
+
+  id: number;
+
+  category: string;
+
+  budgetMonth: string;
+
+  limitAmount: number;
+
+}

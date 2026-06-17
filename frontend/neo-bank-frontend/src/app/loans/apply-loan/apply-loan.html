@@ -1,0 +1,95 @@
+<div class="apply-loan-page">
+
+    <div class="page-header">
+
+        <h1>
+            Apply for Loan
+        </h1>
+
+        <p>
+            Submit your loan application quickly and securely.
+        </p>
+
+    </div>
+
+    <div class="loan-card">
+
+        <div class="field">
+
+            <label>
+                Loan Product
+            </label>
+
+            <select [(ngModel)]="application.productId">
+
+                @for(product of products; track product.id){
+
+                <option [value]="product.id">
+
+                    {{ product.productName }}
+
+                </option>
+
+                }
+
+            </select>
+
+        </div>
+
+        <div class="field">
+
+            <label>
+                Loan Amount
+            </label>
+
+            <input
+                type="number"
+                [(ngModel)]="application.amount"
+                placeholder="₹ Enter amount">
+
+        </div>
+
+        <div class="field">
+
+            <label>
+                Tenure (Months)
+            </label>
+
+            <input
+                type="number"
+                [(ngModel)]="application.tenureMonths"
+                placeholder="Enter tenure">
+
+        </div>
+
+        @if(errorMessage){
+
+        <div class="error-card">
+
+            {{ errorMessage }}
+
+        </div>
+
+        }
+
+        <button
+            class="apply-btn"
+            (click)="applyLoan()">
+
+            Apply Now
+
+        </button>
+
+    </div>
+
+</div>
+
+@if(showToast){
+
+<div class="success-toast">
+
+    ✅ Loan application submitted successfully
+
+</div>
+
+}

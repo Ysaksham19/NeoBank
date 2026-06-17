@@ -1,0 +1,159 @@
+<div
+    class="quick-action-card"
+    (click)="openModal()">
+
+    <div class="card-top">
+
+        <div class="icon">
+            👤
+        </div>
+
+        <div class="arrow">
+            →
+        </div>
+
+    </div>
+
+    <div class="card-content">
+
+        <h3>
+            Add Beneficiary
+        </h3>
+
+        <p>
+            Manage and add trusted beneficiaries securely.
+        </p>
+
+    </div>
+
+</div>
+
+@if(showModal){
+
+    <div class="modal-overlay">
+
+        <div class="beneficiary-modal">
+
+            <!-- HEADER -->
+            <div class="modal-header">
+
+                <div>
+
+                    <h2>Add Beneficiary</h2>
+
+                    <p>
+                        Add trusted bank accounts for quick transfers.
+                    </p>
+
+                </div>
+
+                <button
+                    class="close-btn"
+                    (click)="closeModal()">
+
+                    ✕
+
+                </button>
+
+            </div>
+
+            <!-- FORM -->
+            <div class="form-grid">
+
+                <div class="field">
+
+                    <label>Full Name</label>
+
+                    <input
+                        [(ngModel)]="beneficiary.fullName"
+                        placeholder="Enter beneficiary name">
+
+                </div>
+
+                <div class="field">
+
+                    <label>Bank Name</label>
+
+                    <input
+                        [(ngModel)]="beneficiary.bankName"
+                        placeholder="Enter bank name">
+
+                </div>
+
+                <div class="field">
+
+                    <label>Account Number</label>
+
+                    <input
+                        [(ngModel)]="beneficiary.accountNumber"
+                        placeholder="Enter account number">
+
+                </div>
+
+                <div class="field">
+
+                    <label>Confirm Account Number</label>
+
+                    <input
+                        [(ngModel)]="beneficiary.confirmAccountNumber"
+                        placeholder="Re-enter account number">
+
+                </div>
+
+                <div class="field">
+
+                    <label>IFSC Code</label>
+
+                    <input
+                        [(ngModel)]="beneficiary.ifscCode"
+                        placeholder="SBIN0001234">
+
+                </div>
+
+                <div class="field">
+
+                    <label>Nickname</label>
+
+                    <input
+                        [(ngModel)]="beneficiary.nickname"
+                        placeholder="Optional">
+
+                </div>
+
+                <div class="field full-width">
+
+                    <label>Relationship</label>
+
+                    <input
+                        [(ngModel)]="beneficiary.relationship"
+                        placeholder="Family / Friend / Business">
+
+                </div>
+
+            </div>
+
+            <!-- FOOTER -->
+            <div class="button-row">
+
+                <button
+                    class="cancel-btn"
+                    (click)="closeModal()">
+
+                    Cancel
+
+                </button>
+
+                <button
+                    class="save-btn"
+                    (click)="saveBeneficiary()">
+
+                    Save Beneficiary
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+}
