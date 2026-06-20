@@ -1,32 +1,36 @@
 <div class="admin-page">
   <div class="admin-page__inner">
+
+    <!-- Header -->
     <div class="page-header">
       <div>
         <span class="page-eyebrow">NeoBank360 Admin</span>
         <h1>Admin Dashboard</h1>
         <p>Monitor users, review loan activity, and manage banking operations from one place.</p>
       </div>
-
-      <button class="refresh-btn" type="button" (click)="loadDashboard()">
-        Refresh
-      </button>
+      <button class="refresh-btn" type="button" (click)="loadDashboard()">Refresh</button>
     </div>
 
+    <!-- Loading — uses loading-card (matches CSS) -->
     @if(loading) {
       <div class="loading-card">
         <div class="loading-spinner" aria-hidden="true"></div>
         <span>Loading dashboard data...</span>
       </div>
+
+    <!-- Error — uses error-card (matches CSS) -->
     } @else if(errorMessage) {
       <div class="error-card">
         <h3>Unable to load dashboard</h3>
         <p>{{ errorMessage }}</p>
-        <button class="refresh-btn" type="button" (click)="loadDashboard()">
-          Try Again
-        </button>
+        <button class="refresh-btn" type="button" (click)="loadDashboard()">Try Again</button>
       </div>
+
     } @else {
+
+      <!-- Stats Grid — 6 cards, 3-column layout -->
       <div class="stats-grid">
+
         <div class="stat-card stat-card--blue">
           <div class="stat-card__top">
             <div class="stat-icon">👥</div>
@@ -34,7 +38,7 @@
           </div>
           <div class="stat-value">{{ totalUsers }}</div>
           <div class="stat-label">Total Users</div>
-          <p class="stat-meta">All registered customers available in the platform.</p>
+          <p class="stat-meta">All registered customers on the platform.</p>
         </div>
 
         <div class="stat-card stat-card--green">
@@ -44,17 +48,7 @@
           </div>
           <div class="stat-value">{{ activeUsers }}</div>
           <div class="stat-label">Active Users</div>
-          <p class="stat-meta">Customers currently allowed to access banking services.</p>
-        </div>
-
-        <div class="stat-card stat-card--amber">
-          <div class="stat-card__top">
-            <div class="stat-icon">📋</div>
-            <span class="stat-badge warning">Pending</span>
-          </div>
-          <div class="stat-value">{{ pendingLoans }}</div>
-          <div class="stat-label">Pending Loans</div>
-          <p class="stat-meta">Loan applications still waiting for admin review.</p>
+          <p class="stat-meta">Customers with full account access.</p>
         </div>
 
         <div class="stat-card stat-card--red">
@@ -64,11 +58,45 @@
           </div>
           <div class="stat-value">{{ blockedUsers }}</div>
           <div class="stat-label">Blocked Users</div>
-          <p class="stat-meta">Accounts currently restricted by admin status updates.</p>
+          <p class="stat-meta">Accounts currently restricted by admin.</p>
         </div>
+
+        <div class="stat-card stat-card--amber">
+          <div class="stat-card__top">
+            <div class="stat-icon">🪪</div>
+            <span class="stat-badge warning">KYC</span>
+          </div>
+          <div class="stat-value">{{ pendingKyc }}</div>
+          <div class="stat-label">Pending KYC</div>
+          <p class="stat-meta">Customers awaiting KYC verification.</p>
+        </div>
+
+        <div class="stat-card stat-card--amber">
+          <div class="stat-card__top">
+            <div class="stat-icon">📋</div>
+            <span class="stat-badge warning">Pending</span>
+          </div>
+          <div class="stat-value">{{ pendingLoans }}</div>
+          <div class="stat-label">Pending Loans</div>
+          <p class="stat-meta">Loan applications awaiting a decision.</p>
+        </div>
+
+        <div class="stat-card stat-card--green">
+          <div class="stat-card__top">
+            <div class="stat-icon">💰</div>
+            <span class="stat-badge success">Approved</span>
+          </div>
+          <div class="stat-value">{{ approvedLoans }}</div>
+          <div class="stat-label">Approved Loans</div>
+          <p class="stat-meta">Loan applications approved by admin.</p>
+        </div>
+
       </div>
 
+      <!-- Dashboard Layout -->
       <div class="dashboard-layout">
+
+        <!-- Quick Access Panel -->
         <div class="dashboard-panel">
           <div class="panel-head">
             <div>
@@ -76,81 +104,79 @@
               <p>Open an admin module to manage the platform.</p>
             </div>
           </div>
-
           <div class="admin-nav-grid">
+
             <a routerLink="/admin/users" class="admin-nav-card">
-              <div class="admin-nav-card__icon-wrap">
-                <span class="nav-icon">👥</span>
-              </div>
+              <div class="admin-nav-card__icon-wrap"><span class="nav-icon">👥</span></div>
               <div class="admin-nav-card__content">
                 <h3>Users Management</h3>
                 <p>View all users, check KYC status, and update account access.</p>
-                <span class="nav-link-text">Open module</span>
+                <span class="nav-link-text">Open module →</span>
               </div>
             </a>
 
             <a routerLink="/admin/loans" class="admin-nav-card">
-              <div class="admin-nav-card__icon-wrap">
-                <span class="nav-icon">💰</span>
-              </div>
+              <div class="admin-nav-card__icon-wrap"><span class="nav-icon">💰</span></div>
               <div class="admin-nav-card__content">
                 <h3>Loan Decisions</h3>
                 <p>Review pending loan applications and add decision remarks.</p>
-                <span class="nav-link-text">Open module</span>
+                <span class="nav-link-text">Open module →</span>
               </div>
             </a>
 
             <a routerLink="/admin/transactions" class="admin-nav-card">
-              <div class="admin-nav-card__icon-wrap">
-                <span class="nav-icon">📄</span>
-              </div>
+              <div class="admin-nav-card__icon-wrap"><span class="nav-icon">📄</span></div>
               <div class="admin-nav-card__content">
                 <h3>Transactions</h3>
-                <p>Monitor users and use the transaction overview section.</p>
-                <span class="nav-link-text">Open module</span>
+                <p>Monitor all user transactions across the platform.</p>
+                <span class="nav-link-text">Open module →</span>
               </div>
             </a>
+
+            <a routerLink="/admin/accounts" class="admin-nav-card">
+              <div class="admin-nav-card__icon-wrap"><span class="nav-icon">🏦</span></div>
+              <div class="admin-nav-card__content">
+                <h3>Accounts Management</h3>
+                <p>View all bank accounts and update account statuses.</p>
+                <span class="nav-link-text">Open module →</span>
+              </div>
+            </a>
+
           </div>
         </div>
 
+        <!-- Recent Users Panel -->
         <div class="dashboard-panel">
           <div class="panel-head">
             <div>
               <h2>Recent Users</h2>
-              <p>Live snapshot from the admin users endpoint.</p>
+              <p>Latest 6 registered customers.</p>
             </div>
           </div>
 
           @if(recentUsers.length === 0) {
             <div class="empty-state">
               <div class="empty-state__icon">📭</div>
-              <h3>No users available</h3>
-              <p>Customer records will appear here after data loads.</p>
+              <h3>No users yet</h3>
+              <p>Customer records will appear here once data loads.</p>
             </div>
           } @else {
             <div class="users-list">
               @for(user of recentUsers; track user.id) {
                 <div class="user-row">
-                  <div class="user-avatar">
-                   {{ user.fullName.charAt(0) || 'U' }}
-                  </div>
-
+                  <div class="user-avatar">{{ user.fullName.charAt(0) }}</div>
                   <div class="user-info">
                     <h4>{{ user.fullName }}</h4>
                     <p>{{ user.email }}</p>
-                    <span class="user-subtext">Customer No: {{ user.customerNo }}</span>
+                    <span class="user-subtext">{{ user.customerNo }}</span>
                   </div>
-
                   <div class="user-tags">
-                    <span
-                      class="tag"
+                    <span class="tag"
                       [class.tag--active]="user.status === 'ACTIVE'"
                       [class.tag--blocked]="user.status === 'BLOCKED'">
                       {{ user.status }}
                     </span>
-
-                    <span
-                      class="tag"
+                    <span class="tag"
                       [class.tag--kyc-pending]="user.kycStatus === 'PENDING'"
                       [class.tag--kyc-approved]="user.kycStatus === 'VERIFIED' || user.kycStatus === 'APPROVED'">
                       {{ user.kycStatus }}
@@ -161,7 +187,9 @@
             </div>
           }
         </div>
+
       </div>
     }
+
   </div>
 </div>

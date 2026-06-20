@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { forkJoin } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { HttpErrorResponse } from '@angular/common/http';
 
-import { AdminService } from '../../core/services/admin';
-import { LoanService } from '../../core/services/loan';
-import { AdminUser } from '../../models/admin-user.model';
-import { LoanApplication } from '../../models/loan-application.model';
+import { AdminService, AdminUser, AdminLoanApplication } from '../../core/services/admin';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -16,53 +15,59 @@ import { LoanApplication } from '../../models/loan-application.model';
   styleUrls: ['./admin-dashboard.css']
 })
 export class AdminDashboard implements OnInit {
-  loading = true;
-  errorMessage = '';
 
-  totalUsers = 0;
-  activeUsers = 0;
-  blockedUsers = 0;
-  pendingLoans = 0;
+  loading          = true;
+  errorMessage     = '';
+  loansUnavailable = false;   // ← shows a soft warning instead of hard crash
+
+  totalUsers    = 0;
+  activeUsers   = 0;
+  blockedUsers  = 0;
+  pendingKyc    = 0;
+  pendingLoans  = 0;
   approvedLoans = 0;
 
-  users: AdminUser[] = [];
-  applications: LoanApplication[] = [];
   recentUsers: AdminUser[] = [];
 
-  constructor(
-    private adminService: AdminService,
-    private loanService: LoanService
-  ) {}
+  constructor(private adminService: AdminService) {}
 
-  ngOnInit(): void {
-    this.loadDashboard();
-  }
+  ngOnInit(): void { this.loadDashboard(); }
 
   loadDashboard(): void {
-    this.loading = true;
-    this.errorMessage = '';
+    this.loading          = true;
+    this.errorMessage     = '';
+    this.loansUnavailable = false;
 
     forkJoin({
-      users: this.adminService.getAllUsers(),
-      applications: this.loanService.getAllApplications()
+      users: this.adminService.getAllUsers().pipe(
+        catchError((err: HttpErrorResponse) => {
+          this.errorMessage = err.error?.message || 'Unable to load users.';
+          return of([] as AdminUser[]);
+        })
+      ),
+      applications: this.adminService.getAllLoanApplications().pipe(
+        catchError(() => {
+          this.loansUnavailable = true;   // soft warning — dashboard still loads
+          return of([] as AdminLoanApplication[]);
+        })
+      )
     }).subscribe({
       next: ({ users, applications }) => {
-        this.users = users;
-        this.applications = applications;
+        this.totalUsers    = users.length;
+        this.activeUsers   = users.filter(u => u.status    === 'ACTIVE').length;
+        this.blockedUsers  = users.filter(u => u.status    === 'BLOCKED').length;
+        this.pendingKyc    = users.filter(u => u.kycStatus === 'PENDING').length;
+        this.pendingLoans  = applications.filter(a => a.status === 'PENDING').length;
+        this.approvedLoans = applications.filter(a => a.status === 'APPROVED').length;
 
-        this.totalUsers = users.length;
-        this.activeUsers = users.filter(user => user.status === 'ACTIVE').length;
-        this.blockedUsers = users.filter(user => user.status === 'BLOCKED').length;
-
-        this.pendingLoans = applications.filter(app => app.status === 'PENDING').length;
-        this.approvedLoans = applications.filter(app => app.status === 'APPROVED').length;
-
-        this.recentUsers = [...users].slice(0, 6);
+        this.recentUsers = [...users]
+          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+          .slice(0, 6);
 
         this.loading = false;
       },
-      error: (error) => {
-        this.errorMessage = error?.error?.message || 'Unable to load admin dashboard.';
+      error: (err: HttpErrorResponse) => {
+        this.errorMessage = err.error?.message || 'Unable to load dashboard.';
         this.loading = false;
       }
     });

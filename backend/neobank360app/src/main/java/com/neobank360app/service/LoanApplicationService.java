@@ -1,206 +1,3 @@
-//package com.neobank360app.service;
-//
-//import com.neobank360app.dto.LoanApplicationRequestDTO;
-//import com.neobank360app.dto.LoanApplicationResponseDTO;
-//import com.neobank360app.entity.LoanApplication;
-//import com.neobank360app.entity.LoanProduct;
-//import com.neobank360app.entity.User;
-//import com.neobank360app.entity.LoanApplicationStatus;
-//import com.neobank360app.repository.LoanApplicationRepository;
-//import com.neobank360app.repository.LoanProductRepository;
-//import com.neobank360app.repository.UserRepository;
-//import org.springframework.security.core.Authentication;
-//import org.springframework.security.core.context.SecurityContextHolder;
-//import org.springframework.stereotype.Service;
-//
-//import java.util.ArrayList;
-//import java.util.Arrays;
-//import java.util.List;
-//
-//@Service
-//public class LoanApplicationService {
-//
-//    private final LoanApplicationRepository loanApplicationRepository;
-//
-//    private final LoanProductRepository loanProductRepository;
-//
-//    private final UserRepository userRepository;
-//
-//    public LoanApplicationService(
-//            LoanApplicationRepository loanApplicationRepository,
-//            LoanProductRepository loanProductRepository,
-//            UserRepository userRepository
-//    ) {
-//        this.loanApplicationRepository = loanApplicationRepository;
-//        this.loanProductRepository = loanProductRepository;
-//        this.userRepository = userRepository;
-//    }
-//
-//    public LoanApplicationResponseDTO applyLoan(
-//            LoanApplicationRequestDTO dto
-//    ) {
-//
-//        Authentication authentication =
-//                SecurityContextHolder.getContext()
-//                        .getAuthentication();
-//
-//        String email = authentication.getName();
-//
-//        User user =
-//                userRepository.findByEmail(email)
-//                        .orElseThrow(() ->
-//                                new RuntimeException("User not found")
-//                        );
-//
-//        LoanProduct loanProduct =
-//                loanProductRepository.findById(
-//                                dto.getLoanProductId()
-//                        )
-//                        .orElseThrow(() ->
-//                                new RuntimeException(
-//                                        "Loan product not found"
-//                                ));
-//
-//        if (dto.getRequestedAmount().compareTo(
-//                loanProduct.getMinAmount()) < 0
-//                ||
-//                dto.getRequestedAmount().compareTo(
-//                        loanProduct.getMaxAmount()) > 0) {
-//
-//            throw new RuntimeException(
-//                    "Requested amount outside allowed range"
-//            );
-//        }
-//
-//        List<String> tenures =
-//                Arrays.asList(
-//                        loanProduct.getAllowedTenures().split(",")
-//                );
-//
-//        if (!tenures.contains(
-//                String.valueOf(
-//                        dto.getRequestedTenureMonths()
-//                ))) {
-//
-//            throw new RuntimeException(
-//                    "Invalid tenure selected"
-//            );
-//        }
-//
-//        boolean alreadyExists =
-//                loanApplicationRepository
-//                        .findByUserIdAndLoanProductIdAndStatus(
-//                                user.getId(),
-//                                loanProduct.getId(),
-//                                LoanApplicationStatus.PENDING
-//                        )
-//                        .isPresent();
-//
-//        if (alreadyExists) {
-//
-//            throw new RuntimeException(
-//                    "Pending application already exists"
-//            );
-//        }
-//
-//        LoanApplication application =
-//                new LoanApplication();
-//
-//        application.setUser(user);
-//
-//        application.setLoanProduct(loanProduct);
-//
-//        application.setRequestedAmount(
-//                dto.getRequestedAmount()
-//        );
-//
-//        application.setRequestedTenureMonths(
-//                dto.getRequestedTenureMonths()
-//        );
-//
-//        application.setStatus(
-//                LoanApplicationStatus.PENDING
-//        );
-//
-//        LoanApplication saved =
-//                loanApplicationRepository.save(application);
-//
-//        return mapToResponse(saved);
-//    }
-//
-//    public List<LoanApplicationResponseDTO> getMyApplications() {
-//
-//        Authentication authentication =
-//                SecurityContextHolder.getContext()
-//                        .getAuthentication();
-//
-//        String email = authentication.getName();
-//
-//        User user =
-//                userRepository.findByEmail(email)
-//                        .orElseThrow(() ->
-//                                new RuntimeException("User not found")
-//                        );
-//
-//        List<LoanApplication> applications =
-//                loanApplicationRepository.findByUserId(
-//                        user.getId()
-//                );
-//
-//        List<LoanApplicationResponseDTO> response =
-//                new ArrayList<>();
-//
-//        for (LoanApplication application : applications) {
-//
-//            response.add(
-//                    mapToResponse(application)
-//            );
-//        }
-//
-//        return response;
-//    }
-//
-//    private LoanApplicationResponseDTO mapToResponse(
-//            LoanApplication application
-//    ) {
-//
-//        LoanApplicationResponseDTO dto =
-//                new LoanApplicationResponseDTO();
-//
-//        dto.setApplicationId(
-//                application.getId()
-//        );
-//
-//        dto.setProductName(
-//                application.getLoanProduct().getProductName()
-//        );
-//
-//        dto.setRequestedAmount(
-//                application.getRequestedAmount()
-//        );
-//
-//        dto.setRequestedTenureMonths(
-//                application.getRequestedTenureMonths()
-//        );
-//
-//        dto.setStatus(
-//                application.getStatus().name()
-//        );
-//
-//        dto.setAdminRemarks(
-//                application.getAdminRemarks()
-//        );
-//
-//        dto.setAppliedAt(
-//                application.getAppliedAt()
-//        );
-//
-//        return dto;
-//    }
-//}
-
-
-
 package com.neobank360app.service;
 
 import com.neobank360app.dto.LoanApplicationRequestDTO;
@@ -209,6 +6,8 @@ import com.neobank360app.entity.LoanApplication;
 import com.neobank360app.entity.LoanApplicationStatus;
 import com.neobank360app.entity.LoanProduct;
 import com.neobank360app.entity.User;
+import com.neobank360app.exception.ConflictException;
+import com.neobank360app.exception.ResourceNotFoundException;
 import com.neobank360app.repository.LoanApplicationRepository;
 import com.neobank360app.repository.LoanProductRepository;
 import com.neobank360app.repository.UserRepository;
@@ -216,224 +15,124 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class LoanApplicationService {
 
     private final LoanApplicationRepository loanApplicationRepository;
-
     private final LoanProductRepository loanProductRepository;
-
     private final UserRepository userRepository;
 
     public LoanApplicationService(
             LoanApplicationRepository loanApplicationRepository,
             LoanProductRepository loanProductRepository,
-            UserRepository userRepository
-    ) {
-
+            UserRepository userRepository) {
         this.loanApplicationRepository = loanApplicationRepository;
         this.loanProductRepository = loanProductRepository;
         this.userRepository = userRepository;
     }
 
-    // =========================================================
-    // APPLY LOAN
-    // =========================================================
+    // ─── APPLY LOAN ──────────────────────────────────────
 
-    public LoanApplicationResponseDTO applyLoan(
-            LoanApplicationRequestDTO dto
-    ) {
+    public LoanApplicationResponseDTO applyLoan(LoanApplicationRequestDTO dto) {
 
-        Authentication authentication =
-                SecurityContextHolder.getContext()
-                        .getAuthentication();
+        String email = getCurrentUserEmail();
 
-        String email = authentication.getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User not found."));
 
-        User user =
-                userRepository.findByEmail(email)
-                        .orElseThrow(() ->
-                                new RuntimeException("User not found")
-                        );
+        LoanProduct loanProduct = loanProductRepository
+                .findById(dto.getLoanProductId())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Loan product not found."));
 
-        LoanProduct loanProduct =
-                loanProductRepository.findById(
-                                dto.getLoanProductId()
-                        )
-                        .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Loan product not found"
-                                ));
-
-        if (dto.getRequestedAmount().compareTo(
-                loanProduct.getMinAmount()) < 0
-                ||
-                dto.getRequestedAmount().compareTo(
-                        loanProduct.getMaxAmount()) > 0) {
-
-            throw new RuntimeException(
-                    "Requested amount outside allowed range"
-            );
+        // ✅ Amount range validation — 400
+        if (dto.getRequestedAmount().compareTo(loanProduct.getMinAmount()) < 0
+                || dto.getRequestedAmount().compareTo(loanProduct.getMaxAmount()) > 0) {
+            throw new IllegalArgumentException(
+                    "Requested amount must be between "
+                    + loanProduct.getMinAmount() + " and "
+                    + loanProduct.getMaxAmount() + ".");
         }
 
-        List<String> tenures =
-                Arrays.asList(
-                        loanProduct.getAllowedTenures().split(",")
-                );
-
-        if (!tenures.contains(
-                String.valueOf(
-                        dto.getRequestedTenureMonths()
-                ))) {
-
-            throw new RuntimeException(
-                    "Invalid tenure selected"
-            );
+        // ✅ Tenure validation — 400
+        List<String> tenures = Arrays.asList(
+                loanProduct.getAllowedTenures().split(","));
+        if (!tenures.contains(String.valueOf(dto.getRequestedTenureMonths()))) {
+            throw new IllegalArgumentException(
+                    "Invalid tenure. Allowed tenures: "
+                    + loanProduct.getAllowedTenures() + " months.");
         }
 
-        boolean alreadyExists =
-                loanApplicationRepository
-                        .findByUserIdAndLoanProductIdAndStatus(
-                                user.getId(),
-                                loanProduct.getId(),
-                                LoanApplicationStatus.PENDING
-                        )
-                        .isPresent();
+        // ✅ Duplicate pending application — 409
+        boolean alreadyExists = loanApplicationRepository
+                .findByUserIdAndLoanProductIdAndStatus(
+                        user.getId(),
+                        loanProduct.getId(),
+                        LoanApplicationStatus.PENDING)
+                .isPresent();
 
         if (alreadyExists) {
-
-            throw new RuntimeException(
-                    "Pending application already exists"
-            );
+            throw new ConflictException(
+                    "You already have a pending application for this loan product.");
         }
 
-        LoanApplication application =
-                new LoanApplication();
-
+        LoanApplication application = new LoanApplication();
         application.setUser(user);
-
         application.setLoanProduct(loanProduct);
+        application.setRequestedAmount(dto.getRequestedAmount());
+        application.setRequestedTenureMonths(dto.getRequestedTenureMonths());
+        application.setStatus(LoanApplicationStatus.PENDING);
 
-        application.setRequestedAmount(
-                dto.getRequestedAmount()
-        );
-
-        application.setRequestedTenureMonths(
-                dto.getRequestedTenureMonths()
-        );
-
-        application.setStatus(
-                LoanApplicationStatus.PENDING
-        );
-
-        LoanApplication saved =
-                loanApplicationRepository.save(application);
-
-        return mapToResponse(saved);
+        return mapToResponse(loanApplicationRepository.save(application));
     }
 
-    // =========================================================
-    // MY APPLICATIONS
-    // =========================================================
+    // ─── MY APPLICATIONS ─────────────────────────────────
 
     public List<LoanApplicationResponseDTO> getMyApplications() {
 
-        Authentication authentication =
-                SecurityContextHolder.getContext()
-                        .getAuthentication();
+        String email = getCurrentUserEmail();
 
-        String email = authentication.getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User not found."));
 
-        User user =
-                userRepository.findByEmail(email)
-                        .orElseThrow(() ->
-                                new RuntimeException("User not found")
-                        );
-
-        List<LoanApplication> applications =
-                loanApplicationRepository.findByUserId(
-                        user.getId()
-                );
-
-        List<LoanApplicationResponseDTO> response =
-                new ArrayList<>();
-
-        for (LoanApplication application : applications) {
-
-            response.add(
-                    mapToResponse(application)
-            );
-        }
-
-        return response;
+        return loanApplicationRepository.findByUserId(user.getId())
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 
-    // =========================================================
-    // ADMIN - GET ALL APPLICATIONS
-    // =========================================================
+    // ─── ADMIN — GET ALL APPLICATIONS ────────────────────
 
-    public List<LoanApplicationResponseDTO>
-    getAllApplications() {
-
-        List<LoanApplication> applications =
-                loanApplicationRepository.findAll();
-
-        List<LoanApplicationResponseDTO> response =
-                new ArrayList<>();
-
-        for (LoanApplication application : applications) {
-
-            response.add(
-                    mapToResponse(application)
-            );
-        }
-
-        return response;
+    public List<LoanApplicationResponseDTO> getAllApplications() {
+        return loanApplicationRepository.findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 
-    // =========================================================
-    // DTO MAPPER
-    // =========================================================
+    // ─── HELPERS ─────────────────────────────────────────
 
-    private LoanApplicationResponseDTO mapToResponse(
-            LoanApplication application
-    ) {
+    private String getCurrentUserEmail() {
+        Authentication auth = SecurityContextHolder
+                .getContext().getAuthentication();
+        return auth.getName();
+    }
 
-        LoanApplicationResponseDTO dto =
-                new LoanApplicationResponseDTO();
-
-        dto.setApplicationId(
-                application.getId()
-        );
-
-        dto.setProductName(
-                application.getLoanProduct().getProductName()
-        );
-
-        dto.setRequestedAmount(
-                application.getRequestedAmount()
-        );
-
-        dto.setRequestedTenureMonths(
-                application.getRequestedTenureMonths()
-        );
-
-        dto.setStatus(
-                application.getStatus().name()
-        );
-
-        dto.setAdminRemarks(
-                application.getAdminRemarks()
-        );
-
-        dto.setAppliedAt(
-                application.getAppliedAt()
-        );
-
+    private LoanApplicationResponseDTO mapToResponse(LoanApplication application) {
+        LoanApplicationResponseDTO dto = new LoanApplicationResponseDTO();
+        dto.setApplicationId(application.getId());
+        dto.setProductName(application.getLoanProduct().getProductName());
+        dto.setRequestedAmount(application.getRequestedAmount());
+        dto.setRequestedTenureMonths(application.getRequestedTenureMonths());
+        dto.setStatus(application.getStatus().name());
+        dto.setAdminRemarks(application.getAdminRemarks());
+        dto.setAppliedAt(application.getAppliedAt());
         return dto;
     }
 }

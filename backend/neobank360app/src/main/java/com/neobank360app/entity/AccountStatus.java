@@ -1,9 +1,9 @@
 package com.neobank360app.entity;
 
 public enum AccountStatus {
-
+    PENDING,
     ACTIVE,
-    BLOCKED,
-    FROZEN,
+    INACTIVE,
+    SUSPENDED,
     CLOSED
 }

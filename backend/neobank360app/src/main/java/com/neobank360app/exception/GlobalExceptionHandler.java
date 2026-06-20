@@ -15,7 +15,8 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidation(MethodArgumentNotValidException ex) {
+    public ResponseEntity<Map<String, Object>> handleValidation(
+            MethodArgumentNotValidException ex) {
         Map<String, String> fieldErrors = new HashMap<>();
         for (FieldError error : ex.getBindingResult().getFieldErrors())
             fieldErrors.put(error.getField(), error.getDefaultMessage());
@@ -23,51 +24,65 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Map<String, Object>> handleIllegalArgument(IllegalArgumentException ex) {
-        return build(HttpStatus.BAD_REQUEST, ex.getMessage(), null);
+    public ResponseEntity<Map<String, Object>> handleIllegalArgument(
+            IllegalArgumentException ex) {
+        return build(HttpStatus.BAD_REQUEST, ex.getMessage(), null);      // 400
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<Map<String, Object>> handleBadCredentials(BadCredentialsException ex) {
-        return build(HttpStatus.UNAUTHORIZED, "Invalid email or password.", null);
+    public ResponseEntity<Map<String, Object>> handleBadCredentials(
+            BadCredentialsException ex) {
+        return build(HttpStatus.UNAUTHORIZED, "Invalid email or password.", null); // 401
     }
-    
+
+    @ExceptionHandler(UnauthorizedAccountAccessException.class)
+    public ResponseEntity<Map<String, Object>> handleUnauthorizedAccount(
+            UnauthorizedAccountAccessException ex) {
+        return build(HttpStatus.FORBIDDEN, ex.getMessage(), null);        // 403
+    }
+
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleNotFound(ResourceNotFoundException ex) {
+    public ResponseEntity<Map<String, Object>> handleNotFound(
+            ResourceNotFoundException ex) {
         return build(HttpStatus.NOT_FOUND, ex.getMessage(), null);        // 404
     }
 
     @ExceptionHandler(DuplicateResourceException.class)
-    public ResponseEntity<Map<String, Object>> handleDuplicate(DuplicateResourceException ex) {
+    public ResponseEntity<Map<String, Object>> handleDuplicate(
+            DuplicateResourceException ex) {
+        return build(HttpStatus.CONFLICT, ex.getMessage(), null);         // 409
+    }
+
+    // ✅ NEW — loan already approved/rejected
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<Map<String, Object>> handleConflict(
+            ConflictException ex) {
         return build(HttpStatus.CONFLICT, ex.getMessage(), null);         // 409
     }
 
     @ExceptionHandler(TooManyRequestsException.class)
-    public ResponseEntity<Map<String, Object>> handleTooMany(TooManyRequestsException ex) {
+    public ResponseEntity<Map<String, Object>> handleTooMany(
+            TooManyRequestsException ex) {
         return build(HttpStatus.TOO_MANY_REQUESTS, ex.getMessage(), null); // 429
     }
 
+    // ⚠️ Keep RuntimeException LAST among runtime handlers —
+    //    specific handlers above take priority due to Spring's handler ordering
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<Map<String, Object>> handleRuntime(RuntimeException ex) {
-        return build(HttpStatus.BAD_REQUEST, ex.getMessage(), null);
+    public ResponseEntity<Map<String, Object>> handleRuntime(
+            RuntimeException ex) {
+        return build(HttpStatus.BAD_REQUEST, ex.getMessage(), null);      // 400
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGeneric(Exception ex) {
-        // Print real error to console for debugging
         ex.printStackTrace();
         return build(HttpStatus.INTERNAL_SERVER_ERROR,
-                "Something went wrong: " + ex.getMessage(), null);
-    }
-    
-    @ExceptionHandler(UnauthorizedAccountAccessException.class)
-    public ResponseEntity<Map<String, Object>> handleUnauthorizedAccount(
-            UnauthorizedAccountAccessException ex
-    ) {
-        return build(HttpStatus.FORBIDDEN, ex.getMessage(), null);
+                "Something went wrong: " + ex.getMessage(), null);        // 500
     }
 
-    private ResponseEntity<Map<String, Object>> build(HttpStatus status, String message, Object details) {
+    private ResponseEntity<Map<String, Object>> build(
+            HttpStatus status, String message, Object details) {
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", LocalDateTime.now().toString());
         body.put("status", status.value());

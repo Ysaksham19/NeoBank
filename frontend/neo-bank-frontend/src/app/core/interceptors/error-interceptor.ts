@@ -10,10 +10,13 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (error.status === 401) {
+
+      // ── Auto-logout only on protected endpoint 401s (not login/register)
+      if (error.status === 401 && !req.url.includes('/auth/')) {
         storage.clear();
         router.navigate(['/login']);
       }
+
       return throwError(() => error);
     })
   );

@@ -1,40 +1,3 @@
-//package com.neobank360app.controller;
-//
-//import com.neobank360app.dto.LoanDecisionDTO;
-//import com.neobank360app.service.LoanDecisionService;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.security.access.prepost.PreAuthorize;
-//import org.springframework.web.bind.annotation.*;
-//
-//@RestController
-//@RequestMapping("/api/loans")
-//public class AdminLoanController {
-//
-//    private final LoanDecisionService loanDecisionService;
-//
-//    public AdminLoanController(
-//            LoanDecisionService loanDecisionService
-//    ) {
-//        this.loanDecisionService =
-//                loanDecisionService;
-//    }
-//
-//    @PutMapping("/{loanApplicationId}/decision")
-//    @PreAuthorize("hasRole('ADMIN')")
-//    public ResponseEntity<String> decideLoan(
-//            @PathVariable Long loanApplicationId,
-//            @RequestBody LoanDecisionDTO dto
-//    ) {
-//
-//        return ResponseEntity.ok(
-//                loanDecisionService.decideLoan(
-//                        loanApplicationId,
-//                        dto
-//                )
-//        );
-//    }
-//}
-
 package com.neobank360app.controller;
 
 import com.neobank360app.dto.LoanApplicationResponseDTO;
@@ -48,61 +11,33 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/loans")
+@RequestMapping("/api/v1/admin/loans")   // ← fixed: was /api/v1/loans
+@PreAuthorize("hasRole('ADMIN')")
 public class AdminLoanController {
 
     private final LoanDecisionService loanDecisionService;
-
     private final LoanApplicationService loanApplicationService;
 
     public AdminLoanController(
-
             LoanDecisionService loanDecisionService,
-
-            LoanApplicationService loanApplicationService
-    ) {
-
+            LoanApplicationService loanApplicationService) {
         this.loanDecisionService = loanDecisionService;
-
         this.loanApplicationService = loanApplicationService;
     }
 
-    // =========================================================
-    // GET ALL APPLICATIONS (ADMIN)
-    // =========================================================
-
-    @GetMapping("/admin/applications")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<LoanApplicationResponseDTO>>
-    getAllApplications() {
-
+    // GET /api/v1/admin/loans/applications
+    @GetMapping("/applications")          // ← fixed: was /admin/applications
+    public ResponseEntity<List<LoanApplicationResponseDTO>> getAllApplications() {
         return ResponseEntity.ok(
-
-                loanApplicationService.getAllApplications()
-
-        );
+                loanApplicationService.getAllApplications());
     }
 
-    // =========================================================
-    // APPROVE / REJECT LOAN
-    // =========================================================
-
+    // PUT /api/v1/admin/loans/{loanApplicationId}/decision
     @PutMapping("/{loanApplicationId}/decision")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> decideLoan(
-
             @PathVariable Long loanApplicationId,
-
-            @RequestBody LoanDecisionDTO dto
-    ) {
-
+            @RequestBody LoanDecisionDTO dto) {
         return ResponseEntity.ok(
-
-                loanDecisionService.decideLoan(
-                        loanApplicationId,
-                        dto
-                )
-
-        );
+                loanDecisionService.decideLoan(loanApplicationId, dto));
     }
 }

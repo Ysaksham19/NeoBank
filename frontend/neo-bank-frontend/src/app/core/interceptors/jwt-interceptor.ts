@@ -1,54 +1,25 @@
-import {
-
-  HttpInterceptorFn
-
-} from '@angular/common/http';
-
+import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-
 import { StorageService } from '../services/storage';
 
-export const jwtInterceptor: HttpInterceptorFn = (
+export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
 
-  req,
+  const storageService = inject(StorageService);
 
-  next
+  // ── Skip token injection for all auth endpoints
+  if (req.url.includes('/auth/')) {
+    return next(req);
+  }
 
-) => {
-
-  // =========================================================
-  // INJECT STORAGE SERVICE
-  // =========================================================
-
-  const storageService =
-    inject(StorageService);
-
-  // =========================================================
-  // GET TOKEN
-  // =========================================================
-
-  const token =
-    storageService.getToken();
-
-  // =========================================================
-  // ADD AUTH HEADER
-  // =========================================================
+  const token = storageService.getToken();
 
   if (token) {
-
     req = req.clone({
-
       setHeaders: {
-
-        Authorization:
-          `Bearer ${token}`
+        Authorization: `Bearer ${token}`
       }
     });
   }
-
-  // =========================================================
-  // CONTINUE REQUEST
-  // =========================================================
 
   return next(req);
 };

@@ -10,47 +10,31 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/loans/products")
+@RequestMapping("/api/v1/loans/products")   // ✅ fixed from /api/loans/products
 public class LoanProductController {
 
     private final LoanProductService loanProductService;
 
-    public LoanProductController(
-            LoanProductService loanProductService
-    ) {
+    public LoanProductController(LoanProductService loanProductService) {
         this.loanProductService = loanProductService;
     }
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<LoanProductDTO> createProduct(
-            @RequestBody LoanProductDTO dto
-    ) {
-
-        LoanProductDTO response =
-                loanProductService.createLoanProduct(dto);
-
+            @RequestBody LoanProductDTO dto) {
         return new ResponseEntity<>(
-                response,
-                HttpStatus.CREATED
-        );
+                loanProductService.createLoanProduct(dto),
+                HttpStatus.CREATED);
     }
 
     @GetMapping
     public ResponseEntity<List<LoanProductDTO>> getAllProducts() {
-
-        return ResponseEntity.ok(
-                loanProductService.getAllProducts()
-        );
+        return ResponseEntity.ok(loanProductService.getAllProducts());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<LoanProductDTO> getProductById(
-            @PathVariable Long id
-    ) {
-
-        return ResponseEntity.ok(
-                loanProductService.getProductById(id)
-        );
+    public ResponseEntity<LoanProductDTO> getProductById(@PathVariable Long id) {
+        return ResponseEntity.ok(loanProductService.getProductById(id));
     }
 }

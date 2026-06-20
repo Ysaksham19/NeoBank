@@ -30,6 +30,7 @@ import { AdminDashboard } from './admin/admin-dashboard/admin-dashboard';
 import { UsersManagement } from './admin/users-management/users-management';
 import { LoanDecision } from './admin/loan-decision/loan-decision';
 import { TransactionsManagement } from './admin/transactions-management/transactions-management';
+import { AccountsManagement } from './admin/accounts-management/accounts-management'; // ← NEW
 
 export const routes: Routes = [
   // ── Public ──
@@ -81,6 +82,7 @@ export const routes: Routes = [
   { path: 'admin/users', component: UsersManagement, canActivate: [AuthGuard, adminGuard] },
   { path: 'admin/loans', component: LoanDecision, canActivate: [AuthGuard, adminGuard] },
   { path: 'admin/transactions', component: TransactionsManagement, canActivate: [AuthGuard, adminGuard] },
+  { path: 'admin/accounts', component: AccountsManagement, canActivate: [AuthGuard, adminGuard] }, // ← NEW
 
   // ── Fallback ──
   { path: '**', redirectTo: '' }

@@ -1,10 +1,14 @@
 package com.neobank360app.service;
 
+import com.neobank360app.dto.AdminAccountResponseDTO;
 import com.neobank360app.dto.AdminTransactionResponseDTO;
 import com.neobank360app.dto.AdminUserResponseDTO;
+import com.neobank360app.entity.Account;
+import com.neobank360app.entity.AccountStatus;
 import com.neobank360app.entity.Transaction;
 import com.neobank360app.entity.User;
 import com.neobank360app.exception.ResourceNotFoundException;
+import com.neobank360app.repository.AccountRepository;
 import com.neobank360app.repository.TransactionRepository;
 import com.neobank360app.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -17,19 +21,22 @@ public class AdminService {
 
     private final UserRepository userRepository;
     private final TransactionRepository transactionRepository;
+    private final AccountRepository accountRepository;
 
     public AdminService(
             UserRepository userRepository,
-            TransactionRepository transactionRepository
-    ) {
+            TransactionRepository transactionRepository,
+            AccountRepository accountRepository) {
         this.userRepository = userRepository;
         this.transactionRepository = transactionRepository;
+        this.accountRepository = accountRepository;
     }
 
-    public List<AdminUserResponseDTO> getAllUsers() {
-        List<User> users = userRepository.findAll();
+    // ─── USERS ──────────────────────────────────────────
 
-        return users.stream()
+    public List<AdminUserResponseDTO> getAllUsers() {
+        return userRepository.findAll()
+                .stream()
                 .map(this::mapToUserDTO)
                 .collect(Collectors.toList());
     }
@@ -38,24 +45,73 @@ public class AdminService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("User not found."));
-
         return mapToUserDTO(user);
     }
 
-    public AdminUserResponseDTO updateUserStatus(
-            Long userId,
-            String status
-    ) {
+    public AdminUserResponseDTO updateUserStatus(Long userId, String status) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("User not found."));
-
         user.setStatus(status);
-
-        User savedUser = userRepository.save(user);
-
-        return mapToUserDTO(savedUser);
+        return mapToUserDTO(userRepository.save(user));
     }
+
+    // ─── KYC ────────────────────────────────────────────
+
+    public List<AdminUserResponseDTO> getPendingKycUsers() {
+        return userRepository.findAll()
+                .stream()
+                .filter(u -> "PENDING".equals(u.getKycStatus()))
+                .map(this::mapToUserDTO)
+                .collect(Collectors.toList());
+    }
+
+    public AdminUserResponseDTO updateKycStatus(Long userId, String kycStatus) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User not found."));
+        user.setKycStatus(kycStatus);
+        return mapToUserDTO(userRepository.save(user));
+    }
+
+    // ─── ACCOUNTS ───────────────────────────────────────
+
+    public List<AdminAccountResponseDTO> getAllAccounts() {
+        return accountRepository.findAll()
+                .stream()
+                .map(this::mapToAccountDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<AdminAccountResponseDTO> getAccountsByUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User not found."));
+        return accountRepository.findByUser(user)
+                .stream()
+                .map(this::mapToAccountDTO)
+                .collect(Collectors.toList());
+    }
+
+    public AdminAccountResponseDTO updateAccountStatus(Long accountId, String status) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Account not found."));
+
+        AccountStatus accountStatus;
+        try {
+            accountStatus = AccountStatus.valueOf(status.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(
+                    "Invalid account status: '" + status + "'. " +
+                    "Valid values: " + getValidAccountStatuses());
+        }
+
+        account.setStatus(accountStatus);
+        return mapToAccountDTO(accountRepository.save(account));
+    }
+
+    // ─── TRANSACTIONS ────────────────────────────────────
 
     public List<AdminTransactionResponseDTO> getAllTransactions() {
         return transactionRepository.findAllByOrderByCreatedAtDesc()
@@ -64,9 +120,10 @@ public class AdminService {
                 .collect(Collectors.toList());
     }
 
+    // ─── MAPPERS ─────────────────────────────────────────
+
     private AdminUserResponseDTO mapToUserDTO(User user) {
         AdminUserResponseDTO dto = new AdminUserResponseDTO();
-
         dto.setId(user.getId());
         dto.setCustomerNo(user.getCustomerNo());
         dto.setFullName(user.getFullName());
@@ -74,44 +131,61 @@ public class AdminService {
         dto.setPhone(user.getPhone());
         dto.setStatus(user.getStatus());
         dto.setKycStatus(user.getKycStatus());
+        return dto;
+    }
 
+    private AdminAccountResponseDTO mapToAccountDTO(Account account) {
+        AdminAccountResponseDTO dto = new AdminAccountResponseDTO();
+        dto.setId(account.getId());
+        dto.setAccountNo(account.getAccountNo());
+        dto.setAccountType(account.getAccountType() != null
+                ? account.getAccountType().name() : null);
+        dto.setStatus(account.getStatus() != null
+                ? account.getStatus().name() : null);
+        dto.setCurrency(account.getCurrency());
+        dto.setAvailableBalance(account.getAvailableBalance());
+        dto.setLedgerBalance(account.getLedgerBalance());
+        if (account.getUser() != null) {
+            dto.setUserId(account.getUser().getId());
+            dto.setCustomerNo(account.getUser().getCustomerNo());
+            dto.setCustomerName(account.getUser().getFullName());
+        }
         return dto;
     }
 
     private AdminTransactionResponseDTO mapToTransactionDTO(Transaction transaction) {
         AdminTransactionResponseDTO dto = new AdminTransactionResponseDTO();
-
         dto.setId(transaction.getId());
         dto.setTransactionRef(transaction.getTransactionRef());
-        dto.setTransactionType(
-                transaction.getTransactionType() != null
-                        ? transaction.getTransactionType().name()
-                        : null
-        );
-        dto.setTransactionStatus(
-                transaction.getTransactionStatus() != null
-                        ? transaction.getTransactionStatus().name()
-                        : null
-        );
+        dto.setTransactionType(transaction.getTransactionType() != null
+                ? transaction.getTransactionType().name() : null);
+        dto.setTransactionStatus(transaction.getTransactionStatus() != null
+                ? transaction.getTransactionStatus().name() : null);
         dto.setAmount(transaction.getAmount());
         dto.setAvailableBalanceAfter(transaction.getAvailableBalanceAfter());
         dto.setLedgerBalanceAfter(transaction.getLedgerBalanceAfter());
         dto.setRemarks(transaction.getRemarks());
         dto.setCreatedAt(transaction.getCreatedAt());
-
         if (transaction.getAccount() != null) {
             dto.setSenderAccountNo(transaction.getAccount().getAccountNo());
-
             if (transaction.getAccount().getUser() != null) {
                 dto.setCustomerNo(transaction.getAccount().getUser().getCustomerNo());
                 dto.setCustomerName(transaction.getAccount().getUser().getFullName());
             }
         }
-
         if (transaction.getReceiverAccount() != null) {
             dto.setReceiverAccountNo(transaction.getReceiverAccount().getAccountNo());
         }
-
         return dto;
+    }
+
+    // ─── UTILS ───────────────────────────────────────────
+
+    private String getValidAccountStatuses() {
+        StringBuilder sb = new StringBuilder();
+        for (AccountStatus s : AccountStatus.values()) {
+            sb.append(s.name()).append(", ");
+        }
+        return sb.toString().replaceAll(", $", "");
     }
 }

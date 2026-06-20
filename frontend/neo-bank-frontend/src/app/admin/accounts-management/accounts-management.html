@@ -14,14 +14,17 @@
         </button>
         <div>
           <span class="page-eyebrow">Admin Module</span>
-          <h1>Transactions</h1>
-          <p>Monitor all user transactions across the platform in real time.</p>
+          <h1>Accounts Management</h1>
+          <p>View all bank accounts, monitor balances, and update account statuses.</p>
         </div>
       </div>
-      <button class="refresh-btn" type="button" (click)="loadTransactions()">Refresh</button>
+      <button class="refresh-btn" type="button" (click)="loadAccounts()">Refresh</button>
     </div>
 
-    <!-- Error Alert (non-blocking) -->
+    <!-- Alerts -->
+    @if(successMessage) {
+      <div class="alert alert--success">{{ successMessage }}</div>
+    }
     @if(errorMessage && !loading) {
       <div class="alert alert--error">{{ errorMessage }}</div>
     }
@@ -30,41 +33,37 @@
     @if(loading) {
       <div class="state-card">
         <div class="loading-spinner" aria-hidden="true"></div>
-        <span>Loading transactions...</span>
+        <span>Loading accounts...</span>
       </div>
 
-    <!-- No transactions at all -->
-    } @else if(transactions.length === 0) {
+    <!-- No accounts at all -->
+    } @else if(accounts.length === 0) {
       <div class="state-card">
-        <div class="empty-icon">📄</div>
-        <h3>No transactions yet</h3>
-        <p>Platform transactions will appear here once activity begins.</p>
+        <div class="empty-icon">🏦</div>
+        <h3>No accounts found</h3>
+        <p>Bank accounts will appear here once customers are onboarded.</p>
       </div>
 
     <!-- Data -->
     } @else {
 
-      <!-- Stats Row -->
+      <!-- Stats -->
       <div class="stats-row">
         <div class="stat-card">
-          <span class="stat-label">Total Transactions</span>
-          <span class="stat-value">{{ transactions.length }}</span>
+          <span class="stat-label">Total Accounts</span>
+          <span class="stat-value">{{ totalAccounts }}</span>
         </div>
         <div class="stat-card stat-card--success">
-          <span class="stat-label">Successful</span>
-          <span class="stat-value">{{ successCount }}</span>
+          <span class="stat-label">Active</span>
+          <span class="stat-value">{{ activeCount }}</span>
         </div>
         <div class="stat-card stat-card--danger">
-          <span class="stat-label">Failed</span>
-          <span class="stat-value">{{ failedCount }}</span>
+          <span class="stat-label">Blocked</span>
+          <span class="stat-value">{{ blockedCount }}</span>
         </div>
         <div class="stat-card stat-card--warning">
-          <span class="stat-label">Pending</span>
-          <span class="stat-value">{{ pendingCount }}</span>
-        </div>
-        <div class="stat-card stat-card--blue">
-          <span class="stat-label">Total Volume</span>
-          <span class="stat-value">₹ {{ totalAmount | number:'1.2-2' }}</span>
+          <span class="stat-label">Inactive</span>
+          <span class="stat-value">{{ inactiveCount }}</span>
         </div>
       </div>
 
@@ -78,7 +77,7 @@
           <input
             class="search-input"
             type="text"
-            placeholder="Search by ref, customer, account..."
+            placeholder="Search by account no, customer, type, currency..."
             [(ngModel)]="searchQuery"
             (input)="applyFilters()"
           />
@@ -102,15 +101,15 @@
           <button class="clear-btn" type="button" (click)="clearFilters()">Clear Filters</button>
         }
 
-        <span class="result-count">{{ filtered.length }} of {{ transactions.length }} records</span>
+        <span class="result-count">{{ filtered.length }} of {{ accounts.length }} accounts</span>
       </div>
 
       <!-- No filter results -->
       @if(filtered.length === 0) {
         <div class="state-card">
           <div class="empty-icon">🔍</div>
-          <h3>No results found</h3>
-          <p>Try adjusting your search or filters.</p>
+          <h3>No accounts match your filters</h3>
+          <p>Try adjusting your search or filter criteria.</p>
           <button class="clear-btn clear-btn--lg" type="button" (click)="clearFilters()">
             Clear Filters
           </button>
@@ -123,50 +122,61 @@
             <table>
               <thead>
                 <tr>
-                  <th>Ref No</th>
+                  <th>Account No</th>
                   <th>Customer</th>
-                  <th>Sender A/C</th>
-                  <th>Receiver A/C</th>
                   <th>Type</th>
-                  <th>Status</th>
-                  <th>Amount</th>
+                  <th>Currency</th>
                   <th>Avail. Balance</th>
                   <th>Ledger Balance</th>
-                  <th>Remarks</th>
-                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Created</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                @for(txn of filtered; track txn.id) {
+                @for(account of filtered; track account.id) {
                   <tr>
-                    <td class="mono ref">{{ txn.transactionRef }}</td>
+                    <td class="mono">{{ account.accountNo }}</td>
                     <td>
                       <div class="customer-cell">
-                        <div class="mini-avatar">{{ (txn.customerName || '?').charAt(0) }}</div>
+                        <div class="mini-avatar">{{ (account.customerName || '?').charAt(0) }}</div>
                         <div>
-                          <div class="customer-name">{{ txn.customerName || '—' }}</div>
-                          <div class="customer-no">{{ txn.customerNo || '—' }}</div>
+                          <div class="customer-name">{{ account.customerName }}</div>
+                          <div class="customer-no">{{ account.customerNo }}</div>
                         </div>
                       </div>
                     </td>
-                    <td class="mono">{{ txn.senderAccountNo   || '—' }}</td>
-                    <td class="mono">{{ txn.receiverAccountNo || '—' }}</td>
                     <td>
-                      <span class="pill pill--type">{{ txn.transactionType }}</span>
+                      <span class="pill pill--type">{{ account.accountType }}</span>
                     </td>
+                    <td class="currency">{{ account.currency }}</td>
+                    <td class="amount">₹ {{ account.availableBalance | number:'1.2-2' }}</td>
+                    <td class="balance">₹ {{ account.ledgerBalance | number:'1.2-2' }}</td>
                     <td>
                       <span class="pill"
-                        [class.pill--success]="txn.transactionStatus === 'SUCCESS'"
-                        [class.pill--danger]="txn.transactionStatus === 'FAILED'"
-                        [class.pill--warning]="txn.transactionStatus === 'PENDING'">
-                        {{ txn.transactionStatus }}
+                        [class.pill--success]="account.status === 'ACTIVE'"
+                        [class.pill--danger]="account.status === 'BLOCKED'"
+                        [class.pill--warning]="account.status === 'INACTIVE'">
+                        {{ account.status }}
                       </span>
                     </td>
-                    <td class="amount">₹ {{ txn.amount | number:'1.2-2' }}</td>
-                    <td class="balance">₹ {{ txn.availableBalanceAfter | number:'1.2-2' }}</td>
-                    <td class="balance">₹ {{ txn.ledgerBalanceAfter | number:'1.2-2' }}</td>
-                    <td class="remarks">{{ txn.remarks || '—' }}</td>
-                    <td class="date">{{ txn.createdAt | date:'dd MMM y, h:mm a' }}</td>
+                    <td class="date">{{ account.createdAt | date:'dd MMM y' }}</td>
+                    <td>
+                      <div class="action-btns">
+                        <button
+                          class="btn-action btn-activate"
+                          [disabled]="account.status === 'ACTIVE'"
+                          (click)="updateStatus(account.id, 'ACTIVE')">
+                          Activate
+                        </button>
+                        <button
+                          class="btn-action btn-block"
+                          [disabled]="account.status === 'BLOCKED'"
+                          (click)="updateStatus(account.id, 'BLOCKED')">
+                          Block
+                        </button>
+                      </div>
+                    </td>
                   </tr>
                 }
               </tbody>
@@ -177,4 +187,4 @@
     }
 
   </div>
-</div>  
+</div>
