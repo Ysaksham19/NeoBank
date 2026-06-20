@@ -2,63 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-// ← REMOVED: import { AdminUser } from '../../models/admin-user.model'
-//   AdminUser is now defined inline below — no external model needed
 
-
+import { AdminUser } from '../../models/admin-user.model';
+import { AdminLoanApplication } from '../../models/admin-loan-application';
+import { AdminAccount } from '../../models/admin-account.model';
+import { AdminTransaction } from '../../models/admin-transaction.model';
 // ─── Interfaces ───────────────────────────────────────────────
 
-export interface AdminUser {
-  id: number;
-  customerNo: string;
-  fullName: string;
-  email: string;
-  phone: string;
-  status: string;
-  kycStatus: string;
-  createdAt: string;
-}
-
-export interface AdminLoanApplication {
-  id: number;
-  customerNo: string;
-  customerName: string;
-  loanProductName: string;
-  requestedAmount: number;
-  tenure: number;
-  status: string;
-  adminRemarks: string | null;
-  createdAt: string;
-}
-
-export interface AdminAccount {
-  id: number;
-  accountNo: string;
-  customerNo: string;
-  customerName: string;
-  accountType: string;
-  currency: string;
-  availableBalance: number;
-  ledgerBalance: number;
-  status: string;
-  createdAt: string;
-}
-
-export interface AdminTransaction {
-  id: number;
-  transactionRef: string;
-  customerNo: string | null;
-  customerName: string | null;
-  senderAccountNo: string | null;
-  receiverAccountNo: string | null;
-  transactionType: string;
-  transactionStatus: string;
-  amount: number;
-  availableBalanceAfter: number;
-  ledgerBalanceAfter: number;
-  remarks: string | null;
-  createdAt: string;
-}
 
 
 // ─── Service ──────────────────────────────────────────────────

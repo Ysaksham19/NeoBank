@@ -4,7 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Location } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 
-import { AdminService, AdminAccount } from '../../core/services/admin';
+import { AdminService } from '../../core/services/admin';
+import { AdminAccount } from '../../models/admin-account.model';
 
 @Component({
   selector: 'app-accounts-management',

@@ -5,7 +5,9 @@ import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
 
-import { AdminService, AdminUser, AdminLoanApplication } from '../../core/services/admin';
+import { AdminService,  } from '../../core/services/admin';
+import { AdminUser } from '../../models/admin-user.model';
+import { AdminLoanApplication } from '../../models/admin-loan-application';
 
 @Component({
   selector: 'app-admin-dashboard',

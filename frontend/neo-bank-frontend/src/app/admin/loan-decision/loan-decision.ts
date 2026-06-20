@@ -4,7 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Location } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 
-import { AdminService, AdminLoanApplication } from '../../core/services/admin';
+import { AdminService } from '../../core/services/admin';
+import { AdminLoanApplication } from '../../models/admin-loan-application';
 
 @Component({
   selector: 'app-loan-decision',

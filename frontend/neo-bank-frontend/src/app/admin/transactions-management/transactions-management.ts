@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Location } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { AdminService, AdminTransaction } from '../../core/services/admin';
+import { AdminService } from '../../core/services/admin';
+import { AdminTransaction } from '../../models/admin-transaction.model';
 
 @Component({
   selector: 'app-transactions-management',
