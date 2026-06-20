@@ -31,8 +31,15 @@ public class User {
     @Column(name = "password_hash", nullable = false, length = 255)
     private String passwordHash;
 
+    /**
+     * Account lifecycle status — stored as string in DB for readability.
+     * Default is INACTIVE (pending admin approval).
+     * Admin sets to ACTIVE to grant login access.
+     * Admin sets to LOCKED to suspend access.
+     */
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
-    private String status = "ACTIVE";
+    private UserStatus status = UserStatus.INACTIVE;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -41,10 +48,13 @@ public class User {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-    
+
+    /**
+     * KYC verification status.
+     * PENDING = awaiting review, ACCEPTED = verified, REJECTED = failed.
+     */
     @Column(name = "kyc_status", nullable = false, length = 30)
     private String kycStatus = "PENDING";
-
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -59,36 +69,35 @@ public class User {
 
     public User() {}
 
-    public Long getId() { return id; }
+    public Long getId()                              { return id; }
 
-    public String getCustomerNo() { return customerNo; }
-    public void setCustomerNo(String customerId) { this.customerNo = customerId; }
+    public String getCustomerNo()                    { return customerNo; }
+    public void setCustomerNo(String customerNo)     { this.customerNo = customerNo; }
 
-    public String getFullName() { return fullName; }
-    public void setFullName(String fullName) { this.fullName = fullName; }
+    public String getFullName()                      { return fullName; }
+    public void setFullName(String fullName)         { this.fullName = fullName; }
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    public String getEmail()                         { return email; }
+    public void setEmail(String email)               { this.email = email; }
 
-    public String getPhone() { return phone; }
-    public void setPhone(String phone) { this.phone = phone; }
+    public String getPhone()                         { return phone; }
+    public void setPhone(String phone)               { this.phone = phone; }
 
-    public String getPasswordHash() { return passwordHash; }
+    public String getPasswordHash()                  { return passwordHash; }
     public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public UserStatus getStatus()                    { return status; }
+    public void setStatus(UserStatus status)         { this.status = status; }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public LocalDateTime getCreatedAt()              { return createdAt; }
+    public LocalDateTime getUpdatedAt()              { return updatedAt; }
 
-    public Set<Role> getRoles() { return roles; }
-    public void setRoles(Set<Role> roles) { this.roles = roles; }
+    public String getKycStatus()                     { return kycStatus; }
+    public void setKycStatus(String kycStatus)       { this.kycStatus = kycStatus; }
 
-    public Set<Account> getAccounts() { return accounts; }
-    public void setAccounts(Set<Account> accounts) { this.accounts = accounts; }
-    
-    public String getKycStatus() { return kycStatus; }
-    public void setKycStatus(String kycStatus) { this.kycStatus = kycStatus; }
+    public Set<Role> getRoles()                      { return roles; }
+    public void setRoles(Set<Role> roles)            { this.roles = roles; }
 
+    public Set<Account> getAccounts()                { return accounts; }
+    public void setAccounts(Set<Account> accounts)   { this.accounts = accounts; }
 }

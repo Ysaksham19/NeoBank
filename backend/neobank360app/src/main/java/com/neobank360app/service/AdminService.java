@@ -7,12 +7,14 @@ import com.neobank360app.entity.Account;
 import com.neobank360app.entity.AccountStatus;
 import com.neobank360app.entity.Transaction;
 import com.neobank360app.entity.User;
+import com.neobank360app.entity.UserStatus;
 import com.neobank360app.exception.ResourceNotFoundException;
 import com.neobank360app.repository.AccountRepository;
 import com.neobank360app.repository.TransactionRepository;
 import com.neobank360app.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,95 +34,121 @@ public class AdminService {
         this.accountRepository = accountRepository;
     }
 
-    // ─── USERS ──────────────────────────────────────────
+    // ─── USERS ───────────────────────────────────────────────────────────────────
 
     public List<AdminUserResponseDTO> getAllUsers() {
-        return userRepository.findAll()
-                .stream()
+        return userRepository.findAll().stream()
                 .map(this::mapToUserDTO)
                 .collect(Collectors.toList());
     }
 
     public AdminUserResponseDTO getUserById(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("User not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found."));
         return mapToUserDTO(user);
     }
 
+    /**
+     * Updates user account status.
+     * Validates against UserStatus enum — invalid values return 400 Bad Request.
+     * Valid values: ACTIVE, INACTIVE, LOCKED.
+     */
     public AdminUserResponseDTO updateUserStatus(Long userId, String status) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("User not found."));
-        user.setStatus(status);
+                .orElseThrow(() -> new ResourceNotFoundException("User not found."));
+
+        UserStatus userStatus;
+        try {
+            userStatus = UserStatus.valueOf(status.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            String valid = Arrays.stream(UserStatus.values())
+                    .map(Enum::name)
+                    .collect(Collectors.joining(", "));
+            throw new IllegalArgumentException(
+                    "Invalid user status: '" + status + "'. Valid values: " + valid);
+        }
+
+        user.setStatus(userStatus);
         return mapToUserDTO(userRepository.save(user));
     }
 
-    // ─── KYC ────────────────────────────────────────────
+    // ─── KYC ─────────────────────────────────────────────────────────────────────
 
+    /**
+     * Returns all users with kycStatus = PENDING (case-insensitive filter).
+     */
     public List<AdminUserResponseDTO> getPendingKycUsers() {
-        return userRepository.findAll()
-                .stream()
-                .filter(u -> "PENDING".equals(u.getKycStatus()))
+        return userRepository.findAll().stream()
+                .filter(u -> "PENDING".equalsIgnoreCase(u.getKycStatus()))
                 .map(this::mapToUserDTO)
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Updates KYC status for a user.
+     * Validates against allowed values: PENDING, ACCEPTED, REJECTED.
+     * Invalid values return 400 Bad Request.
+     */
     public AdminUserResponseDTO updateKycStatus(Long userId, String kycStatus) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("User not found."));
-        user.setKycStatus(kycStatus);
+                .orElseThrow(() -> new ResourceNotFoundException("User not found."));
+
+        String normalized = kycStatus.toUpperCase();
+        if (!normalized.equals("PENDING")
+                && !normalized.equals("ACCEPTED")
+                && !normalized.equals("REJECTED")) {
+            throw new IllegalArgumentException(
+                    "Invalid KYC status: '" + kycStatus + "'. Valid values: PENDING, ACCEPTED, REJECTED");
+        }
+
+        user.setKycStatus(normalized);
         return mapToUserDTO(userRepository.save(user));
     }
 
-    // ─── ACCOUNTS ───────────────────────────────────────
+    // ─── ACCOUNTS ────────────────────────────────────────────────────────────────
 
     public List<AdminAccountResponseDTO> getAllAccounts() {
-        return accountRepository.findAll()
-                .stream()
+        return accountRepository.findAll().stream()
                 .map(this::mapToAccountDTO)
                 .collect(Collectors.toList());
     }
 
     public List<AdminAccountResponseDTO> getAccountsByUser(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("User not found."));
-        return accountRepository.findByUser(user)
-                .stream()
+                .orElseThrow(() -> new ResourceNotFoundException("User not found."));
+        return accountRepository.findByUser(user).stream()
                 .map(this::mapToAccountDTO)
                 .collect(Collectors.toList());
     }
 
     public AdminAccountResponseDTO updateAccountStatus(Long accountId, String status) {
         Account account = accountRepository.findById(accountId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Account not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found."));
 
         AccountStatus accountStatus;
         try {
             accountStatus = AccountStatus.valueOf(status.toUpperCase());
         } catch (IllegalArgumentException e) {
+            String valid = Arrays.stream(AccountStatus.values())
+                    .map(Enum::name)
+                    .collect(Collectors.joining(", "));
             throw new IllegalArgumentException(
-                    "Invalid account status: '" + status + "'. " +
-                    "Valid values: " + getValidAccountStatuses());
+                    "Invalid account status: '" + status + "'. Valid values: " + valid);
         }
 
         account.setStatus(accountStatus);
         return mapToAccountDTO(accountRepository.save(account));
     }
 
-    // ─── TRANSACTIONS ────────────────────────────────────
+    // ─── TRANSACTIONS ────────────────────────────────────────────────────────────
 
     public List<AdminTransactionResponseDTO> getAllTransactions() {
-        return transactionRepository.findAllByOrderByCreatedAtDesc()
-                .stream()
+        return transactionRepository.findAllByOrderByCreatedAtDesc().stream()
                 .map(this::mapToTransactionDTO)
                 .collect(Collectors.toList());
     }
 
-    // ─── MAPPERS ─────────────────────────────────────────
+    // ─── MAPPERS ─────────────────────────────────────────────────────────────────
 
     private AdminUserResponseDTO mapToUserDTO(User user) {
         AdminUserResponseDTO dto = new AdminUserResponseDTO();
@@ -129,7 +157,8 @@ public class AdminService {
         dto.setFullName(user.getFullName());
         dto.setEmail(user.getEmail());
         dto.setPhone(user.getPhone());
-        dto.setStatus(user.getStatus());
+        // UserStatus is now an enum — call .name() to serialize to String
+        dto.setStatus(user.getStatus() != null ? user.getStatus().name() : null);
         dto.setKycStatus(user.getKycStatus());
         return dto;
     }
@@ -138,10 +167,8 @@ public class AdminService {
         AdminAccountResponseDTO dto = new AdminAccountResponseDTO();
         dto.setId(account.getId());
         dto.setAccountNo(account.getAccountNo());
-        dto.setAccountType(account.getAccountType() != null
-                ? account.getAccountType().name() : null);
-        dto.setStatus(account.getStatus() != null
-                ? account.getStatus().name() : null);
+        dto.setAccountType(account.getAccountType() != null ? account.getAccountType().name() : null);
+        dto.setStatus(account.getStatus() != null ? account.getStatus().name() : null);
         dto.setCurrency(account.getCurrency());
         dto.setAvailableBalance(account.getAvailableBalance());
         dto.setLedgerBalance(account.getLedgerBalance());
@@ -177,15 +204,5 @@ public class AdminService {
             dto.setReceiverAccountNo(transaction.getReceiverAccount().getAccountNo());
         }
         return dto;
-    }
-
-    // ─── UTILS ───────────────────────────────────────────
-
-    private String getValidAccountStatuses() {
-        StringBuilder sb = new StringBuilder();
-        for (AccountStatus s : AccountStatus.values()) {
-            sb.append(s.name()).append(", ");
-        }
-        return sb.toString().replaceAll(", $", "");
     }
 }
