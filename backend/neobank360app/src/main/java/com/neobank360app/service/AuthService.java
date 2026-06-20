@@ -68,7 +68,7 @@ public class AuthService {
             case "SAVINGS" -> "Standard savings account. Minimum balance: ₹1,000";
             case "CURRENT" -> "Business current account. Minimum balance: ₹5,000";
             case "SALARY"  -> "Zero-balance salary account";
-            default        -> "";
+            default        -> throw new IllegalArgumentException("Invalid account type: " + type);
         };
         return new AccountTypeSelectionResponse(type, minBalance, description,
                 "Account type selected. Please proceed to OTP verification.");
@@ -95,7 +95,7 @@ public class AuthService {
         Branch branch = branchRepository.findByBranchCode(request.getBranchCode())
                 .orElseThrow(() -> new ResourceNotFoundException("Invalid branch selected."));
 
-        // FIX BUG-05: Use ROLE_CUSTOMER (matches DataSeeder seed + SecurityConfig)
+        // FIX BUG-05: Use ROLE_CUSTOMER (matches DataSeeder + SecurityConfig)
         Role userRole = roleRepository.findByName("ROLE_CUSTOMER")
                 .orElseThrow(() -> new IllegalStateException("Default role not found. Contact admin."));
 
@@ -105,7 +105,7 @@ public class AuthService {
         user.setPhone(request.getPhone());
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         user.setCustomerNo(generateCustomerId());
-        // FIX BUG-02: User starts as INACTIVE — admin must approve before login
+        // FIX BUG-02: User starts INACTIVE — admin must approve before first login
         user.setStatus(UserStatus.INACTIVE);
         user.setKycStatus("PENDING");
         Set<Role> roles = new HashSet<>();
@@ -136,7 +136,7 @@ public class AuthService {
 
         sendWelcomeEmail(savedUser, account, branch);
 
-        // Return response WITHOUT a JWT token — user must wait for admin approval
+        // No JWT on registration — user must wait for admin approval to login
         log.info("User registered (pending admin approval): customerId={}, accountType={}",
                 savedUser.getCustomerNo(), account.getAccountType());
         return buildAuthResponse(null, savedUser, account, branch);
@@ -150,12 +150,13 @@ public class AuthService {
         CustomUserPrincipal principal = (CustomUserPrincipal) auth.getPrincipal();
         User user = principal.getUser();
 
-        // Guard: block login if account not yet approved by admin
+        // Block login if admin has not yet activated the account
         if (user.getStatus() != UserStatus.ACTIVE) {
             throw new IllegalArgumentException(
                     "Your account is pending admin approval. Please wait for activation.");
         }
 
+        // FIX BUG-02: findByUser returns a list — take first account
         List<Account> accounts = accountRepository.findByUser(user);
         Account account = accounts.isEmpty() ? null : accounts.get(0);
         Branch branch = (account != null) ? account.getBranch() : null;
@@ -174,9 +175,10 @@ public class AuthService {
         response.setEmail(user.getEmail());
         response.setPhone(user.getPhone());
         response.setCustomerId(user.getCustomerNo());
-        // FIX BUG-06: convert UserStatus enum to String
+        // FIX BUG-06: UserStatus is enum — serialize to String
         response.setStatus(user.getStatus() != null ? user.getStatus().name() : null);
         response.setKycStatus(user.getKycStatus());
+        response.setCreatedAt(user.getCreatedAt());
         response.setRoles(user.getRoles().stream()
                 .map(Role::getName).collect(Collectors.toSet()));
         return response;
@@ -185,7 +187,7 @@ public class AuthService {
     // ── PRIVATE HELPERS ───────────────────────────────────────────────────────
 
     private String generateCustomerId() {
-        // FIX BUG-21: use 100 retries and wider range for collision safety
+        // FIX BUG-21: wider range + 100 retries to avoid collision
         for (int i = 0; i < 100; i++) {
             String id = String.valueOf(100_000_000L + (long)(SECURE_RANDOM.nextDouble() * 900_000_000L));
             if (!userRepository.existsByCustomerNo(id)) return id;
@@ -214,35 +216,27 @@ public class AuthService {
                 .existsByReferenceAndOtpTypeAndIsVerifiedTrue(reference, otpType);
         if (!verified)
             throw new IllegalArgumentException(
-                    otpType.equals("EMAIL_OTP")
+                    "EMAIL_OTP".equals(otpType)
                             ? "Email OTP not verified. Please verify your email first."
                             : "Mobile OTP not verified. Please verify your phone first.");
     }
 
     private AuthResponse buildAuthResponse(String token, User user, Account account, Branch branch) {
         AuthResponse response = new AuthResponse();
-        response.setToken(token);
+        response.setAccessToken(token);
         response.setUserId(user.getId());
         response.setCustomerId(user.getCustomerNo());
         response.setFullName(user.getFullName());
         response.setEmail(user.getEmail());
-        response.setPhone(user.getPhone());
-        response.setStatus(user.getStatus() != null ? user.getStatus().name() : null);
-        response.setKycStatus(user.getKycStatus());
         response.setRoles(user.getRoles().stream().map(Role::getName).collect(Collectors.toSet()));
         if (account != null) {
-            response.setAccountId(account.getId());
             response.setAccountNo(account.getAccountNo());
-            response.setAccountType(account.getAccountType() != null ? account.getAccountType().name() : null);
-            response.setAccountStatus(account.getStatus() != null ? account.getStatus().name() : null);
-            response.setAvailableBalance(account.getAvailableBalance());
-            response.setLedgerBalance(account.getLedgerBalance());
-            response.setCurrency(account.getCurrency());
+            response.setAccountType(account.getAccountType());
         }
         if (branch != null) {
-            response.setBranchId(branch.getId());
             response.setBranchName(branch.getBranchName());
             response.setBranchCode(branch.getBranchCode());
+            response.setIfscCode(branch.getIfscCode());
         }
         return response;
     }
@@ -259,7 +253,7 @@ public class AuthService {
                     "Account No  : " + account.getAccountNo() + "\n" +
                     "Account Type: " + account.getAccountType().name() + "\n" +
                     "Branch      : " + branch.getBranchName() + "\n\n" +
-                    "Your account is pending admin approval. You will be notified once it is activated.\n\n" +
+                    "Your account is pending admin approval. You will be notified once activated.\n\n" +
                     "Regards,\nNeoBank360 Team"
             );
             mailSender.send(mail);
