@@ -14,57 +14,42 @@ import { BillService } from '../../core/services/bill';
 export class PayBill implements OnInit {
 
   pendingBills: Bill[] = [];
-
+  isLoading = false;
   showToast = false;
+  errorMessage = '';
 
-  constructor(
-    private billService: BillService
-  ) {}
+  constructor(private billService: BillService) {}
 
   ngOnInit(): void {
-
     this.loadPendingBills();
-
   }
 
   loadPendingBills(): void {
-
-    this.billService
-      .getPendingBills()
-      .subscribe({
-
-        next: (response) => {
-
-          this.pendingBills = response;
-
-        }
-
-      });
-
+    this.isLoading = true;
+    this.billService.getPendingBills().subscribe({
+      next: (response) => {
+        this.pendingBills = response;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Failed to load pending bills', error);
+        this.isLoading = false;
+      }
+    });
   }
 
   payBill(id: number): void {
-
-    this.billService
-      .payBill(id)
-      .subscribe({
-
-        next: () => {
-
-          this.showToast = true;
-
-          setTimeout(() => {
-
-            this.showToast = false;
-
-          }, 3000);
-
-          this.loadPendingBills();
-
-        }
-
-      });
-
+    this.billService.payBill(id).subscribe({
+      next: () => {
+        this.showToast = true;
+        this.errorMessage = '';
+        setTimeout(() => { this.showToast = false; }, 3000);
+        this.loadPendingBills();
+      },
+      error: (error) => {
+        console.error('Payment failed', error);
+        this.errorMessage = 'Payment failed. Please try again.';
+      }
+    });
   }
-
 }

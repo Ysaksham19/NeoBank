@@ -1,51 +1,52 @@
-.rewards-page {
-
-    min-height: 100vh;
-
-    background: var(--color-surface-3);
-
-    padding: 40px;
+.history-page {
+  padding: 32px;
+  background: var(--color-bg, #f7f6f2);
+  min-height: 100vh;
 }
 
-.reward-card {
-
-    max-width: 450px;
-
-    background:
-        linear-gradient(
-            180deg,
-            var(--color-surface-1),
-            var(--color-surface-2)
-        );
-
-    border-radius: 28px;
-
-    border: 1px solid rgba(255,255,255,.06);
-
-    padding: 40px;
-
-    text-align: center;
+.history-card {
+  background: var(--color-surface, #f9f8f5);
+  border: 1px solid var(--color-border, #d4d1ca);
+  border-radius: 14px;
+  padding: 26px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  max-width: 720px;
 }
 
-.icon {
-
-    font-size: 50px;
-
-    margin-bottom: 20px;
+.history-card h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-text, #28251d);
+  margin-bottom: 20px;
 }
 
-h2 {
+.history-card table { width: 100%; border-collapse: collapse; }
 
-    color: white;
-
-    margin-bottom: 20px;
+.history-card th {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-text-muted, #7a7974);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 10px 0;
+  text-align: left;
+  border-bottom: 1px solid var(--color-divider, #dcd9d5);
 }
 
-.amount {
+.history-card td {
+  font-size: 0.9rem;
+  color: var(--color-text, #28251d);
+  padding: 14px 0;
+  border-top: 1px solid var(--color-divider, #dcd9d5);
+}
 
-    font-size: 42px;
+.empty-row {
+  text-align: center;
+  color: var(--color-text-muted, #7a7974);
+  padding: 32px 0 !important;
+}
 
-    font-weight: 700;
-
-    color: var(--color-secondary);
+@media (max-width: 600px) {
+  .history-page { padding: 20px 16px; }
+  .history-card { padding: 18px; overflow-x: auto; }
 }

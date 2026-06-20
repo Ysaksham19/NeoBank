@@ -1,89 +1,56 @@
 <div class="bills-page">
 
-    <div class="page-header">
+  <div class="page-header">
+    <h1>Bills</h1>
+    <p>Manage and pay your upcoming bills.</p>
+  </div>
 
-        <h1>
-            Bills
-        </h1>
+  @if(isLoading) {
+    <div class="loading-state">Loading bills...</div>
+  }
 
-        <p>
-            Manage and pay your upcoming bills.
-        </p>
+  <div class="bill-grid">
 
-    </div>
+    @for(bill of bills; track bill.id) {
 
-    <div class="bill-grid">
+      <div class="bill-card">
 
-        @for(bill of bills; track bill.id){
-
-        <div class="bill-card">
-
-            <div class="card-header">
-
-                <h3>
-
-                    {{ bill.billerName }}
-
-                </h3>
-
-                <span
-                    class="status"
-                    [class.paid]="bill.status === 'PAID'"
-                    [class.pending]="bill.status === 'PENDING'">
-
-                    {{ bill.status }}
-
-                </span>
-
-            </div>
-
-            <div class="category">
-
-                {{ bill.category }}
-
-            </div>
-
-            <div class="amount">
-
-                ₹{{ bill.amount }}
-
-            </div>
-
-            <div class="due-date">
-
-                Due:
-                {{ bill.dueDate }}
-
-            </div>
-
-            <div class="actions">
-
-                @if(bill.status !== 'PAID'){
-
-                <button
-                    class="pay-btn"
-                    (click)="payBill(bill.id)">
-
-                    Pay Bill
-
-                </button>
-
-                }
-
-                <button
-                    class="delete-btn"
-                    (click)="deleteBill(bill.id)">
-
-                    Delete
-
-                </button>
-
-            </div>
-
+        <div class="card-header">
+          <h3>{{ bill.billerName }}</h3>
+          <span class="status"
+            [class.paid]="bill.status === 'PAID'"
+            [class.pending]="bill.status === 'PENDING'">
+            {{ bill.status }}
+          </span>
         </div>
 
-        }
+        <div class="category">{{ bill.category }}</div>
+        <div class="amount">₹{{ bill.amount }}</div>
+        <div class="due-date">Due: {{ bill.dueDate | date:'mediumDate' }}</div>
 
-    </div>
+        <div class="actions">
+          @if(bill.status !== 'PAID') {
+            <button class="pay-btn" (click)="payBill(bill.id)">Pay Bill</button>
+          }
+          <button class="delete-btn" (click)="deleteBill(bill.id)" aria-label="Delete bill">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="3 6 5 6 21 6"/>
+              <path d="M19 6l-1 14H6L5 6"/>
+              <path d="M10 11v6M14 11v6"/>
+              <path d="M9 6V4h6v2"/>
+            </svg>
+            Delete
+          </button>
+        </div>
+
+      </div>
+
+    } @empty {
+      <div class="empty-state">No bills found.</div>
+    }
+
+  </div>
 
 </div>

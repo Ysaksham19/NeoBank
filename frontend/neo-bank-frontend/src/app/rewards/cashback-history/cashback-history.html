@@ -1,42 +1,25 @@
-<div class="history-card">
-
-    <h2>
-
-        Reward History
-
-    </h2>
-
+<div class="history-page">
+  <div class="history-card">
+    <h2>Cashback History</h2>
     <table>
-
-        <tr
-            *ngFor="let reward of rewards">
-
-            <td>
-
-                {{ reward.rewardType }}
-
-            </td>
-
-            <td>
-
-                {{ reward.description }}
-
-            </td>
-
-            <td>
-
-                ₹{{ reward.amount }}
-
-            </td>
-
-            <td>
-
-                {{ reward.createdAt | date:'dd MMM yyyy' }}
-
-            </td>
-
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th>Amount</th>
+          <th>Date</th>
         </tr>
-
+      </thead>
+      <tbody>
+        @for(reward of rewards; track reward.id) {
+          <tr>
+            <td>{{ reward.description }}</td>
+            <td>₹{{ reward.amount }}</td>
+            <td>{{ reward.createdAt | date:'mediumDate' }}</td>
+          </tr>
+        } @empty {
+          <tr><td colspan="3" style="text-align:center; color: var(--color-text-muted); padding: 32px 0;">No cashback history yet.</td></tr>
+        }
+      </tbody>
     </table>
-
+  </div>
 </div>

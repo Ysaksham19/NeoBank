@@ -1,149 +1,72 @@
 .budget-page {
-
-    min-height: 100vh;
-
-    background: var(--color-surface-3);
-
-    padding: 40px;
+  padding: 32px;
+  background: var(--color-bg, #f7f6f2);
+  min-height: 100vh;
 }
-
-.page-header {
-
-    margin-bottom: 30px;
-}
-
+.page-header { margin-bottom: 28px; }
 .page-header h1 {
-
-    color: white;
-
-    font-size: 34px;
-
-    margin-bottom: 10px;
+  font-size: 1.75rem; font-weight: 700;
+  color: var(--color-text, #28251d); margin-bottom: 6px;
 }
-
-.page-header p {
-
-    color: var(--color-text-secondary);
-}
-
+.page-header p { font-size: 0.95rem; color: var(--color-text-muted, #7a7974); }
 .budget-card {
-
-    max-width: 650px;
-
-    background:
-        linear-gradient(
-            180deg,
-            var(--color-surface-1),
-            var(--color-surface-2)
-        );
-
-    border: 1px solid rgba(255,255,255,.06);
-
-    border-radius: 28px;
-
-    padding: 35px;
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 25px;
+  max-width: 520px;
+  background: var(--color-surface, #f9f8f5);
+  border: 1px solid var(--color-border, #d4d1ca);
+  border-radius: 14px;
+  padding: 30px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
 }
-
-.field {
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 10px;
-}
-
+.field { margin-bottom: 20px; display: flex; flex-direction: column; gap: 6px; }
 .field label {
-
-    color: var(--color-text-secondary);
-
-    font-size: 14px;
+  font-size: 0.85rem; font-weight: 600;
+  color: var(--color-text-muted, #7a7974);
+  text-transform: uppercase; letter-spacing: 0.04em;
 }
-
-.field input,
-.field select {
-
-    height: 56px;
-
-    border-radius: 16px;
-
-    border: 1px solid rgba(255,255,255,.08);
-
-    background: rgba(255,255,255,.04);
-
-    color: white;
-
-    padding: 0 18px;
-
-    outline: none;
+.field input, .field select {
+  height: 44px; padding: 0 14px;
+  border: 1px solid var(--color-border, #d4d1ca);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: var(--color-text, #28251d);
+  background: var(--color-surface-2, #fbfbf9);
+  outline: none;
+  transition: border-color 0.18s;
 }
-
-.field input:focus,
-.field select:focus {
-
-    border-color: var(--color-secondary);
+.field input:focus, .field select:focus {
+  border-color: var(--color-primary, #01696f);
+  box-shadow: 0 0 0 3px rgba(1,105,111,0.1);
 }
-
-.create-btn {
-
-    height: 56px;
-
-    border: none;
-
-    border-radius: 18px;
-
-    cursor: pointer;
-
-    font-size: 16px;
-
-    font-weight: 600;
-
-    color: white;
-
-    background:
-        linear-gradient(
-            135deg,
-            var(--color-secondary),
-            var(--color-tertiary)
-        );
-}
-
 .error-message {
-
-    background: rgba(239,68,68,.15);
-
-    color: var(--color-danger-light);
-
-    padding: 14px;
-
-    border-radius: 14px;
-
-    border: 1px solid rgba(239,68,68,.25);
+  color: var(--color-error, #a12c7b);
+  font-size: 0.875rem;
+  margin-bottom: 16px;
+  padding: 10px 14px;
+  background: rgba(161,44,123,0.06);
+  border-radius: 8px;
 }
-
+.create-btn {
+  width: 100%; height: 46px;
+  background: var(--color-primary, #01696f);
+  color: #fff; border: none;
+  border-radius: 10px;
+  font-size: 0.95rem; font-weight: 600;
+  cursor: pointer; transition: background 0.18s;
+}
+.create-btn:hover { background: var(--color-primary-hover, #0c4e54); }
 .success-toast {
-
-    position: fixed;
-
-    right: 30px;
-
-    bottom: 30px;
-
-    background: var(--color-success);
-
-    color: white;
-
-    padding: 16px 24px;
-
-    border-radius: 16px;
-
-    font-weight: 600;
-
-    z-index: 9999;
+  position: fixed; bottom: 28px; right: 28px;
+  background: var(--color-primary, #01696f);
+  color: #fff; padding: 14px 22px;
+  border-radius: 10px; font-size: 0.9rem; font-weight: 600;
+  box-shadow: 0 6px 20px rgba(1,105,111,0.3);
+  animation: slideUp 0.3s ease; z-index: 999;
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@media (max-width: 600px) {
+  .budget-page { padding: 20px 16px; }
+  .budget-card { padding: 20px; }
 }

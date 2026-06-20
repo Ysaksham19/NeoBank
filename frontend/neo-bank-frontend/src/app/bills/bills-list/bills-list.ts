@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 import { Bill } from '../../models/bill.model';
 import { BillService } from '../../core/services/bill';
@@ -7,81 +8,46 @@ import { BillService } from '../../core/services/bill';
 @Component({
   selector: 'app-bills-list',
   standalone: true,
-  imports: [
-    CommonModule
-  ],
+  imports: [CommonModule, RouterLink],
   templateUrl: './bills-list.html',
   styleUrls: ['./bills-list.css']
 })
 export class BillsList implements OnInit {
 
   bills: Bill[] = [];
+  isLoading = false;
 
-  constructor(
-    private billService: BillService
-  ) {}
+  constructor(private billService: BillService) {}
 
   ngOnInit(): void {
-
     this.loadBills();
-
   }
 
   loadBills(): void {
-
-    this.billService
-      .getBills()
-      .subscribe({
-
-        next: (response) => {
-
-          this.bills = response;
-
-        },
-
-        error: (error) => {
-
-          console.error(
-            'Failed to load bills',
-            error
-          );
-
-        }
-
-      });
-
+    this.isLoading = true;
+    this.billService.getBills().subscribe({
+      next: (response) => {
+        this.bills = response;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Failed to load bills', error);
+        this.isLoading = false;
+      }
+    });
   }
 
   payBill(id: number): void {
-
-    this.billService
-      .payBill(id)
-      .subscribe({
-
-        next: () => {
-
-          this.loadBills();
-
-        }
-
-      });
-
+    this.billService.payBill(id).subscribe({
+      next: () => { this.loadBills(); },
+      error: (error) => { console.error('Pay bill failed', error); }
+    });
   }
 
   deleteBill(id: number): void {
-
-    this.billService
-      .deleteBill(id)
-      .subscribe({
-
-        next: () => {
-
-          this.loadBills();
-
-        }
-
-      });
-
+    this.billService.deleteBill(id).subscribe({
+      next: () => { this.loadBills(); },
+      error: (error) => { console.error('Delete bill failed', error); }
+    });
   }
-
 }

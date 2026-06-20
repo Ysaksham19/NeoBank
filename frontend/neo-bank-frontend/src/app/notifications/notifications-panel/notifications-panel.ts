@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { NotificationService } from '../../core/services/notification';
-import { Notification } from '../../models/notification.model';
+import { AppNotification } from '../../models/notification.model';
 
 @Component({
   selector: 'app-notifications-panel',
@@ -13,35 +13,18 @@ import { Notification } from '../../models/notification.model';
 })
 export class NotificationsPanel implements OnInit {
 
-  notifications: Notification[] = [];
+  notifications: AppNotification[] = [];
 
-  constructor(
-    private notificationService: NotificationService
-  ) {}
+  constructor(private notificationService: NotificationService) {}
 
   ngOnInit(): void {
-
-    this.notificationService
-      .getNotifications()
-      .subscribe({
-
-        next: (response) => {
-
-          this.notifications = response;
-
-        },
-
-        error: (error) => {
-
-          console.error(
-            'Failed to load notifications',
-            error
-          );
-
-        }
-
-      });
-
+    this.notificationService.getNotifications().subscribe({
+      next: (response) => {
+        this.notifications = response;
+      },
+      error: (error) => {
+        console.error('Failed to load notifications', error);
+      }
+    });
   }
-
 }

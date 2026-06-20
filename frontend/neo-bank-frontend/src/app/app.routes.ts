@@ -30,7 +30,8 @@ import { AdminDashboard } from './admin/admin-dashboard/admin-dashboard';
 import { UsersManagement } from './admin/users-management/users-management';
 import { LoanDecision } from './admin/loan-decision/loan-decision';
 import { TransactionsManagement } from './admin/transactions-management/transactions-management';
-import { AccountsManagement } from './admin/accounts-management/accounts-management'; // ← NEW
+import { AccountsManagement } from './admin/accounts-management/accounts-management'; 
+import { CashbackHistory } from './rewards/cashback-history/cashback-history';
 
 export const routes: Routes = [
   // ── Public ──
@@ -82,7 +83,11 @@ export const routes: Routes = [
   { path: 'admin/users', component: UsersManagement, canActivate: [AuthGuard, adminGuard] },
   { path: 'admin/loans', component: LoanDecision, canActivate: [AuthGuard, adminGuard] },
   { path: 'admin/transactions', component: TransactionsManagement, canActivate: [AuthGuard, adminGuard] },
-  { path: 'admin/accounts', component: AccountsManagement, canActivate: [AuthGuard, adminGuard] }, // ← NEW
+  { path: 'admin/accounts', component: AccountsManagement, canActivate: [AuthGuard, adminGuard] },
+
+  // ── Rewards ──
+{ path: 'rewards', component: RewardsDashboard, canActivate: [AuthGuard] },
+{ path: 'rewards/cashback', component: CashbackHistory, canActivate: [AuthGuard] },  // ← ADD THIS
 
   // ── Fallback ──
   { path: '**', redirectTo: '' }

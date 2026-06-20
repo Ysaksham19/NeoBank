@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { AuthService } from '../../core/services/auth';
 import { NotificationService } from '../../core/services/notification';
-import { Notification } from '../../models/notification.model';
+import { AppNotification } from '../../models/notification.model';
 
 @Component({
   selector: 'app-dashboard-navbar',
@@ -16,7 +16,7 @@ export class DashboardNavbar implements OnInit {
 
   user: any;
 
-  notifications: Notification[] = [];
+  notifications: AppNotification[] = [];
 
   constructor(
     private authService: AuthService,

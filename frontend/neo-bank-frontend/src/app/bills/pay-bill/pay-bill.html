@@ -1,70 +1,40 @@
 <div class="pay-bill-page">
 
-    <div class="page-header">
+  <div class="page-header">
+    <h1>Pay Bills</h1>
+    <p>Complete your pending bill payments.</p>
+  </div>
 
-        <h1>
-            Pay Bills
-        </h1>
+  @if(errorMessage) {
+    <div class="error-message">{{ errorMessage }}</div>
+  }
 
-        <p>
-            Complete your pending bill payments.
-        </p>
+  @if(isLoading) {
+    <div class="loading-state">Loading pending bills...</div>
+  }
 
-    </div>
+  <div class="bill-grid">
 
-    <div class="bill-grid">
+    @for(bill of pendingBills; track bill.id) {
 
-        @for(bill of pendingBills; track bill.id){
+      <div class="bill-card">
+        <h3>{{ bill.billerName }}</h3>
+        <div class="category">{{ bill.category }}</div>
+        <div class="amount">₹{{ bill.amount }}</div>
+        <div class="due-date">Due: {{ bill.dueDate | date:'mediumDate' }}</div>
+        <button class="pay-btn" (click)="payBill(bill.id)">Pay Now</button>
+      </div>
 
-        <div class="bill-card">
+    } @empty {
+      @if(!isLoading) {
+        <div class="empty-state">No pending bills. You're all caught up! 🎉</div>
+      }
+    }
 
-            <h3>
-
-                {{ bill.billerName }}
-
-            </h3>
-
-            <div class="category">
-
-                {{ bill.category }}
-
-            </div>
-
-            <div class="amount">
-
-                ₹{{ bill.amount }}
-
-            </div>
-
-            <div class="due-date">
-
-                Due:
-                {{ bill.dueDate }}
-
-            </div>
-
-            <button
-                class="pay-btn"
-                (click)="payBill(bill.id)">
-
-                Pay Now
-
-            </button>
-
-        </div>
-
-        }
-
-    </div>
+  </div>
 
 </div>
 
-@if(showToast){
-
-<div class="success-toast">
-
-    ✅ Bill paid successfully
-
-</div>
-
+@if(showToast) {
+  <div class="success-toast">✅ Bill paid successfully</div>
 }
