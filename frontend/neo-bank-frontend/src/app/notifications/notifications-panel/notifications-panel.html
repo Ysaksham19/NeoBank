@@ -1,45 +1,21 @@
 <div class="notifications-card">
+  <div class="card-header">
+    <h3>Notifications</h3>
+    <span class="count-badge">{{ notifications.length }}</span>
+  </div>
 
-    <div class="card-header">
-
-        <h3>
-            Notifications
-        </h3>
-
-        <span class="count-badge">
-
-            {{ notifications.length }}
-
-        </span>
-
-    </div>
-
-    <div
-        class="notification-item"
-        *ngFor="let notification of notifications">
-
-        <div class="notification-icon">
-
-            🔔
-
-        </div>
-
+  @if(notifications.length === 0) {
+    <div class="empty-state">No new notifications.</div>
+  } @else {
+    @for(notification of notifications; track notification.id) {
+      <div class="notification-item">
+        <div class="notification-icon">🔔</div>
         <div class="notification-content">
-
-            <h4>
-
-                {{ notification.title }}
-
-            </h4>
-
-            <p>
-
-                {{ notification.message }}
-
-            </p>
-
+          <h4>{{ notification.title }}</h4>
+          <p>{{ notification.message }}</p>
+          <span class="timestamp">{{ notification.createdAt | date:'short' }}</span>
         </div>
-
-    </div>
-
+      </div>
+    }
+  }
 </div>

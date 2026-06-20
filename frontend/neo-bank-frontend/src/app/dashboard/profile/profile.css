@@ -1,6 +1,6 @@
 .profile-page {
 
-    background: #030d22;
+    background: var(--color-surface-3);
 
     min-height: 100vh;
 
@@ -14,8 +14,8 @@
     background:
         linear-gradient(
             180deg,
-            #07162e,
-            #051123
+            var(--color-surface-1),
+            var(--color-surface-2)
         );
 
     border: 1px solid rgba(255,255,255,.06);
@@ -46,7 +46,7 @@
 
     object-fit: cover;
 
-    border: 3px solid #14d8ff;
+    border: 3px solid var(--color-secondary);
 }
 
 .profile-header h1 {
@@ -58,7 +58,7 @@
 
 .profile-header p {
 
-    color: #94a3b8;
+    color: var(--color-text-secondary);
 }
 
 .details-grid {
@@ -87,7 +87,7 @@
 
     display: block;
 
-    color: #94a3b8;
+    color: var(--color-text-secondary);
 
     margin-bottom: 12px;
 }
@@ -101,7 +101,7 @@
 
 .active-status {
 
-    color: #22c55e !important;
+    color: var(--color-success) !important;
 }
 
 .edit-btn {
@@ -117,8 +117,8 @@
     background:
         linear-gradient(
             135deg,
-            #14d8ff,
-            #4f46e5
+            var(--color-secondary),
+            var(--color-tertiary)
         );
 
     color: white;

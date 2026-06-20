@@ -2,7 +2,7 @@
 
     min-height: 100vh;
 
-    background: #030d22;
+    background: var(--color-surface-3);
 
     padding: 40px;
 }
@@ -23,7 +23,7 @@
 
 .page-header p {
 
-    color: #94a3b8;
+    color: var(--color-text-secondary);
 }
 
 .bill-grid {
@@ -41,8 +41,8 @@
     background:
         linear-gradient(
             180deg,
-            #07162e,
-            #051123
+            var(--color-surface-1),
+            var(--color-surface-2)
         );
 
     border-radius: 24px;
@@ -92,7 +92,7 @@
 
     background: rgba(34,197,94,.15);
 
-    color: #22c55e;
+    color: var(--color-success);
 }
 
 .pending {
@@ -104,14 +104,14 @@
 
 .category {
 
-    color: #94a3b8;
+    color: var(--color-text-secondary);
 
     margin-bottom: 15px;
 }
 
 .amount {
 
-    color: #14d8ff;
+    color: var(--color-secondary);
 
     font-size: 28px;
 
@@ -151,8 +151,8 @@
     background:
         linear-gradient(
             135deg,
-            #14d8ff,
-            #4f46e5
+            var(--color-secondary),
+            var(--color-tertiary)
         );
 }
 
@@ -170,5 +170,5 @@
 
     background: rgba(239,68,68,.15);
 
-    color: #ffb4b4;
+    color: var(--color-danger-light);
 }

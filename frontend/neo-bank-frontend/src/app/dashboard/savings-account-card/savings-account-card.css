@@ -1,6 +1,6 @@
 .account-card {
 
-    background: #07162e;
+    background: var(--color-surface-1);
 
     border-radius: 22px;
 
@@ -30,7 +30,7 @@
 
 .status {
 
-    color: #14d8ff;
+    color: var(--color-secondary);
 
     font-size: .85rem;
 }
@@ -39,7 +39,7 @@
 
     margin-top: 20px;
 
-    color: #94a3b8;
+    color: var(--color-text-secondary);
 }
 
 .balance {

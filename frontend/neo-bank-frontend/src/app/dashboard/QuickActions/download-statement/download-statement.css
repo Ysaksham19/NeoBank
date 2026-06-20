@@ -65,7 +65,7 @@
 
 .arrow {
 
-    color: #94a3b8;
+    color: var(--color-text-secondary);
 
     font-size: 20px;
 }
@@ -79,7 +79,7 @@
 
 .card-content p {
 
-    color: #94a3b8;
+    color: var(--color-text-secondary);
 
     line-height: 1.6;
 }
@@ -113,8 +113,8 @@
 
     background: linear-gradient(
         180deg,
-        #07162e,
-        #051123
+        var(--color-surface-1),
+        var(--color-surface-2)
     );
 
     border-radius: 28px;
@@ -140,7 +140,7 @@
 
 .modal-header p {
 
-    color: #94a3b8;
+    color: var(--color-text-secondary);
 }
 
 .close-btn {
@@ -176,7 +176,7 @@
 
 .field label {
 
-    color: #cbd5e1;
+    color: var(--color-text-secondary);
 }
 
 .field input,
@@ -223,8 +223,8 @@
 
     background: linear-gradient(
         135deg,
-        #14d8ff,
-        #4f46e5
+        var(--color-secondary),
+        var(--color-tertiary)
     );
 
     border: none;

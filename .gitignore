@@ -1,11 +1,13 @@
-*.zip 
+# Eclipse
+.metadata/
+
+# Angular
 node_modules/
 dist/
 .angular/
-target/
-.metadata/
-.settings/
-.project
-.classpath
-.vscode/
+
+# Archives
+*.zip
+
+# Logs
 *.log

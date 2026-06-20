@@ -4,6 +4,6 @@
 
 }
 
-<div class="content-padding">
+<div class="content-padding" [class.auth-content]="isAuthPage()">
   <router-outlet></router-outlet>
 </div>

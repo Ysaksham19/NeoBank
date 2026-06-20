@@ -1,172 +1,53 @@
-<!-- ===================================================== -->
-<!-- HERO SECTION -->
-<!-- ===================================================== -->
-
-<section class="hero-section">
-
-  <!-- BACKGROUND BLUR -->
-
-  <div class="blur blur-1"></div>
-
-  <div class="blur blur-2"></div>
-
-  <!-- HERO CONTENT -->
-
-  <div class="hero-content">
-
-    <!-- LEFT -->
-
-    <div class="hero-left">
-
-      <div class="tag">
-
-        🚀 Next Generation Digital Banking
-
-      </div>
+<section class="hero">
+  <div class="container hero-layout hero-layout--single">
+    <div class="hero-content">
+      <span class="hero-eyebrow">Banking Made Simple.</span>
 
       <h1>
-
-        Banking That’s
-
-        <span>
-          Smarter
-        </span>
-
-        Faster & Secure
-
+        Secure. Fast.
+        <span class="text-gradient">Digital.</span>
       </h1>
 
       <p>
-
-        NeoBank360 helps you manage accounts,
-        transfer money, track spending,
-        pay bills, and monitor analytics —
-        all in one intelligent banking platform.
-
+        Experience a smarter way to bank with Neo Bank.
+        Your money, your way.
       </p>
 
-      <!-- BUTTONS -->
-
-      <div class="hero-buttons">
-
-        <button
-          class="primary-btn"
-          routerLink="/register">
-
-          Get Started
-
-        </button>
-
-        <a
-          href="#features"
-          class="secondary-btn">
-
-          Learn More
-
-        </a>
+      <div class="hero-actions">
+        <a routerLink="/register" class="btn btn-primary">Open an Account</a>
+        <a routerLink="/login" class="btn btn-secondary">Login to Account</a>
       </div>
 
-      <!-- STATS -->
-
-      <div class="stats-container">
-
-        @for (stat of stats; track stat.label) {
-
-          <div class="stat-card">
-
-            <h2>
-              {{ stat.value }}
-            </h2>
-
-            <p>
-              {{ stat.label }}
-            </p>
-          </div>
-        }
-      </div>
-    </div>
-
-    <!-- RIGHT -->
-
-    <div class="hero-right">
-
-      <div class="dashboard-card">
-
-        <!-- HEADER -->
-
-        <div class="card-header">
-
-          <div class="user">
-
-            <div class="avatar"></div>
-
-            <div>
-
-              <h3>
-                Welcome Back
-              </h3>
-
-              <p>
-                John Doe
-              </p>
-            </div>
-          </div>
-
-          <div class="live-badge">
-
-            ● Live
-
+      <div class="hero-trust-strip">
+        <div class="hero-trust-item">
+          <div class="hero-trust-icon">🛡️</div>
+          <div>
+            <h4>100% Secure</h4>
+            <p>Bank-grade security</p>
           </div>
         </div>
 
-        <!-- BALANCE -->
-
-        <div class="balance-card">
-
-          <p>
-            Total Balance
-          </p>
-
-          <h1>
-            ₹ 5,42,840
-          </h1>
+        <div class="hero-trust-item">
+          <div class="hero-trust-icon">⚡</div>
+          <div>
+            <h4>Instant Access</h4>
+            <p>Open account in minutes</p>
+          </div>
         </div>
 
-        <!-- TRANSACTIONS -->
-
-        <div class="transactions">
-
-          <div class="transaction success">
-
-            <span>
-              Salary Credit
-            </span>
-
-            <strong>
-              + ₹85,000
-            </strong>
+        <div class="hero-trust-item">
+          <div class="hero-trust-icon">🎧</div>
+          <div>
+            <h4>24x7 Support</h4>
+            <p>Always by your side</p>
           </div>
+        </div>
 
-          <div class="transaction expense">
-
-            <span>
-              Netflix Subscription
-            </span>
-
-            <strong>
-              - ₹799
-            </strong>
-          </div>
-
-          <div class="transaction success">
-
-            <span>
-              Cashback Reward
-            </span>
-
-            <strong>
-              + ₹2,400
-            </strong>
+        <div class="hero-trust-item">
+          <div class="hero-trust-icon">🏛️</div>
+          <div>
+            <h4>RBI Regulated</h4>
+            <p>Your money is safe</p>
           </div>
         </div>
       </div>
@@ -174,253 +55,180 @@
   </div>
 </section>
 
+<section class="services-section">
+  <div class="container">
+    <div class="section-header compact services-head">
+      <h2>Our Services</h2>
+      <p>Everything you need for a better banking experience.</p>
+    </div>
 
-<!-- ===================================================== -->
-<!-- FEATURES -->
-<!-- ===================================================== -->
-
-<section
-  id="features"
-  class="features-section">
-
-  <div class="section-header">
-
-    <h2>
-      Why Choose NeoBank360
-    </h2>
-
-    <p>
-      Powerful digital banking features built
-      for modern users.
-    </p>
-  </div>
-
-  <div class="features-grid">
-
-    @for (feature of features; track feature.title) {
-
-      <div class="feature-card">
-
-        <div class="icon">
-
+    <div class="services-reference-grid">
+      <div class="service-reference-card" *ngFor="let feature of features">
+        <div class="service-reference-icon" [ngClass]="feature.theme">
           {{ feature.icon }}
-
         </div>
 
-        <h3>
-          {{ feature.title }}
-        </h3>
-
-        <p>
-          {{ feature.description }}
-        </p>
+        <div class="service-reference-body">
+          <h3>{{ feature.title }}</h3>
+          <p>{{ feature.description }}</p>
+          <a [routerLink]="feature.link">Explore →</a>
+        </div>
       </div>
-    }
+    </div>
   </div>
 </section>
 
-
-<!-- ===================================================== -->
-<!-- ABOUT -->
-<!-- ===================================================== -->
-
-<section
-  id="about"
-  class="about-section">
-
-  <div class="about-content">
-
-    <!-- LEFT -->
-
-    <div class="about-left">
-
-      <div class="section-tag">
-
-        ABOUT US
-
+<section class="promo-strip reference-promo-strip">
+  <div class="container loan-wide-container">
+    <div class="reference-loan-band">
+      <div class="reference-loan-intro">
+        <h3>
+          Achieve Your Dreams with
+          <br />
+          Our Loan Solutions
+        </h3>
+        <a routerLink="/login" class="view-all-loans-btn">View All Loans →</a>
       </div>
 
-      <h2>
+      <div class="reference-loan-item">
+        <div class="reference-loan-thumb">
+          <img src="/images/homeLoan.png" alt="Home Loan" />
+        </div>
+        <div class="reference-loan-text">
+          <h4>Home Loan</h4>
+          <p>Lowest interest rates starting from</p>
+          <div class="reference-loan-rate">8.35% <span>p.a.</span></div>
+        </div>
+      </div>
 
-        Building The Future
-        Of Digital Banking
+      <div class="reference-loan-item">
+        <div class="reference-loan-thumb">
+          <img src="/images/CarLoan.png" alt="Car Loan" />
+        </div>
+        <div class="reference-loan-text">
+          <h4>Car Loan</h4>
+          <p>Bring home your dream car at low EMI</p>
+          <div class="reference-loan-rate">8.75% <span>p.a.</span></div>
+        </div>
+      </div>
 
-      </h2>
+      <div class="reference-loan-item">
+        <div class="reference-loan-thumb">
+          <img src="/images/PersonalLoan.png" alt="Personal Loan" />
+        </div>
+        <div class="reference-loan-text">
+          <h4>Personal Loan</h4>
+          <p>Quick funds for your immediate needs</p>
+          <div class="reference-loan-rate">9.49% <span>p.a.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
+<section class="stats-section reference-stats-section">
+  <div class="container loan-wide-container">
+    <div class="reference-stats-band">
+      <div class="reference-stat-item" *ngFor="let stat of stats">
+        <div class="reference-stat-icon">{{ stat.icon }}</div>
+        <div>
+          <h3>{{ stat.value }}</h3>
+          <p>{{ stat.label }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container about-layout">
+    <div class="about-content">
+      <h2>Redefining the <br />Future of Finance</h2>
       <p>
-
-        NeoBank is a next-generation fintech
-        banking platform focused on secure,
-        intelligent, and seamless financial
-        experiences for modern users.
-
+        We combine artificial intelligence with enterprise-grade security
+        to bring you an unparalleled banking ecosystem.
       </p>
 
-      <div class="about-list">
-
-        @for (item of aboutFeatures; track item) {
-
-          <div class="about-item">
-
-            ✅ {{ item }}
-
-          </div>
-        }
-      </div>
+      <ul class="about-list">
+        <li *ngFor="let item of aboutFeatures">
+          <span class="check-icon">✓</span> {{ item }}
+        </li>
+      </ul>
     </div>
 
-    <!-- RIGHT -->
-
-    <div class="about-right">
-
-      <div class="about-card">
-
-        <h3>
-          Trusted Banking Platform
-        </h3>
-
-        <p>
-
-          NeoBank360 delivers intelligent banking
-          solutions powered by modern technology,
-          analytics, and enterprise-grade security.
-
-        </p>
-
-        <div class="growth">
-
-          📈 240% Growth This Year
-
-        </div>
+    <div class="about-visual">
+      <div class="visual-card-mockup">
+        <div class="mockup-chip"></div>
+        <div class="mockup-logo">₹</div>
+        <div class="mockup-number">•••• •••• •••• 2026</div>
       </div>
     </div>
   </div>
 </section>
 
-
-<!-- ===================================================== -->
-<!-- SECURITY -->
-<!-- ===================================================== -->
-
-<section
-  id="security"
-  class="security-section">
-
-  <div class="section-header">
-
-    <h2>
-      Security First Banking
-    </h2>
-
-    <p>
-
-      Your money and data are protected
-      using enterprise-grade security.
-
-    </p>
-  </div>
-
-  <div class="security-grid">
-
-    @for (security of securityFeatures; track security.title) {
-
-      <div class="security-card">
-
-        <div class="security-icon">
-
-          {{ security.icon }}
-
-        </div>
-
-        <h3>
-
-          {{ security.title }}
-
-        </h3>
-
-        <p>
-
-          {{ security.description }}
-
-        </p>
-      </div>
-    }
-  </div>
-</section>
-
-
-<!-- ===================================================== -->
-<!-- CONTACT -->
-<!-- ===================================================== -->
-
-<section
-  id="contact"
-  class="contact-section">
-
-  <div class="contact-container">
-
-    <!-- LEFT -->
-
-    <div class="contact-left">
-
-      <div class="section-tag">
-
-        CONTACT US
-
-      </div>
-
-      <h2>
-
-        Let’s Build
-        Better Banking Together
-
-      </h2>
-
-      <p>
-
-        Have questions or feedback?
-        Our support team is available
-        24/7 to help you.
-
-      </p>
-
-      <div class="contact-info">
-
-        <div>
-          📍 India
-        </div>
-
-        <div>
-          📧 support@neobank360.com
-        </div>
-
-        <div>
-          📞 +91 9876003210
-        </div>
-      </div>
+<section class="section bg-light">
+  <div class="container">
+    <div class="section-header">
+      <h2>Security First Infrastructure</h2>
+      <p>Your money and data stay protected at every step.</p>
     </div>
 
-    <!-- RIGHT -->
-
-    <div class="contact-form">
-
-      <input
-        type="text"
-        placeholder="Full Name">
-
-      <input
-        type="email"
-        placeholder="Email Address">
-
-      <textarea
-        rows="5"
-        placeholder="Your Message"></textarea>
-
-      <button>
-
-        Send Message
-
-      </button>
+    <div class="grid-4">
+      <div class="card security-card" *ngFor="let sec of securityFeatures">
+        <div class="card-icon">{{ sec.icon }}</div>
+        <h3>{{ sec.title }}</h3>
+        <p>{{ sec.description }}</p>
+      </div>
     </div>
   </div>
 </section>
+
+<footer class="cta-section">
+  <div class="container">
+    <div class="cta-content">
+      <h2>Ready to take control of your finances?</h2>
+      <p>Join millions of users managing money smarter every day.</p>
+      <a routerLink="/register" class="btn btn-primary btn-large">Get Started Instantly</a>
+    </div>
+
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h3>Neo <span>Bank</span></h3>
+        <p>Trusted. Secure. Yours.</p>
+        <p class="footer-copy">© 2024 Neo Bank. All rights reserved.</p>
+      </div>
+
+      <div class="footer-links">
+        <h4>About Us</h4>
+        <a routerLink="/login">Who We Are</a>
+        <a routerLink="/login">Careers</a>
+        <a routerLink="/login">Investor Relations</a>
+        <a routerLink="/login">News & Media</a>
+      </div>
+
+      <div class="footer-links">
+        <h4>Banking</h4>
+        <a routerLink="/login">Accounts</a>
+        <a routerLink="/login">Cards</a>
+        <a routerLink="/login">Loans</a>
+        <a routerLink="/login">Investments</a>
+      </div>
+
+      <div class="footer-links">
+        <h4>Support</h4>
+        <a routerLink="/login">Help Center</a>
+        <a routerLink="/login">FAQs</a>
+        <a routerLink="/login">Security Tips</a>
+        <a routerLink="/login">Contact Us</a>
+      </div>
+
+      <div class="footer-links">
+        <h4>Useful Links</h4>
+        <a routerLink="/login">Rates & Charges</a>
+        <a routerLink="/login">Terms & Conditions</a>
+        <a routerLink="/login">Privacy Policy</a>
+        <a routerLink="/login">Grievance Redressal</a>
+      </div>
+    </div>
+  </div>
+</footer>

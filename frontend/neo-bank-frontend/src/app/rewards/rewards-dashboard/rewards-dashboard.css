@@ -2,7 +2,7 @@
 
     min-height: 100vh;
 
-    background: #030d22;
+    background: var(--color-surface-3);
 
     padding: 40px;
 }
@@ -14,8 +14,8 @@
     background:
         linear-gradient(
             180deg,
-            #07162e,
-            #051123
+            var(--color-surface-1),
+            var(--color-surface-2)
         );
 
     border-radius: 28px;
@@ -47,5 +47,5 @@ h2 {
 
     font-weight: 700;
 
-    color: #14d8ff;
+    color: var(--color-secondary);
 }

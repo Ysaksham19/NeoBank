@@ -2,7 +2,7 @@
 
     min-height: 100vh;
 
-    background: #030d22;
+    background: var(--color-surface-3);
 
     padding: 40px;
 }
@@ -23,7 +23,7 @@
 
 .page-header p {
 
-    color: #94a3b8;
+    color: var(--color-text-secondary);
 }
 
 .bill-grid {
@@ -41,8 +41,8 @@
     background:
         linear-gradient(
             180deg,
-            #07162e,
-            #051123
+            var(--color-surface-1),
+            var(--color-surface-2)
         );
 
     border: 1px solid rgba(239,68,68,.25);
@@ -58,7 +58,7 @@
 
     background: rgba(239,68,68,.15);
 
-    color: #ffb4b4;
+    color: var(--color-danger-light);
 
     padding: 8px 14px;
 
@@ -76,14 +76,14 @@
 
 .category {
 
-    color: #94a3b8;
+    color: var(--color-text-secondary);
 
     margin-bottom: 15px;
 }
 
 .amount {
 
-    color: #ef4444;
+    color: var(--color-danger);
 
     font-size: 28px;
 

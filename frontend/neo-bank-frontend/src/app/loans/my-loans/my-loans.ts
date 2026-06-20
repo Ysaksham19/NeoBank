@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { LoanService } from '../../core/services/loan';
 import { LoanAccount } from '../../models/loan-account.model';
 
@@ -12,42 +11,22 @@ import { LoanAccount } from '../../models/loan-account.model';
   styleUrls: ['./my-loans.css']
 })
 export class MyLoans implements OnInit {
-
   loans: LoanAccount[] = [];
+  applications: any[] = [];
+  loading = true;
+  activeTab: 'accounts' | 'applications' = 'accounts';
 
-  constructor(
-    private loanService: LoanService
-  ) {}
+  constructor(private loanService: LoanService) {}
 
   ngOnInit(): void {
-
-    this.loadLoans();
-
+    this.loanService.getMyLoanAccounts().subscribe({
+      next: (res) => { this.loans = res; this.loading = false; },
+      error: () => { this.loading = false; }
+    });
+    // FIX #10 — load my applications
+    this.loanService.getMyApplications().subscribe({
+      next: (res) => { this.applications = res; },
+      error: () => {}
+    });
   }
-
-  loadLoans(): void {
-
-    this.loanService
-      .getMyLoanAccounts()
-      .subscribe({
-
-        next: (response) => {
-
-          this.loans = response;
-
-        },
-
-        error: (error) => {
-
-          console.error(
-            'Failed to load loans',
-            error
-          );
-
-        }
-
-      });
-
-  }
-
 }

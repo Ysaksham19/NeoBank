@@ -1,6 +1,6 @@
 .quick-actions-container {
 
-    background: #07162e;
+    background: var(--color-surface-1);
 
     border-radius: 24px;
 

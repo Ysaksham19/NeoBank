@@ -15,6 +15,9 @@ export class App{
   showNavbar(): boolean {
 
     return !(
+        this.router.url.startsWith('/login') ||
+        this.router.url.startsWith('/register') ||
+        this.router.url.startsWith('/forgot-password') ||
         this.router.url.startsWith('/dashboard') ||
         this.router.url.startsWith('/accounts') ||
         this.router.url.startsWith('/transactions') ||
@@ -28,5 +31,13 @@ export class App{
         this.router.url.startsWith('/rewards')
       );
 
+  }
+
+  isAuthPage(): boolean {
+    return (
+      this.router.url.startsWith('/login') ||
+      this.router.url.startsWith('/register') ||
+      this.router.url.startsWith('/forgot-password')
+    );
   }
 }

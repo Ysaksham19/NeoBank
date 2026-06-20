@@ -1,100 +1,39 @@
 <div class="transfer-page">
+  <div class="page-header">
+    <h1>Transfer Money</h1>
+    <p>Send money securely to another account.</p>
+  </div>
 
-    <div class="page-header">
-
-        <h1>
-            Transfer Money
-        </h1>
-
-        <p>
-            Send money securely to another account.
-        </p>
-
-    </div>
-
-    <div class="transfer-card">
-
-        <div class="field">
-
-            <label>From Account</label>
-
-            <select [(ngModel)]="selectedAccountId">
-
-                @for(account of accounts; track account.id){
-
-                <option [value]="account.id">
-
-                    {{ account.accountType }}
-                    -
-                    {{ account.accountNumber }}
-
-                </option>
-
-                }
-
-            </select>
-
-        </div>
-
-        <div class="field">
-
-            <label>Receiver Account Number</label>
-
-            <input
-                [(ngModel)]="transferRequest.receiverAccountNo"
-                placeholder="Enter account number">
-
-        </div>
-
-        <div class="field">
-
-            <label>Amount</label>
-
-            <input
-                type="number"
-                [(ngModel)]="transferRequest.amount"
-                placeholder="₹ Amount">
-
-        </div>
-
-        <div class="field">
-
-            <label>Remarks</label>
-
-            <textarea
-                [(ngModel)]="transferRequest.remarks"
-                placeholder="Optional remarks">
-            </textarea>
-
-        </div>
-
-        @if(errorMessage){
-
-            <div class="error-message">
-
-                {{ errorMessage }}
-
-            </div>
-
+  <div class="transfer-card">
+    <div class="field">
+      <label>From Account</label>
+      <select [(ngModel)]="selectedAccountId">
+        @for(account of accounts; track account.id) {
+          <option [value]="account.id">{{ account.accountType }} — {{ account.accountNumber }}</option>
         }
-         <button
-            class="transfer-btn"
-            (click)="transferMoney()">
-
-            Transfer Money
-
-        </button>
-
+      </select>
     </div>
 
+    <div class="field">
+      <label>Receiver Account Number</label>
+      <input [(ngModel)]="transferRequest.receiverAccountNo" placeholder="Enter receiver account number">
+    </div>
+
+    <div class="field">
+      <label>Amount (₹)</label>
+      <input type="number" [(ngModel)]="transferRequest.amount" placeholder="Enter amount" min="1">
+    </div>
+
+    <div class="field">
+      <label>Remarks (optional)</label>
+      <textarea [(ngModel)]="transferRequest.remarks" placeholder="Add a note"></textarea>
+    </div>
+
+    @if(errorMessage) { <div class="error-message">{{ errorMessage }}</div> }
+
+    <button class="transfer-btn" [disabled]="loading" (click)="transferMoney()">
+      {{ loading ? 'Processing...' : 'Transfer Money' }}
+    </button>
+  </div>
 </div>
-
-@if(showToast){
-
-<div class="success-toast">
-
-    ✅ Transfer initiated successfully
-
-</div>
-
-}
+@if(showToast) { <div class="success-toast">✅ Transfer successful</div> }

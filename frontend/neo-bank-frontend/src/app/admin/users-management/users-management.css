@@ -1,6 +1,6 @@
 .users-page {
 
-    background: #030d22;
+    background: var(--color-surface-3);
 
     min-height: 100vh;
 
@@ -20,7 +20,7 @@ table {
 
     border-collapse: collapse;
 
-    background: #07162e;
+    background: var(--color-surface-1);
 
     border-radius: 20px;
 
@@ -29,7 +29,7 @@ table {
 
 th {
 
-    color: #94a3b8;
+    color: var(--color-text-secondary);
 
     padding: 20px;
 }
@@ -45,7 +45,7 @@ td {
 
 .active-btn {
 
-    background: #22c55e;
+    background: var(--color-success);
 
     color: white;
 
@@ -62,7 +62,7 @@ td {
 
 .block-btn {
 
-    background: #ef4444;
+    background: var(--color-danger);
 
     color: white;
 

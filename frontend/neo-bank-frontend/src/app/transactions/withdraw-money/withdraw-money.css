@@ -1,6 +1,6 @@
 .withdraw-page {
 
-    background: #030d22;
+    background: var(--color-surface-3);
 
     min-height: 100vh;
 
@@ -18,7 +18,7 @@
 
 .page-header p {
 
-    color: #94a3b8;
+    color: var(--color-text-secondary);
 
     margin-bottom: 35px;
 }
@@ -30,8 +30,8 @@
     background:
         linear-gradient(
             180deg,
-            #07162e,
-            #051123
+            var(--color-surface-1),
+            var(--color-surface-2)
         );
 
     border: 1px solid rgba(255,255,255,.06);
@@ -58,7 +58,7 @@
 
 .field label {
 
-    color: #cbd5e1;
+    color: var(--color-text-secondary);
 }
 
 .field input,
@@ -98,8 +98,8 @@
     background:
         linear-gradient(
             135deg,
-            #ef4444,
-            #dc2626
+            var(--color-danger),
+            var(--color-danger-dark)
         );
 
     color: white;
@@ -124,7 +124,7 @@
 
     right: 30px;
 
-    background: #16a34a;
+    background: var(--color-success-dark);
 
     color: white;
 
@@ -139,7 +139,7 @@
 
     background: rgba(239,68,68,.15);
 
-    color: #ffb4b4;
+    color: var(--color-danger-light);
 
     border: 1px solid rgba(239,68,68,.25);
 

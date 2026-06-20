@@ -1,0 +1,290 @@
+ .project                                           |     11 [31m-[m
+ backend/.metadata/.bak_0.log                       |  11250 [31m--[m
+ backend/.metadata/.lock                            |      0
+ backend/.metadata/.lock_info                       |      4 [31m-[m
+ backend/.metadata/.log                             |   2451 [31m-[m
+ backend/.metadata/.mylyn/.tasks.xml.zip            |    Bin [31m235[m -> [32m0[m bytes
+ backend/.metadata/.mylyn/repositories.xml.zip      |    Bin [31m439[m -> [32m0[m bytes
+ backend/.metadata/.mylyn/tasks.xml.zip             |    Bin [31m235[m -> [32m0[m bytes
+ .../gradle/versions.json                           |  10434 [31m--[m
+ .../.history/6c/b067964dac690011194cd805846f8fb5   |    111 [31m-[m
+ .../.projects/.org.eclipse.egit.core.cmp/.location |    Bin [31m164[m -> [32m0[m bytes
+ .../.indexes/e4/b9/22/81/58/9c/history.index       |    Bin [31m101[m -> [32m0[m bytes
+ .../neobank360app/.indexes/properties.index        |    Bin [31m86[m -> [32m0[m bytes
+ .../.projects/neobank360app/.markers               |    Bin [31m3613[m -> [32m0[m bytes
+ .../.root/.indexes/history.version                 |      1 [31m-[m
+ .../.root/.indexes/properties.index                |    Bin [31m202[m -> [32m0[m bytes
+ .../.root/.indexes/properties.version              |      1 [31m-[m
+ .../org.eclipse.core.resources/.root/27.tree       |    Bin [31m18560[m -> [32m0[m bytes
+ .../.safetable/org.eclipse.core.resources          |    Bin [31m1188[m -> [32m0[m bytes
+ .../.settings/Docker.prefs                         |      2 [31m-[m
+ .../.settings/org.eclipse.ant.ui.prefs             |      3 [31m-[m
+ .../.settings/org.eclipse.core.resources.prefs     |      3 [31m-[m
+ .../.settings/org.eclipse.core.variables.prefs     |      2 [31m-[m
+ .../.settings/org.eclipse.debug.core.prefs         |      2 [31m-[m
+ .../.settings/org.eclipse.debug.ui.prefs           |      7 [31m-[m
+ .../.settings/org.eclipse.egit.core.prefs          |      2 [31m-[m
+ .../.settings/org.eclipse.jdt.core.prefs           |      7 [31m-[m
+ .../.settings/org.eclipse.jdt.debug.ui.prefs       |      4 [31m-[m
+ .../.settings/org.eclipse.jdt.junit.prefs          |      2 [31m-[m
+ .../.settings/org.eclipse.jdt.launching.prefs      |      2 [31m-[m
+ .../.settings/org.eclipse.jdt.ui.prefs             |     12 [31m-[m
+ .../.settings/org.eclipse.jsch.core.prefs          |      2 [31m-[m
+ .../.settings/org.eclipse.m2e.apt.prefs            |      3 [31m-[m
+ .../.settings/org.eclipse.m2e.discovery.prefs      |      2 [31m-[m
+ .../.settings/org.eclipse.mylyn.context.core.prefs |      2 [31m-[m
+ .../.settings/org.eclipse.mylyn.monitor.ui.prefs   |      2 [31m-[m
+ .../.settings/org.eclipse.mylyn.tasks.ui.prefs     |      5 [31m-[m
+ .../.settings/org.eclipse.pde.api.tools.prefs      |      2 [31m-[m
+ .../.settings/org.eclipse.ui.editors.prefs         |      2 [31m-[m
+ .../.settings/org.eclipse.ui.ide.prefs             |      4 [31m-[m
+ .../.settings/org.eclipse.ui.navigator.prefs       |      2 [31m-[m
+ .../.settings/org.eclipse.ui.prefs                 |      2 [31m-[m
+ .../.settings/org.eclipse.ui.workbench.prefs       |     13 [31m-[m
+ .../.settings/org.eclipse.wst.sse.ui.prefs         |      3 [31m-[m
+ ...org.springframework.ide.eclipse.boot.dash.prefs |      2 [31m-[m
+ ...g.springframework.ide.eclipse.boot.launch.prefs |      2 [31m-[m
+ .../org.springframework.ide.eclipse.boot.prefs     |     20 [31m-[m
+ .../org.springframework.ide.eclipse.imports.prefs  |      2 [31m-[m
+ .../org.springsource.ide.eclipse.commons.ui.prefs  |      2 [31m-[m
+ .../devtools-client[neobank360app].launch          |     14 [31m-[m
+ ...neobank360app - Neobank360appApplication.launch |     31 [31m-[m
+ .../.launches/neobank360app.launch                 |      5 [31m-[m
+ .../org.eclipse.debug.ui/dialog_settings.xml       |     21 [31m-[m
+ .../launchConfigurationHistory.xml                 |     23 [31m-[m
+ .../org.eclipse.e4.workbench/workbench.xmi         |   2986 [31m-[m
+ .../.org.eclipse.egit.core.cmp/.project            |     11 [31m-[m
+ .../.settings/org.eclipse.core.resources.prefs     |      2 [31m-[m
+ .../org.eclipse.egit.ui/dialog_settings.xml        |      8 [31m-[m
+ .../.plugins/org.eclipse.jdt.core/1027387727.index |    Bin [31m403854[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/1050137629.index |    Bin [31m2372698[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/1082717045.index |    Bin [31m186124[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/1086439403.index |    Bin [31m120047[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/1093498028.index |    Bin [31m873245[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/1126978567.index |    Bin [31m2008247[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/1144292292.index |    Bin [31m29147[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/1217575768.index |    Bin [31m1850426[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/1249556644.index |    Bin [31m921592[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/1269385339.index |    Bin [31m90361[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/1274179627.index |    Bin [31m89651[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/1333421591.index |    Bin [31m121[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/1343110040.index |    Bin [31m605267[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/1372787647.index |    Bin [31m96261[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/1375687699.index |    Bin [31m9795[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/1387113192.index |    Bin [31m630998[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/1476028556.index |    Bin [31m740214[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/1485875712.index |    Bin [31m2873285[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/1498617976.index |    Bin [31m212711[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/1501003760.index |    Bin [31m147947[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/1520487918.index |    Bin [31m48600[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/1559787146.index |    Bin [31m46428[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/1560522918.index |    Bin [31m117457[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/1561200763.index |    Bin [31m39798272[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/1587150792.index |    Bin [31m135816[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/1703001355.index |    Bin [31m717080[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/172732503.index  |    Bin [31m289003[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/183405819.index  |    Bin [31m11132[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/1865797976.index |    Bin [31m8453954[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/1909458907.index |    Bin [31m240940[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/1919582546.index |    Bin [31m345982[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/1931370979.index |    Bin [31m2385791[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/1933261154.index |    Bin [31m9997[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/1944524507.index |    Bin [31m163519[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/2032723200.index |    Bin [31m112[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/2117073966.index |    Bin [31m12358[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/2155327212.index |    Bin [31m119[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/2170296893.index |    Bin [31m251208[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/2287252768.index |    Bin [31m147660[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/2364120414.index |    Bin [31m216418[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/2370828782.index |    Bin [31m268467[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/2377455529.index |    Bin [31m729595[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/2386267042.index |    Bin [31m206875[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/2386591055.index |    Bin [31m220322[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/2397459694.index |    Bin [31m387531[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/2410753744.index |    Bin [31m2213504[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/2418133655.index |    Bin [31m2024187[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/2448225547.index |    Bin [31m1035483[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/2484065040.index |    Bin [31m1071335[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/2494885156.index |    Bin [31m87876[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/2506421645.index |    Bin [31m134048[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/2532388604.index |    Bin [31m284851[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/2534475570.index |    Bin [31m327472[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/2539803964.index |    Bin [31m128760[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/2551936749.index |    Bin [31m28958[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/2557747994.index |    Bin [31m2274[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/2584819510.index |    Bin [31m291440[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/2606371095.index |    Bin [31m60997[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/2645509416.index |    Bin [31m82182[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/2680253102.index |    Bin [31m40725[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/274469753.index  |    Bin [31m843309[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/2756308502.index |    Bin [31m80285[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/2909014801.index |    Bin [31m322583[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/2941753313.index |    Bin [31m306417[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/2948099619.index |    Bin [31m1091646[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/2998821830.index |    Bin [31m31212[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/3006781032.index |    Bin [31m67054[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/3072752012.index |    Bin [31m1463124[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/3125362314.index |    Bin [31m117[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/31875993.index   |    Bin [31m117[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/3220249616.index |    Bin [31m1685963[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/3256708123.index |    Bin [31m134975[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/326489366.index  |    Bin [31m117[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/3361638940.index |    Bin [31m22529[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/3389285352.index |    Bin [31m21173[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/3397875771.index |    Bin [31m120[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/3420437413.index |    Bin [31m93068[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/3424772892.index |    Bin [31m40424[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/3440469778.index |    Bin [31m256891[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/3458795690.index |    Bin [31m1209480[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/3461071424.index |    Bin [31m16590970[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/3470739580.index |    Bin [31m19383[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/3485512777.index |    Bin [31m3848[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/3489977802.index |    Bin [31m24823[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/3505145279.index |    Bin [31m257095[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/3522427270.index |    Bin [31m117[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/3563768282.index |    Bin [31m305103[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/3572158453.index |    Bin [31m166904[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/3610942459.index |    Bin [31m4604779[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/3694672566.index |    Bin [31m39376[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/3719364298.index |    Bin [31m376861[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/3751278224.index |    Bin [31m104972[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/3798094659.index |    Bin [31m9795[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/3799961270.index |    Bin [31m100632[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/3804709723.index |    Bin [31m262102[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/3822849562.index |    Bin [31m145443[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/3829134723.index |    Bin [31m16126[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/383845358.index  |    Bin [31m123[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/3858609022.index |    Bin [31m883512[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/3860645357.index |    Bin [31m116[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/3865352067.index |    Bin [31m385964[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/3875147203.index |    Bin [31m2347468[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/3896454662.index |    Bin [31m26910[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/3910598099.index |    Bin [31m952186[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/3913803340.index |    Bin [31m467805[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/3916222094.index |    Bin [31m7158[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/3981886000.index |    Bin [31m2870870[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/4032156560.index |    Bin [31m1395898[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/4033639288.index |    Bin [31m200406[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/4038421125.index |    Bin [31m168585[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/4126543759.index |    Bin [31m550469[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/4131817915.index |    Bin [31m572629[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/4145636731.index |    Bin [31m263313[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/4185331566.index |    Bin [31m227[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/4193422455.index |    Bin [31m2228379[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/4252391585.index |    Bin [31m462862[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/4266921422.index |    Bin [31m26299[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/48292366.index   |    Bin [31m580721[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/504683331.index  |    Bin [31m116[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/578789385.index  |    Bin [31m2399[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/582188302.index  |    Bin [31m345833[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/63592439.index   |    Bin [31m76380[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/649083028.index  |    Bin [31m121[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/677314213.index  |    Bin [31m30704[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/735696644.index  |    Bin [31m17083[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/739254638.index  |    Bin [31m306379[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/761284404.index  |    Bin [31m7136[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/768612028.index  |    Bin [31m32087[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/801895115.index  |    Bin [31m121[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/84109041.index   |    Bin [31m111468[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/935228377.index  |    Bin [31m30750[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/936050189.index  |    Bin [31m1792005[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/94256384.index   |    Bin [31m2580128[m -> [32m0[m bytes
+ .../.plugins/org.eclipse.jdt.core/972796902.index  |    Bin [31m2399[m -> [32m0[m bytes
+ .../org.eclipse.jdt.core/assumedExternalFilesCache |    Bin [31m4[m -> [32m0[m bytes
+ .../org.eclipse.jdt.core/externalFilesCache        |    Bin [31m25938[m -> [32m0[m bytes
+ .../org.eclipse.jdt.core/externalLibsTimeStamps    |    Bin [31m14450[m -> [32m0[m bytes
+ .../org.eclipse.jdt.core/indexNamesMap.txt         |      1 [31m-[m
+ .../org.eclipse.jdt.core/javaLikeNames.txt         |      1 [31m-[m
+ .../org.eclipse.jdt.core/nonChainingJarsCache      |    Bin [31m13394[m -> [32m0[m bytes
+ .../org.eclipse.jdt.core/savedIndexNames.txt       |    135 [31m-[m
+ .../variablesAndContainers.dat                     |    Bin [31m41427[m -> [32m0[m bytes
+ .../org.eclipse.jdt.launching/.install.xml         |      8 [31m-[m
+ .../org.eclipse.jdt.launching/libraryInfos.xml     |     18 [31m-[m
+ .../org.eclipse.jdt.ui/OpenTypeHistory.xml         |      2 [31m-[m
+ .../QualifiedTypeNameHistory.xml                   |      4 [31m-[m
+ .../org.eclipse.jdt.ui/dialog_settings.xml         |     67 [31m-[m
+ .../neobank360app/2026/4/17/refactorings.history   |      3 [31m-[m
+ .../neobank360app/2026/4/17/refactorings.index     |      5 [31m-[m
+ .../neobank360app/2026/4/18/refactorings.history   |      3 [31m-[m
+ .../neobank360app/2026/4/18/refactorings.index     |      2 [31m-[m
+ .../neobank360app/2026/5/20/refactorings.history   |      4 [31m-[m
+ .../neobank360app/2026/5/20/refactorings.index     |      1 [31m-[m
+ .../neobank360app/2026/5/22/refactorings.history   |      3 [31m-[m
+ .../neobank360app/2026/5/22/refactorings.index     |      3 [31m-[m
+ .../dialog_settings.xml                            |     11 [31m-[m
+ .../org.eclipse.m2e.core.ui/dialog_settings.xml    |      7 [31m-[m
+ .../neobank360app.lifecyclemapping                 |    Bin [31m18175[m -> [32m0[m bytes
+ .../org.eclipse.m2e.core/workspaceState.ser        |    Bin [31m39333[m -> [32m0[m bytes
+ .../org.eclipse.m2e.core/workspacestate.properties |      4 [31m-[m
+ .../org.eclipse.m2e.jdt/neobank360app.container    |    Bin [31m44249[m -> [32m0[m bytes
+ .../launches/m2conf16538664010842257360.tmp        |     51 [31m-[m
+ .../launches/m2conf1660967949983229870.tmp         |     51 [31m-[m
+ .../.plugins/org.eclipse.m2e.logback/0.log         |   5483 [31m-[m
+ .../logback.2.7.0.20241001-1350.xml                |     41 [31m-[m
+ .../.cache/clean-cache.properties                  |      2 [31m-[m
+ .../1.0.0.10/manifest.json                         |      5 [31m-[m
+ .../1.0.0.10/protocols.json                        |    119 [31m-[m
+ .../.plugins/org.eclipse.swt/EBWebView/Breadcrumbs |     30 [31m-[m
+ .../EBWebView/BrowserMetrics-spare.pma             |    Bin [31m1310720[m -> [32m0[m bytes
+ .../BrowserMetrics/BrowserMetrics-6A3169B5-A00.pma |    Bin [31m1310720[m -> [32m0[m bytes
+ .../CertificateRevocation/6498.2025.9.4/crl-set    |    Bin [31m23123[m -> [32m0[m bytes
+ .../6498.2025.9.4/manifest.json                    |      5 [31m-[m
+ .../org.eclipse.swt/EBWebView/Crashpad/metadata    |      0
+ .../EBWebView/Crashpad/settings.dat                |    Bin [31m288[m -> [32m0[m bytes
+ .../EBWebView/Crashpad/throttle_store.dat          |      1 [31m-[m
+ .../EBWebView/Crashpad/watson_metadata             |      0
+ .../EBWebView/CrashpadMetrics-active.pma           |    Bin [31m16384[m -> [32m0[m bytes
+ .../EBWebView/Default/AutofillAiModelCache/LOCK    |      0
+ .../EBWebView/Default/AutofillAiModelCache/LOG     |      0
+ .../EBWebView/Default/AutofillAiModelCache/LOG.old |      0
+ .../EBWebView/Default/AutofillStrikeDatabase/LOCK  |      0
+ .../EBWebView/Default/AutofillStrikeDatabase/LOG   |      0
+ .../Default/AutofillStrikeDatabase/LOG.old         |      0
+ .../Default/BookmarkMergedSurfaceOrdering          |      2 [31m-[m
+ .../EBWebView/Default/BrowsingTopicsSiteData       |    Bin [31m28672[m -> [32m0[m bytes
+ .../Default/BrowsingTopicsSiteData-journal         |      0
+ .../EBWebView/Default/BrowsingTopicsState          |     26 [31m-[m
+ .../EBWebView/Default/BudgetDatabase/LOCK          |      0
+ .../EBWebView/Default/BudgetDatabase/LOG           |      0
+ .../EBWebView/Default/BudgetDatabase/LOG.old       |      0
+ .../EBWebView/Default/ClientCertificates/LOCK      |      0
+ .../EBWebView/Default/ClientCertificates/LOG       |      0
+ .../EBWebView/Default/ClientCertificates/LOG.old   |      0
+ .../EBWebView/Default/Code Cache/js/index          |    Bin [31m24[m -> [32m0[m bytes
+ .../Default/Code Cache/js/index-dir/the-real-index |    Bin [31m48[m -> [32m0[m bytes
+ .../EBWebView/Default/Code Cache/wasm/index        |    Bin [31m24[m -> [32m0[m bytes
+ .../Code Cache/wasm/index-dir/the-real-index       |    Bin [31m48[m -> [32m0[m bytes
+ .../org.eclipse.swt/EBWebView/Default/DIPS         |    Bin [31m36864[m -> [32m0[m bytes
+ .../EBWebView/Default/DashTrackerDatabase          |    Bin [31m10240[m -> [32m0[m bytes
+ .../EBWebView/Default/DashTrackerDatabase-journal  |      0
+ .../EBWebView/Default/DawnGraphiteCache/data_0     |    Bin [31m8192[m -> [32m0[m bytes
+ .../EBWebView/Default/DawnGraphiteCache/data_1     |    Bin [31m270336[m -> [32m0[m bytes
+ .../EBWebView/Default/DawnGraphiteCache/data_2     |    Bin [31m8192[m -> [32m0[m bytes
+ .../EBWebView/Default/DawnGraphiteCache/data_3     |    Bin [31m8192[m -> [32m0[m bytes
+ .../EBWebView/Default/DawnGraphiteCache/index      |    Bin [31m262512[m -> [32m0[m bytes
+ .../EBWebView/Default/DawnWebGPUCache/data_0       |    Bin [31m8192[m -> [32m0[m bytes
+ .../EBWebView/Default/DawnWebGPUCache/data_1       |    Bin [31m270336[m -> [32m0[m bytes
+ .../EBWebView/Default/DawnWebGPUCache/data_2       |    Bin [31m8192[m -> [32m0[m bytes
+ .../EBWebView/Default/DawnWebGPUCache/data_3       |    Bin [31m8192[m -> [32m0[m bytes
+ .../EBWebView/Default/DawnWebGPUCache/index        |    Bin [31m262512[m -> [32m0[m bytes
+ .../EBWebView/Default/EdgeJourneys/EdgeJourneys.db |    Bin [31m114688[m -> [32m0[m bytes
+ .../Default/EdgeSessions/SessionRestoreLog         |      8 [31m-[m
+ .../EBWebView/Default/Extension Rules/000003.log   |    Bin [31m38[m -> [32m0[m bytes
+ .../EBWebView/Default/Extension Rules/CURRENT      |      1 [31m-[m
+ .../EBWebView/Default/Extension Rules/LOCK         |      0
+ .../EBWebView/Default/Extension Rules/LOG          |      2 [31m-[m
+ .../Default/Extension Rules/MANIFEST-000001        |    Bin [31m41[m -> [32m0[m bytes
+ .../EBWebView/Default/Extension Scripts/000003.log |    Bin [31m38[m -> [32m0[m bytes
+ .../EBWebView/Default/Extension Scripts/CURRENT    |      1 [31m-[m
+ .../EBWebView/Default/Extension Scripts/LOCK       |      0
+ .../EBWebView/Default/Extension Scripts/LOG        |      2 [31m-[m
+ .../Default/Extension Scripts/MANIFEST-000001      |    Bin [31m41[m -> [32m0[m bytes
+ .../EBWebView/Default/Extension State/000003.log   |    Bin [31m114[m -> [32m0[m bytes
+ .../EBWebView/Default/Extension State/CURRENT      |      1 [31m-[m
+ .../EBWebView/Default/Extension State/LOCK         |      0
+ .../EBWebView/Default/Extension State/LOG          |      3 [31m-[m
+ .../EBWebView/Default/Extension State/LOG.old      |      3 [31m-[m
+ .../Default/Extension State/MANIFEST-000001        |    Bin [31m41[m -> [32m0[m bytes
+ .../EBWebView/Default/ExtensionActivityComp        |      0
+ .../EBWebView/Default/ExtensionActivityEdge        |    Bin [31m32768[m -> [32m0[m bytes
+ .../Default/ExtensionActivityEdge-journal          |      0

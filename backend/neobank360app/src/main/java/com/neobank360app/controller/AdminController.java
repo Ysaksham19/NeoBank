@@ -1,5 +1,6 @@
-	package com.neobank360app.controller;
+package com.neobank360app.controller;
 
+import com.neobank360app.dto.AdminTransactionResponseDTO;
 import com.neobank360app.dto.AdminUserResponseDTO;
 import com.neobank360app.service.AdminService;
 import org.springframework.http.ResponseEntity;
@@ -18,51 +19,41 @@ public class AdminController {
     public AdminController(
             AdminService adminService
     ) {
-
         this.adminService = adminService;
     }
-
-    // ───────────────── GET ALL USERS ─────────────────
 
     @GetMapping("/users")
     public ResponseEntity<List<AdminUserResponseDTO>>
     getAllUsers() {
-
         return ResponseEntity.ok(
                 adminService.getAllUsers()
         );
     }
 
-    // ───────────────── GET USER BY ID ─────────────────
-
     @GetMapping("/users/{userId}")
     public ResponseEntity<AdminUserResponseDTO>
-    getUserById(
-
-            @PathVariable Long userId
-    ) {
-
+    getUserById(@PathVariable Long userId) {
         return ResponseEntity.ok(
                 adminService.getUserById(userId)
         );
     }
 
-    // ───────────────── UPDATE USER STATUS ─────────────────
-
     @PutMapping("/users/{userId}/status")
     public ResponseEntity<AdminUserResponseDTO>
     updateUserStatus(
-
             @PathVariable Long userId,
-
             @RequestParam String status
     ) {
-
         return ResponseEntity.ok(
-                adminService.updateUserStatus(
-                        userId,
-                        status
-                )
+                adminService.updateUserStatus(userId, status)
+        );
+    }
+
+    @GetMapping("/transactions")
+    public ResponseEntity<List<AdminTransactionResponseDTO>>
+    getAllTransactions() {
+        return ResponseEntity.ok(
+                adminService.getAllTransactions()
         );
     }
 }

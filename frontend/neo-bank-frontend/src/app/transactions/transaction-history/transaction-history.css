@@ -1,6 +1,6 @@
 .transaction-page {
 
-    background: #030d22;
+    background: var(--color-surface-3);
 
     min-height: 100vh;
 
@@ -18,7 +18,7 @@
 
 .page-header p {
 
-    color: #94a3b8;
+    color: var(--color-text-secondary);
 
     margin-bottom: 30px;
 }
@@ -68,9 +68,9 @@
 
 .filter-row button.active {
 
-    background: #14d8ff;
+    background: var(--color-secondary);
 
-    color: #07162e;
+    color: var(--color-surface-1);
 }
 
 .transaction-list {
@@ -87,8 +87,8 @@
     background:
         linear-gradient(
             180deg,
-            #07162e,
-            #051123
+            var(--color-surface-1),
+            var(--color-surface-2)
         );
 
     border: 1px solid rgba(255,255,255,.06);
@@ -113,7 +113,7 @@
 
 .transaction-card p {
 
-    color: #94a3b8;
+    color: var(--color-text-secondary);
 }
 
 .amount {
@@ -125,10 +125,10 @@
 
 .credit {
 
-    color: #22c55e;
+    color: var(--color-success);
 }
 
 .debit {
 
-    color: #ef4444;
+    color: var(--color-danger);
 }

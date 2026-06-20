@@ -2,7 +2,7 @@
 
     min-height: 100vh;
 
-    background: #030d22;
+    background: var(--color-surface-3);
 
     padding: 40px;
 }
@@ -19,7 +19,7 @@
 
 .page-header p {
 
-    color: #94a3b8;
+    color: var(--color-text-secondary);
 }
 
 .search-card {
@@ -39,7 +39,7 @@
 
     border-radius: 16px;
 
-    background: #07162e;
+    background: var(--color-surface-1);
 
     border: 1px solid rgba(255,255,255,.08);
 
@@ -58,8 +58,8 @@
 
     background: linear-gradient(
         135deg,
-        #14d8ff,
-        #4f46e5
+        var(--color-secondary),
+        var(--color-tertiary)
     );
 
     color: white;
@@ -71,7 +71,7 @@ table {
 
     border-collapse: collapse;
 
-    background: #07162e;
+    background: var(--color-surface-1);
 
     border-radius: 20px;
 
@@ -80,7 +80,7 @@ table {
 
 th {
 
-    color: #94a3b8;
+    color: var(--color-text-secondary);
 
     padding: 20px;
 }
@@ -102,7 +102,7 @@ td {
 
     border-radius: 12px;
 
-    background: #14d8ff;
+    background: var(--color-secondary);
 
     color: white;
 }
@@ -115,7 +115,7 @@ td {
 
     right: 30px;
 
-    background: #22c55e;
+    background: var(--color-success);
 
     color: white;
 

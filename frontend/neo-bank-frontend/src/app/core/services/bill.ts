@@ -1,83 +1,32 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
+import { environment } from '../../../environments/environment';
 import { Bill } from '../../models/bill.model';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class BillService {
-
-  private readonly BASE_URL =
-    'http://localhost:8080/api/v1/bills';
-
-  constructor(
-    private http: HttpClient
-  ) {}
-
-  // CREATE BILL
+  private readonly BASE_URL = `${environment.apiUrl}/bills`;
+  constructor(private http: HttpClient) {}
 
   createBill(payload: any): Observable<any> {
-
-    return this.http.post(
-
-      this.BASE_URL,
-
-      payload
-
-    );
-
+    return this.http.post(this.BASE_URL, payload);
   }
-
-  // GET ALL BILLS
 
   getBills(): Observable<Bill[]> {
-
-    return this.http.get<Bill[]>(
-
-      this.BASE_URL
-
-    );
-
+    return this.http.get<Bill[]>(this.BASE_URL);
   }
-
-  // GET PENDING BILLS
 
   getPendingBills(): Observable<Bill[]> {
-
-    return this.http.get<Bill[]>(
-
-      `${this.BASE_URL}/pending`
-
-    );
-
+    return this.http.get<Bill[]>(`${this.BASE_URL}/pending`);
   }
 
-  // PAY BILL
-
+  // FIX #4 — PATCH not PUT
   payBill(id: number): Observable<any> {
-
-    return this.http.put(
-
-      `${this.BASE_URL}/pay/${id}`,
-
-      {}
-
-    );
-
+    return this.http.patch(`${this.BASE_URL}/pay/${id}`, {});
   }
-
-  // DELETE BILL
 
   deleteBill(id: number): Observable<any> {
-
-    return this.http.delete(
-
-      `${this.BASE_URL}/${id}`
-
-    );
-
+    return this.http.delete(`${this.BASE_URL}/${id}`);
   }
-
 }

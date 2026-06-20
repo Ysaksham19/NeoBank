@@ -9,8 +9,8 @@
 
     background: linear-gradient(
         180deg,
-        #051123 0%,
-        #07162e 100%
+        var(--color-surface-2) 0%,
+        var(--color-surface-1) 100%
     );
 
     border-right: 1px solid rgba(255,255,255,.06);
@@ -53,8 +53,8 @@
 
     background: linear-gradient(
         135deg,
-        #14d8ff,
-        #4f46e5
+        var(--color-secondary),
+        var(--color-tertiary)
     );
 
     display: flex;
@@ -81,7 +81,7 @@
 
     text-decoration: none;
 
-    color: #94a3b8;
+    color: var(--color-text-secondary);
 
     padding: 15px 18px;
 
@@ -140,7 +140,7 @@
 
     background: rgba(239,68,68,.15);
 
-    color: #ffb4b4;
+    color: var(--color-danger-light);
 
     cursor: pointer;
 

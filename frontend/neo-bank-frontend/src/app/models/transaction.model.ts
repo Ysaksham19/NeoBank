@@ -1,15 +1,11 @@
 export interface Transaction {
-
   id: number;
-
-  description: string;
-
+  transactionRef: string;
   transactionType: string;
-
+  transactionStatus: string;
   amount: number;
-
-  transactionDate: string;
-
-  status: string;
-
+  availableBalanceAfter: number;
+  ledgerBalanceAfter: number;
+  remarks: string;
+  createdAt: string;
 }

@@ -1,125 +1,54 @@
 <div class="repayment-page">
+  <div class="page-header">
+    <h1>Repayment Schedule</h1>
+    <p>View and manage your EMI payments.</p>
+  </div>
 
-    <div class="page-header">
+  <div class="search-card">
+    <input type="number" [(ngModel)]="loanAccountId" placeholder="Enter Loan Account ID">
+    <button [disabled]="loading" (click)="loadRepayments()">
+      {{ loading ? 'Loading...' : 'Load Schedule' }}
+    </button>
+  </div>
 
-        <h1>
-            Repayment Schedule
-        </h1>
+  @if(errorMessage) {
+    <div class="error-message">{{ errorMessage }}</div>
+  }
 
-        <p>
-            View and manage your EMI payments.
-        </p>
-
-    </div>
-
-    <div class="search-card">
-
-        <input
-            type="number"
-            [(ngModel)]="loanAccountId"
-            placeholder="Enter Loan Account ID">
-
-        <button
-            (click)="loadRepayments()">
-
-            Load Schedule
-
-        </button>
-
-    </div>
-
+  @if(repayments.length > 0) {
     <table>
-
-        <thead>
-
-            <tr>
-
-                <th>EMI #</th>
-                <th>Due Date</th>
-                <th>EMI Amount</th>
-                <th>Principal</th>
-                <th>Interest</th>
-                <th>Status</th>
-                <th>Action</th>
-
-            </tr>
-
-        </thead>
-
-        <tbody>
-
-            @for(item of repayments; track item.id){
-
-            <tr>
-
-                <td>
-
-                    {{ item.installmentNumber }}
-
-                </td>
-
-                <td>
-
-                    {{ item.dueDate }}
-
-                </td>
-
-                <td>
-
-                    ₹{{ item.emiAmount }}
-
-                </td>
-
-                <td>
-
-                    ₹{{ item.principalComponent }}
-
-                </td>
-
-                <td>
-
-                    ₹{{ item.interestComponent }}
-
-                </td>
-
-                <td>
-
-                    {{ item.status }}
-
-                </td>
-
-                <td>
-
-                    @if(item.status !== 'PAID'){
-
-                    <button
-                        class="pay-btn"
-                        (click)="markAsPaid(item.id)">
-
-                        Pay
-
-                    </button>
-
-                    }
-
-                </td>
-
-            </tr>
-
-            }
-
-        </tbody>
-
+      <thead>
+        <tr>
+          <th>EMI #</th>
+          <th>Due Date</th>
+          <th>EMI Amount</th>
+          <th>Principal</th>
+          <th>Interest</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for(item of repayments; track item.instalmentNumber) {
+          <tr>
+            <td>{{ item.instalmentNumber }}</td>
+            <td>{{ item.dueDate }}</td>
+            <td>₹{{ item.emiAmount | number:'1.2-2' }}</td>
+            <td>₹{{ item.principalComponent | number:'1.2-2' }}</td>
+            <td>₹{{ item.interestComponent | number:'1.2-2' }}</td>
+            <td><span class="status-badge" [class]="item.paymentStatus.toLowerCase()">{{ item.paymentStatus }}</span></td>
+            <td>
+              @if(item.paymentStatus !== 'PAID') {
+                <button class="pay-btn" (click)="markAsPaid(item.instalmentNumber)">Pay</button>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
     </table>
-
+  }
 </div>
 
-@if(showToast){
-
-<div class="success-toast">
-
-    ✅ EMI paid successfully
-
-</div>
-
+@if(showToast) {
+  <div class="success-toast">✅ EMI paid successfully</div>
 }

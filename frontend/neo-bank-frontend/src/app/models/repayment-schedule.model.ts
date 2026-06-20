@@ -1,17 +1,8 @@
 export interface RepaymentSchedule {
-
-  id: number;
-
-  installmentNumber: number;
-
+  instalmentNumber: number;
   dueDate: string;
-
   emiAmount: number;
-
   principalComponent: number;
-
   interestComponent: number;
-
-  status: string;
-
+  paymentStatus: string;
 }

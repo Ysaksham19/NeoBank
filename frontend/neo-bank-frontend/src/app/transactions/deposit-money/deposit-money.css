@@ -1,6 +1,6 @@
 .deposit-page {
 
-    background: #030d22;
+    background: var(--color-surface-3);
 
     min-height: 100vh;
 
@@ -18,7 +18,7 @@
 
 .page-header p {
 
-    color: #94a3b8;
+    color: var(--color-text-secondary);
 
     margin-bottom: 35px;
 }
@@ -30,8 +30,8 @@
     background:
         linear-gradient(
             180deg,
-            #07162e,
-            #051123
+            var(--color-surface-1),
+            var(--color-surface-2)
         );
 
     border: 1px solid rgba(255,255,255,.06);
@@ -61,7 +61,7 @@
 
 .field label {
 
-    color: #cbd5e1;
+    color: var(--color-text-secondary);
 
     font-size: 14px;
 
@@ -93,7 +93,7 @@
 .field select:focus,
 .field textarea:focus {
 
-    border-color: #14d8ff;
+    border-color: var(--color-secondary);
 
     box-shadow:
         0 0 0 3px rgba(20,216,255,.15);
@@ -117,8 +117,8 @@
     background:
         linear-gradient(
             135deg,
-            #14d8ff,
-            #4f46e5
+            var(--color-secondary),
+            var(--color-tertiary)
         );
 
     color: white;
@@ -148,7 +148,7 @@
 
     right: 30px;
 
-    background: #16a34a;
+    background: var(--color-success-dark);
 
     color: white;
 
@@ -166,7 +166,7 @@
 
     background: rgba(239,68,68,.15);
 
-    color: #ffb4b4;
+    color: var(--color-danger-light);
 
     border: 1px solid rgba(239,68,68,.25);
 

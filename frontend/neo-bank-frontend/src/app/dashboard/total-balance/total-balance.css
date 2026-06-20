@@ -1,6 +1,6 @@
 .total-balance-card {
 
-    background: #07162e;
+    background: var(--color-surface-1);
 
     border-radius: 24px;
 
@@ -63,12 +63,12 @@
 
 .positive {
 
-    color: #14d8ff;
+    color: var(--color-secondary);
 
     font-weight: 700;
 }
 
 .month-text {
 
-    color: #94a3b8;
+    color: var(--color-text-secondary);
 }

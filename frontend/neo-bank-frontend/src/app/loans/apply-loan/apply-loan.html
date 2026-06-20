@@ -1,95 +1,39 @@
 <div class="apply-loan-page">
+  <div class="page-header">
+    <h1>Apply for Loan</h1>
+    <p>Submit your loan application quickly and securely.</p>
+  </div>
 
-    <div class="page-header">
-
-        <h1>
-            Apply for Loan
-        </h1>
-
-        <p>
-            Submit your loan application quickly and securely.
-        </p>
-
-    </div>
-
-    <div class="loan-card">
-
-        <div class="field">
-
-            <label>
-                Loan Product
-            </label>
-
-            <select [(ngModel)]="application.productId">
-
-                @for(product of products; track product.id){
-
-                <option [value]="product.id">
-
-                    {{ product.productName }}
-
-                </option>
-
-                }
-
-            </select>
-
-        </div>
-
-        <div class="field">
-
-            <label>
-                Loan Amount
-            </label>
-
-            <input
-                type="number"
-                [(ngModel)]="application.amount"
-                placeholder="₹ Enter amount">
-
-        </div>
-
-        <div class="field">
-
-            <label>
-                Tenure (Months)
-            </label>
-
-            <input
-                type="number"
-                [(ngModel)]="application.tenureMonths"
-                placeholder="Enter tenure">
-
-        </div>
-
-        @if(errorMessage){
-
-        <div class="error-card">
-
-            {{ errorMessage }}
-
-        </div>
-
+  <div class="loan-card">
+    <div class="field">
+      <label>Loan Product</label>
+      <select [(ngModel)]="application.loanProductId">
+        @for(product of products; track product.id) {
+          <option [value]="product.id">{{ product.productName }}</option>
         }
-
-        <button
-            class="apply-btn"
-            (click)="applyLoan()">
-
-            Apply Now
-
-        </button>
-
+      </select>
     </div>
 
+    <div class="field">
+      <label>Loan Amount (₹)</label>
+      <input type="number" [(ngModel)]="application.requestedAmount" placeholder="Enter amount">
+    </div>
+
+    <div class="field">
+      <label>Tenure (Months)</label>
+      <input type="number" [(ngModel)]="application.requestedTenureMonths" placeholder="Enter tenure in months">
+    </div>
+
+    @if(errorMessage) {
+      <div class="error-card">{{ errorMessage }}</div>
+    }
+
+    <button class="apply-btn" [disabled]="loading" (click)="applyLoan()">
+      {{ loading ? 'Submitting...' : 'Apply Now' }}
+    </button>
+  </div>
 </div>
 
-@if(showToast){
-
-<div class="success-toast">
-
-    ✅ Loan application submitted successfully
-
-</div>
-
+@if(showToast) {
+  <div class="success-toast">✅ Loan application submitted successfully</div>
 }

@@ -18,6 +18,8 @@ import { LoanApplication } from '../../models/loan-application.model';
 export class LoanDecision implements OnInit {
 
   applications: LoanApplication[] = [];
+  loading = false;
+  errorMessage = '';
 
   remarks: { [key:number]: string } = {};
 
@@ -32,6 +34,8 @@ export class LoanDecision implements OnInit {
   }
 
   loadApplications(): void {
+    this.loading = true;
+    this.errorMessage = '';
 
     this.loanService
       .getAllApplications()
@@ -40,7 +44,13 @@ export class LoanDecision implements OnInit {
         next: (response) => {
 
           this.applications = response;
+          this.loading = false;
 
+        },
+        error: (error) => {
+
+          this.errorMessage = error?.error?.message || 'Unable to load loan applications.';
+          this.loading = false;
         }
 
       });
@@ -63,6 +73,10 @@ export class LoanDecision implements OnInit {
 
           this.loadApplications();
 
+        },
+        error: (error) => {
+
+          this.errorMessage = error?.error?.message || 'Unable to approve this loan application.';
         }
 
       });
@@ -85,6 +99,10 @@ export class LoanDecision implements OnInit {
 
           this.loadApplications();
 
+        },
+        error: (error) => {
+
+          this.errorMessage = error?.error?.message || 'Unable to reject this loan application.';
         }
 
       });

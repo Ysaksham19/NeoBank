@@ -1,159 +1,61 @@
-
 import { Injectable, inject } from '@angular/core';
-
-import {
-  HttpClient
-} from '@angular/common/http';
-
-import {
-  Observable,
-  tap
-} from 'rxjs';
-
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
-
 import { StorageService } from './storage';
+import { environment } from '../../../environments/environment';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
+  private readonly BASE_URL = `${environment.apiUrl}/auth`;
 
-  // =========================================================
-  // API URL
-  // =========================================================
+  private http           = inject(HttpClient);
+  private router         = inject(Router);
+  private storageService = inject(StorageService);
 
-  private readonly BASE_URL =
-    'http://localhost:8080/api/v1/auth';
-
-  // =========================================================
-  // DEPENDENCIES
-  // =========================================================
-
-  private http =
-    inject(HttpClient);
-
-  private router =
-    inject(Router);
-
-  private storageService =
-    inject(StorageService);
-
-  // =========================================================
-  // LOGIN
-  // =========================================================
-
-  login(
-    payload: any
-  ): Observable<any> {
-
-    return this.http.post(
-
-      `${this.BASE_URL}/login`,
-
-      payload
-
-    ).pipe(
-
+  login(payload: any): Observable<any> {
+    return this.http.post(`${this.BASE_URL}/login`, payload).pipe(
       tap((response: any) => {
-
-        // ============================================
-        // SAVE TOKEN
-        // ============================================
-
-        this.storageService.saveToken(
-          response.accessToken
-        );
-
-        // ============================================
-        // SAVE USER
-        // ============================================
-
-        this.storageService.saveUser(
-          response
-        );
+        this.storageService.saveToken(response.accessToken);
+        this.storageService.saveUser(response);
       })
     );
   }
 
-  // =========================================================
-  // REGISTER
-  // =========================================================
-
-  register(
-    payload: any
-  ): Observable<any> {
-
-    return this.http.post(
-
-      `${this.BASE_URL}/register`,
-
-      payload
-    );
+  register(payload: any): Observable<any> {
+    return this.http.post(`${this.BASE_URL}/register`, payload);
   }
-
-  // =========================================================
-  // BRANCHES
-  // =========================================================
 
   getBranches(): Observable<any> {
-
-    return this.http.get('http://localhost:8080/api/v1/branches');
+    return this.http.get(`${environment.apiUrl}/branches`);
   }
-
-  // =========================================================
-  // OTP SEND
-  // =========================================================
 
   sendOtp(reference: string, otpType: string): Observable<any> {
-
-    return this.http.post('http://localhost:8080/api/v1/otp/send', {
-      reference,
-      otpType
-    });
+    return this.http.post(`${environment.apiUrl}/otp/send`, { reference, otpType });
   }
-
-  // =========================================================
-  // OTP VERIFY
-  // =========================================================
 
   verifyOtp(reference: string, otpType: string, otpCode: string): Observable<any> {
-
-    return this.http.post('http://localhost:8080/api/v1/otp/verify', {
-      reference,
-      otpType,
-      otpCode
-    });
+    return this.http.post(`${environment.apiUrl}/otp/verify`, { reference, otpType, otpCode });
   }
 
-  // =========================================================
-  // GET CURRENT USER
-  // =========================================================
-
   getCurrentUser(): any {
-
     return this.storageService.getUser();
   }
 
-  // =========================================================
-  // CHECK LOGIN
-  // =========================================================
-
   isLoggedIn(): boolean {
-
     return this.storageService.isLoggedIn();
   }
 
-  // =========================================================
-  // LOGOUT
-  // =========================================================
-
+  // FIX #9 — call backend logout to blacklist the JWT
   logout(): void {
+    this.http.post(`${this.BASE_URL}/logout`, {}).subscribe({
+      complete: () => this._clearAndRedirect(),
+      error:    () => this._clearAndRedirect()
+    });
+  }
 
+  private _clearAndRedirect(): void {
     this.storageService.clear();
-
-    this.router.navigate([
-      '/login'
-    ]);
+    this.router.navigate(['/login']);
   }
 }

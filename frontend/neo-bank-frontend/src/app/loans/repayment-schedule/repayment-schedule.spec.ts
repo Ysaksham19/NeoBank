@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RepaymentSchedule } from './repayment-schedule';
+import { RepaymentScheduleComponent } from './repayment-schedule';
 
 describe('RepaymentSchedule', () => {
-  let component: RepaymentSchedule;
-  let fixture: ComponentFixture<RepaymentSchedule>;
+  let component: RepaymentScheduleComponent;
+  let fixture: ComponentFixture<RepaymentScheduleComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RepaymentSchedule],
+      imports: [RepaymentScheduleComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(RepaymentSchedule);
+    fixture = TestBed.createComponent(RepaymentScheduleComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

@@ -1,6 +1,6 @@
 .transactions-card {
 
-    background: #07162e;
+    background: var(--color-surface-1);
 
     border-radius: 24px;
 
@@ -46,14 +46,14 @@ td {
 
 .credit {
 
-    color: #22c55e;
+    color: var(--color-success);
 
     font-weight: 700;
 }
 
 .debit {
 
-    color: #ef4444;
+    color: var(--color-danger);
 
     font-weight: 700;
 }

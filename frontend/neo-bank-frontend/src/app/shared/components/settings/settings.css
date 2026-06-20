@@ -1,6 +1,6 @@
 .settings-page {
 
-    background: #030d22;
+    background: var(--color-surface-3);
 
     min-height: 100vh;
 
@@ -24,7 +24,7 @@
 
 .page-header p {
 
-    color: #94a3b8;
+    color: var(--color-text-secondary);
 }
 
 .settings-card {
@@ -32,8 +32,8 @@
     background:
         linear-gradient(
             180deg,
-            #07162e,
-            #051123
+            var(--color-surface-1),
+            var(--color-surface-2)
         );
 
     border: 1px solid rgba(255,255,255,.06);
@@ -96,8 +96,8 @@
     background:
         linear-gradient(
             135deg,
-            #14d8ff,
-            #4f46e5
+            var(--color-secondary),
+            var(--color-tertiary)
         );
 
     color: white;
@@ -123,8 +123,8 @@
     background:
         linear-gradient(
             135deg,
-            #ef4444,
-            #dc2626
+            var(--color-danger),
+            var(--color-danger-dark)
         );
 
     color: white;

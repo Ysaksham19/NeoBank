@@ -2,7 +2,7 @@
 
     min-height: 100vh;
 
-    background: #030d22;
+    background: var(--color-surface-3);
 
     padding: 40px;
 }
@@ -23,7 +23,7 @@
 
 .page-header p {
 
-    color: #94a3b8;
+    color: var(--color-text-secondary);
 }
 
 .product-grid {
@@ -41,8 +41,8 @@
     background:
         linear-gradient(
             180deg,
-            #07162e,
-            #051123
+            var(--color-surface-1),
+            var(--color-surface-2)
         );
 
     border: 1px solid rgba(255,255,255,.06);
@@ -83,7 +83,7 @@
 
     background: rgba(20,216,255,.15);
 
-    color: #14d8ff;
+    color: var(--color-secondary);
 
     padding: 10px 16px;
 
@@ -112,7 +112,7 @@
 
 .detail-row span {
 
-    color: #94a3b8;
+    color: var(--color-text-secondary);
 }
 
 .detail-row strong {

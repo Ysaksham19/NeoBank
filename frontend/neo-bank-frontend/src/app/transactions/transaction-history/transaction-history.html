@@ -1,96 +1,43 @@
 <div class="transaction-page">
+  <div class="page-header">
+    <h1>Transaction History</h1>
+    <p>View and filter all your transactions.</p>
+  </div>
 
-    <div class="page-header">
-
-        <h1>
-            Transaction History
-        </h1>
-
-        <p>
-            View and manage your transactions.
-        </p>
-
-    </div>
-
-    <!-- Search -->
-
-    <div class="search-box">
-
-        <input
-            type="text"
-            placeholder="Search transactions..."
-            [(ngModel)]="searchText"
-            (input)="onSearch()">
-
-    </div>
-
-    <!-- Filters -->
-
+  <div class="toolbar">
+    <input type="text" placeholder="Search by reference or remarks..." [(ngModel)]="searchText" (input)="onSearch()">
     <div class="filter-row">
-
-        <button
-            [class.active]="selectedFilter === 'ALL'"
-            (click)="applyFilter('ALL')">
-
-            All
-
-        </button>
-
-        <button
-            [class.active]="selectedFilter === 'CREDIT'"
-            (click)="applyFilter('CREDIT')">
-
-            Credit
-
-        </button>
-
-        <button
-            [class.active]="selectedFilter === 'DEBIT'"
-            (click)="applyFilter('DEBIT')">
-
-            Debit
-
-        </button>
-
+      <button [class.active]="selectedFilter === 'ALL'" (click)="applyFilter('ALL')">All</button>
+      <button [class.active]="selectedFilter === 'DEPOSIT'" (click)="applyFilter('DEPOSIT')">Deposits</button>
+      <button [class.active]="selectedFilter === 'DEBIT'" (click)="applyFilter('DEBIT')">Debits</button>
+      <button [class.active]="selectedFilter === 'TRANSFER'" (click)="applyFilter('TRANSFER')">Transfers</button>
     </div>
+  </div>
 
-    <!-- Transactions -->
-
+  @if(loading) {
+    <div class="loading">Loading transactions...</div>
+  } @else if(filteredTransactions.length === 0) {
+    <div class="empty-state">No transactions found.</div>
+  } @else {
     <div class="transaction-list">
-
-        @for(transaction of filteredTransactions; track transaction.id){
-
+      @for(tx of filteredTransactions; track tx.id) {
         <div class="transaction-card">
-
+          <div class="tx-left">
+            <div class="tx-icon" [class.credit]="tx.transactionType === 'DEPOSIT'" [class.debit]="tx.transactionType !== 'DEPOSIT'">
+              {{ tx.transactionType === 'DEPOSIT' ? '↓' : '↑' }}
+            </div>
             <div>
-
-                <h3>
-
-                    {{ transaction.description }}
-
-                </h3>
-
-                <p>
-
-                    {{ transaction.transactionDate }}
-
-                </p>
-
+              <h3>{{ tx.transactionType }}</h3>
+              <p class="ref">{{ tx.transactionRef }}</p>
+              <p class="remarks">{{ tx.remarks }}</p>
+              <p class="date">{{ tx.createdAt | date:'medium' }}</p>
             </div>
-
-            <div
-                class="amount"
-                [class.credit]="transaction.transactionType === 'CREDIT'"
-                [class.debit]="transaction.transactionType === 'DEBIT'">
-
-                ₹{{ transaction.amount }}
-
-            </div>
-
+          </div>
+          <div class="tx-amount" [class.credit]="tx.transactionType === 'DEPOSIT'" [class.debit]="tx.transactionType !== 'DEPOSIT'">
+            {{ tx.transactionType === 'DEPOSIT' ? '+' : '-' }}₹{{ tx.amount | number:'1.2-2' }}
+          </div>
         </div>
-
-        }
-
+      }
     </div>
-
+  }
 </div>

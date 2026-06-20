@@ -1,87 +1,52 @@
 <div class="my-loans-page">
+  <div class="page-header">
+    <h1>My Loans</h1>
+    <p>Track your active loan accounts and applications.</p>
+  </div>
 
-    <div class="page-header">
+  <div class="tab-bar">
+    <button [class.active]="activeTab === 'accounts'" (click)="activeTab = 'accounts'">Loan Accounts</button>
+    <button [class.active]="activeTab === 'applications'" (click)="activeTab = 'applications'">My Applications</button>
+  </div>
 
-        <h1>
-            My Loans
-        </h1>
-
-        <p>
-            Track your active loan accounts.
-        </p>
-
-    </div>
-
-    <div class="loan-grid">
-
-        @for(loan of loans; track loan.id){
-
-        <div class="loan-card">
-
-            <h3>
-
-                {{ loan.loanProductName }}
-
-            </h3>
-
-            <div class="info-row">
-
-                <span>Principal</span>
-
-                <strong>
-
-                    ₹{{ loan.principalAmount }}
-
-                </strong>
-
-            </div>
-
-            <div class="info-row">
-
-                <span>EMI</span>
-
-                <strong>
-
-                    ₹{{ loan.emiAmount }}
-
-                </strong>
-
-            </div>
-
-            <div class="info-row">
-
-                <span>Tenure</span>
-
-                <strong>
-
-                    {{ loan.tenureMonths }} Months
-
-                </strong>
-
-            </div>
-
-            <div class="info-row">
-
-                <span>Outstanding</span>
-
-                <strong>
-
-                    ₹{{ loan.outstandingAmount }}
-
-                </strong>
-
-            </div>
-
-            <div class="status">
-
-                {{ loan.status }}
-
-            </div>
-
-        </div>
-
+  @if(activeTab === 'accounts') {
+    @if(loading) {
+      <div class="loading">Loading loans...</div>
+    } @else if(loans.length === 0) {
+      <div class="empty-state">No active loan accounts.</div>
+    } @else {
+      <div class="loan-grid">
+        @for(loan of loans; track loan.id) {
+          <div class="loan-card">
+            <h3>{{ loan.loanProductName }}</h3>
+            <div class="info-row"><span>Principal</span><strong>₹{{ loan.principalAmount | number:'1.2-2' }}</strong></div>
+            <div class="info-row"><span>EMI Amount</span><strong>₹{{ loan.emiAmount | number:'1.2-2' }}</strong></div>
+            <div class="info-row"><span>Tenure</span><strong>{{ loan.tenureMonths }} Months</strong></div>
+          </div>
         }
+      </div>
+    }
+  }
 
-    </div>
-
+  @if(activeTab === 'applications') {
+    @if(applications.length === 0) {
+      <div class="empty-state">No loan applications yet.</div>
+    } @else {
+      <div class="applications-list">
+        @for(app of applications; track app.applicationId) {
+          <div class="application-card">
+            <div class="app-header">
+              <h3>{{ app.productName }}</h3>
+              <span class="status-badge" [class]="app.status.toLowerCase()">{{ app.status }}</span>
+            </div>
+            <div class="info-row"><span>Requested Amount</span><strong>₹{{ app.requestedAmount | number:'1.2-2' }}</strong></div>
+            <div class="info-row"><span>Tenure</span><strong>{{ app.requestedTenureMonths }} Months</strong></div>
+            @if(app.adminRemarks) {
+              <div class="remarks">Remarks: {{ app.adminRemarks }}</div>
+            }
+          </div>
+        }
+      </div>
+    }
+  }
 </div>

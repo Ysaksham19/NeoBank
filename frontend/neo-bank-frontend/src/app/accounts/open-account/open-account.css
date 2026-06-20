@@ -1,6 +1,6 @@
 .open-account-page {
 
-    background: #030d22;
+    background: var(--color-surface-3);
 
     min-height: 100vh;
 
@@ -18,7 +18,7 @@
 
 .page-header p {
 
-    color: #94a3b8;
+    color: var(--color-text-secondary);
 
     margin-bottom: 35px;
 }
@@ -30,8 +30,8 @@
     background:
         linear-gradient(
             180deg,
-            #07162e,
-            #051123
+            var(--color-surface-1),
+            var(--color-surface-2)
         );
 
     border: 1px solid rgba(255,255,255,.06);
@@ -58,7 +58,7 @@
 
 .field label {
 
-    color: #cbd5e1;
+    color: var(--color-text-secondary);
 }
 
 .field input,
@@ -82,7 +82,7 @@
 .field input:focus,
 .field select:focus {
 
-    border-color: #14d8ff;
+    border-color: var(--color-secondary);
 }
 
 .submit-btn {
@@ -96,8 +96,8 @@
     background:
         linear-gradient(
             135deg,
-            #14d8ff,
-            #4f46e5
+            var(--color-secondary),
+            var(--color-tertiary)
         );
 
     color: white;
@@ -115,7 +115,7 @@
 
     right: 30px;
 
-    background: #16a34a;
+    background: var(--color-success-dark);
 
     color: white;
 

@@ -1,108 +1,34 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-
+import { environment } from '../../../environments/environment';
 import { Transaction } from '../../models/transaction.model';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class TransactionService {
+  private readonly BASE_URL = `${environment.apiUrl}/transactions`;
+  constructor(private http: HttpClient) {}
 
-  private readonly BASE_URL =
-    'http://localhost:8080/api/v1/transactions';
-
-  constructor(
-    private http: HttpClient
-  ) {}
-
-  // =====================================================
-  // RECENT TRANSACTIONS
-  // =====================================================
-
-  getRecentTransactions(): Observable<Transaction[]> {
-
-    return this.http.get<Transaction[]>(
-
-      `${this.BASE_URL}/recent`
-
-    );
-
+  // FIX #3 — uses correct endpoint with accountId
+  getMiniStatement(accountId: number): Observable<Transaction[]> {
+    return this.http.get<Transaction[]>(`${this.BASE_URL}/mini-statement/${accountId}`);
   }
 
-  // =====================================================
-  // TRANSFER MONEY
-  // =====================================================
-
-  transferMoney(
-    accountId: number,
-    payload: any
-  ): Observable<any> {
-
-    return this.http.post(
-
-      `${this.BASE_URL}/transfer/${accountId}`,
-
-      payload
-
-    );
-
+  getAllTransactions(accountId: number): Observable<Transaction[]> {
+    return this.http.get<Transaction[]>(`${this.BASE_URL}/${accountId}`);
   }
 
-  // =====================================================
-  // DEPOSIT MONEY
-  // =====================================================
-
-  depositMoney(
-    accountId: number,
-    amount: number,
-    remarks: string
-  ): Observable<any> {
-
-    const params = new HttpParams()
-
-      .set('amount', amount)
-
-      .set('remarks', remarks);
-
-    return this.http.post(
-
-      `${this.BASE_URL}/deposit/${accountId}`,
-
-      {},
-
-      { params }
-
-    );
-
+  transferMoney(accountId: number, payload: any): Observable<any> {
+    return this.http.post(`${this.BASE_URL}/transfer/${accountId}`, payload);
   }
 
-  // =====================================================
-  // WITHDRAW MONEY
-  // =====================================================
-
-  withdrawMoney(
-    accountId: number,
-    amount: number,
-    remarks: string
-  ): Observable<any> {
-
-    const params = new HttpParams()
-
-      .set('amount', amount)
-
-      .set('remarks', remarks);
-
-    return this.http.post(
-
-      `${this.BASE_URL}/withdraw/${accountId}`,
-
-      {},
-
-      { params }
-
-    );
-
+  depositMoney(accountId: number, amount: number, remarks: string): Observable<any> {
+    const params = new HttpParams().set('amount', amount).set('remarks', remarks);
+    return this.http.post(`${this.BASE_URL}/deposit/${accountId}`, {}, { params });
   }
 
+  withdrawMoney(accountId: number, amount: number, remarks: string): Observable<any> {
+    const params = new HttpParams().set('amount', amount).set('remarks', remarks);
+    return this.http.post(`${this.BASE_URL}/withdraw/${accountId}`, {}, { params });
+  }
 }

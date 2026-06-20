@@ -1,44 +1,31 @@
-<div class="transactions-card">
+<div class="recent-tx-card">
+  <div class="card-header">
+    <h3>Recent Transactions</h3>
+  </div>
 
-    <div class="card-title">
-
-        Recent Transactions
-
+  @if(loading) {
+    <div class="loading-rows">
+      <div class="skeleton-row" *ngFor="let i of [1,2,3,4,5]"></div>
     </div>
-
-    <table>
-
-        <tr
-          *ngFor="let tx of transactions">
-
-            <td class="description">
-
-                {{ tx.description }}
-
-            </td>
-
-            <td>
-
-                {{ tx.transactionDate | date:'dd MMM' }}
-
-            </td>
-
-            <td
-              [class.credit]="tx.transactionType === 'CREDIT'"
-              [class.debit]="tx.transactionType === 'DEBIT'">
-
-                ₹{{ tx.amount | number:'1.2-2' }}
-
-            </td>
-
-            <td>
-
-                {{ tx.status }}
-
-            </td>
-
-        </tr>
-
-    </table>
-
+  } @else if(transactions.length === 0) {
+    <div class="empty-state">No transactions yet.</div>
+  } @else {
+    @for(tx of transactions; track tx.id) {
+      <div class="tx-row">
+        <div class="tx-icon" [class.credit]="tx.transactionType === 'DEPOSIT' || tx.transactionType === 'CREDIT'"
+             [class.debit]="tx.transactionType === 'DEBIT' || tx.transactionType === 'TRANSFER'">
+          {{ tx.transactionType === 'DEPOSIT' || tx.transactionType === 'CREDIT' ? '↓' : '↑' }}
+        </div>
+        <div class="tx-info">
+          <span class="tx-type">{{ tx.transactionType }}</span>
+          <span class="tx-ref">{{ tx.transactionRef }}</span>
+        </div>
+        <div class="tx-amount"
+             [class.credit]="tx.transactionType === 'DEPOSIT' || tx.transactionType === 'CREDIT'"
+             [class.debit]="tx.transactionType === 'DEBIT' || tx.transactionType === 'TRANSFER'">
+          {{ (tx.transactionType === 'DEPOSIT' || tx.transactionType === 'CREDIT') ? '+' : '-' }}₹{{ tx.amount | number:'1.2-2' }}
+        </div>
+      </div>
+    }
+  }
 </div>

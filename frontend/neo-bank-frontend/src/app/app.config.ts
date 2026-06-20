@@ -1,30 +1,18 @@
 import {
-ApplicationConfig,
-provideBrowserGlobalErrorListeners,
-provideZoneChangeDetection
+  ApplicationConfig,
+  provideBrowserGlobalErrorListeners,
+  provideZoneChangeDetection
 } from '@angular/core';
-
-import {provideRouter, withInMemoryScrolling} from '@angular/router';
-
-import {
-provideHttpClient,
-withInterceptors} from '@angular/common/http';
-
-import { routes }from './app.routes';
-
+import { provideRouter, withInMemoryScrolling } from '@angular/router';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { routes } from './app.routes';
 import { jwtInterceptor } from './core/interceptors/jwt-interceptor';
+import { errorInterceptor } from './core/interceptors/error-interceptor';
 
 export const appConfig: ApplicationConfig = {
-
   providers: [
-
     provideBrowserGlobalErrorListeners(),
-
-    provideZoneChangeDetection({
-
-      eventCoalescing: true
-    }),
-
+    provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(
       routes,
       withInMemoryScrolling({
@@ -32,13 +20,8 @@ export const appConfig: ApplicationConfig = {
         scrollPositionRestoration: 'enabled'
       })
     ),
-
     provideHttpClient(
-
-      withInterceptors([
-
-        jwtInterceptor
-      ])
+      withInterceptors([jwtInterceptor, errorInterceptor])
     )
   ]
 };

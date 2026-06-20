@@ -8,7 +8,7 @@ import { Account } from '../../models/account.model';
   selector: 'app-account-details',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './account-details.html',
+  templateUrl:'./account-details.html',
   styleUrls: ['./account-details.css']
 })
 export class AccountDetails implements OnInit {

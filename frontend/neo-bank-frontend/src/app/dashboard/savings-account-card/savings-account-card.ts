@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-import { AccountService } from '../../core/services/account';
+import { AccountStateService } from '../../core/services/account-state';
 import { Account } from '../../models/account.model';
 
 @Component({
@@ -12,40 +11,25 @@ import { Account } from '../../models/account.model';
   styleUrls: ['./savings-account-card.css']
 })
 export class SavingsAccountCard implements OnInit {
-
   savingsAccount?: Account;
+  loading = true;
 
-  constructor(
-    private accountService: AccountService
-  ) {}
+  constructor(private accountState: AccountStateService) {}
 
   ngOnInit(): void {
-
-    this.accountService
-      .getMyAccounts()
-      .subscribe({
-
-        next: (accounts) => {
-
-          this.savingsAccount =
-            accounts.find(
-              account =>
-                account.accountType === 'Savings Account'
-            );
-
-        },
-
-        error: (error) => {
-
-          console.error(
-            'Failed to load savings account',
-            error
-          );
-
-        }
-
+    if (this.accountState.snapshot.length > 0) {
+      this.setAccount(this.accountState.snapshot);
+    } else {
+      this.accountState.loadAccounts();
+      this.accountState.accounts$.subscribe(accounts => {
+        if (accounts.length > 0) this.setAccount(accounts);
       });
-
+    }
   }
 
+  private setAccount(accounts: Account[]): void {
+    // FIX #6 — backend returns 'SAVINGS', not 'Savings Account'
+    this.savingsAccount = accounts.find(a => a.accountType === 'SAVINGS');
+    this.loading = false;
+  }
 }

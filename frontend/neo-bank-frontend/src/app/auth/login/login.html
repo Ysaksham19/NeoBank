@@ -1,216 +1,243 @@
-<section class="login-page">
+<div class="login-shell">
+  <section class="login-page">
 
-  <!-- LEFT PANEL -->
+    <!-- LEFT PANEL -->
+    <div class="login-left">
+      <div class="hero-content">
+        <h1>
+          Banking that <br />
+          moves with <span>you</span>
+        </h1>
 
-  <div class="login-left">
+        <div class="hero-line"></div>
 
-    <div class="security-image">
-        <img src="/images/LeftSide.png" alt="LeftSide Image">
+        <p>
+          Experience a smarter, safer and
+          better way to bank with NeoBank360.
+        </p>
+
+        <div class="left-features">
+          <div class="left-feature">
+            <div class="feature-circle">🛡️</div>
+            <div>
+              <h4>Safe & Secure</h4>
+              <span>Your security is our top priority.</span>
+            </div>
+          </div>
+
+          <div class="left-feature">
+            <div class="feature-circle">⚡</div>
+            <div>
+              <h4>Quick & Easy</h4>
+              <span>Bank anytime, anywhere in just a few clicks.</span>
+            </div>
+          </div>
+
+          <div class="left-feature">
+            <div class="feature-circle">🎁</div>
+            <div>
+              <h4>Exclusive Benefits</h4>
+              <span>Unlock exciting offers, rewards and more.</span>
+            </div>
+          </div>
+
+          <div class="left-feature">
+            <div class="feature-circle">🎧</div>
+            <div>
+              <h4>24x7 Support</h4>
+              <span>We are here to help you anytime, anywhere.</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="hero-content">
+    <!-- RIGHT PANEL -->
+    <div class="login-right">
+      <div class="login-card">
 
-      <h1>
-        Bank Smarter,<br>
-        <span>Live Better</span>
-      </h1>
+        <div class="top-register-link">
+          New to NeoBank360?
+          <a routerLink="/register">Open an Account</a>
+        </div>
 
-      <p>
-        Experience secure banking built for the future.
-      </p>
+        <h2>Welcome Back!</h2>
+        <p class="subtitle">Login to access your NeoBank360 account</p>
 
+        @if (errorMessage()) {
+          <div class="alert alert-danger" role="alert">
+            <span>⚠️</span>
+            <span>{{ errorMessage() }}</span>
+          </div>
+        }
+
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+
+          <!-- USERNAME -->
+          <div class="input-group">
+            <label for="email">Username / Customer ID</label>
+
+            <div class="input-icon-wrapper">
+              <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+
+              <input
+                id="email"
+                type="email"
+                formControlName="email"
+                placeholder="Enter your Username or Customer ID"
+                autocomplete="email"
+                inputmode="email"
+                aria-label="Username or Customer ID"
+              />
+            </div>
+
+            @if (email?.touched && email?.errors?.['required']) {
+              <small class="field-error">Email is required</small>
+            }
+
+            @if (email?.touched && email?.errors?.['email']) {
+              <small class="field-error">Enter a valid email address</small>
+            }
+          </div>
+
+          <!-- PASSWORD -->
+          <div class="input-group password-group">
+            <label for="password">Password</label>
+
+            <div class="input-icon-wrapper password-icon-wrapper">
+              <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="5" y="11" width="14" height="9" rx="2"></rect>
+                <path d="M8 11V7a4 4 0 0 1 8 0v4"></path>
+              </svg>
+
+              <div class="password-wrapper">
+                <input
+                  id="password"
+                  [type]="hidePassword() ? 'password' : 'text'"
+                  formControlName="password"
+                  placeholder="Enter your password"
+                  autocomplete="current-password"
+                  aria-label="Password"
+                />
+
+                <button
+                  type="button"
+                  class="password-toggle-icon"
+                  (click)="togglePassword()"
+                  [attr.aria-label]="hidePassword() ? 'Show password' : 'Hide password'"
+                >
+                  @if (hidePassword()) {
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                  } @else {
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                      <line x1="3" y1="3" x2="21" y2="21"></line>
+                    </svg>
+                  }
+                </button>
+              </div>
+            </div>
+
+            @if (password?.touched && password?.errors?.['required']) {
+              <small class="field-error">Password is required</small>
+            }
+
+            @if (password?.touched && password?.errors?.['minlength']) {
+              <small class="field-error">Password must contain at least 6 characters</small>
+            }
+          </div>
+
+          <!-- OPTIONS -->
+          <div class="login-options">
+            <label class="remember-label">
+              <input type="checkbox" />
+              Remember Me
+            </label>
+
+            <a href="#" class="forgot-link">Forgot Password?</a>
+          </div>
+
+          <!-- LOGIN BUTTON -->
+          <div class="form-actions">
+            <button type="submit" class="login-btn" [disabled]="loading()">
+              @if (loading()) {
+                <span class="btn-spinner" aria-hidden="true"></span>
+              }
+              <span>{{ loading() ? 'Logging in...' : 'Login' }}</span>
+            </button>
+          </div>
+        </form>
+
+        <!-- SECURITY FOOTER -->
+        <div class="security-footer-box">
+          <div class="security-footer-left">
+            <div class="security-footer-icon">🛡️</div>
+            <div>
+              <h5>Your information is 100% secure with us</h5>
+              <span>We use bank-grade security to protect your data.</span>
+            </div>
+          </div>
+
+          <div class="security-footer-right">
+            <span>Need Help?</span>
+            <a href="tel:+18001234567">1800 123 4567</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BOTTOM TRUST STRIP -->
+  <div class="bottom-trust-strip">
+    <div class="trust-item">
+      <div class="trust-icon">👥</div>
+      <div>
+        <h5>10M+ Happy Customers</h5>
+        <span>Trusted by millions of customers across India.</span>
+      </div>
     </div>
 
-    <div class="feature-strip">
-
-      <div class="feature-item">
-        <div class="feature-icon">🛡</div>
-        <div>
-          <h4>Bank with Confidence</h4>
-          <span>Your security is our top priority</span>
-        </div>
+    <div class="trust-item">
+      <div class="trust-icon">📍</div>
+      <div>
+        <h5>5000+ Branches</h5>
+        <span>Across India to serve you better.</span>
       </div>
-
-      <div class="feature-item">
-        <div class="feature-icon">🔒</div>
-        <div>
-          <h4>Secure Transactions</h4>
-          <span>Advanced encryption always</span>
-        </div>
-      </div>
-
-      <div class="feature-item">
-        <div class="feature-icon">⚡</div>
-        <div>
-          <h4>Fast & Reliable</h4>
-          <span>Bank anytime, anywhere</span>
-        </div>
-      </div>
-
-      <div class="feature-item">
-        <div class="feature-icon">🎧</div>
-        <div>
-          <h4>24/7 Support</h4>
-          <span>We're here to help</span>
-        </div>
-      </div>
-
     </div>
 
+    <div class="trust-item">
+      <div class="trust-icon">🛡️</div>
+      <div>
+        <h5>100% Secure</h5>
+        <span>Your security is our top priority.</span>
+      </div>
+    </div>
+
+    <div class="trust-item">
+      <div class="trust-icon">🎧</div>
+      <div>
+        <h5>24x7 Support</h5>
+        <span>We are here to help you anytime, anywhere.</span>
+      </div>
+    </div>
+
+    <div class="trust-item">
+      <div class="trust-icon">🏦</div>
+      <div>
+        <h5>RBI Regulated</h5>
+        <span>Your money is safe with us.</span>
+      </div>
+    </div>
   </div>
-
-  <!-- RIGHT PANEL -->
-
-  <div class="login-right">
-
-    <div class="login-card">
-
-      <div class="brand" routerLink="/" style="cursor: pointer;">
-        NeoBank
-      </div>
-
-      <h2>Welcome Back</h2>
-
-      <p class="subtitle">
-        Login to access your NeoBank account
-      </p>
-
-      
-  <form
-    [formGroup]="loginForm"
-    (ngSubmit)="onSubmit()">
-
-    <!-- BACKEND ERROR -->
-
-    @if (errorMessage()) {
-
-      <div class="login-error">
-
-        {{ errorMessage() }}
-
-      </div>
-
-    }
-
-    <!-- EMAIL -->
-
-    <div class="input-group">
-
-      <label>Email</label>
-
-      <input
-        type="email"
-        formControlName="email"
-        placeholder="Enter your email">
-
-      @if (email?.touched && email?.errors?.['required']) {
-
-        <small class="field-error">
-          Email is required
-        </small>
-
-      }
-
-      @if (email?.touched && email?.errors?.['email']) {
-
-        <small class="field-error">
-          Enter a valid email address
-        </small>
-
-      }
-
-    </div>
-
-    <!-- PASSWORD -->
-
-    <div class="input-group">
-
-      <label>Password</label>
-
-      <div class="password-wrapper">
-
-        <input
-          [type]="hidePassword() ? 'password' : 'text'"
-          formControlName="password"
-          placeholder="Enter your password">
-
-        <button
-          type="button"
-          class="eye-btn"
-          (click)="togglePassword()">
-
-          {{ hidePassword() ? '👁️' : '🙈' }}
-
-        </button>
-
-      </div>
-
-      @if (password?.touched && password?.errors?.['required']) {
-
-        <small class="field-error">
-          Password is required
-        </small>
-
-      }
-
-      @if (password?.touched && password?.errors?.['minlength']) {
-
-        <small class="field-error">
-          Password must contain at least 6 characters
-        </small>
-
-      }
-
-    </div>
-
-    <!-- OPTIONS -->
-
-    <div class="options">
-
-      <label>
-
-        <input type="checkbox">
-
-        Remember Me
-
-      </label>
-
-      <a href="#">
-        Forgot Password?
-      </a>
-
-    </div>
-
-    <!-- LOGIN BUTTON -->
-
-    <button
-      type="submit"
-      class="login-btn"
-      [disabled]="loading()">
-
-      {{ loading() ? 'Logging in...' : 'Login' }}
-
-    </button>
-
-  </form>
-
-      <div class="divider">
-        <span>OR</span>
-      </div>
-
-      <button class="biometric-btn">
-        Login with Biometric
-      </button>
-
-      <div class="footer-text">
-        Don't have an account?
-        <a routerLink="/register">
-          Create Account
-        </a>
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
+</div>

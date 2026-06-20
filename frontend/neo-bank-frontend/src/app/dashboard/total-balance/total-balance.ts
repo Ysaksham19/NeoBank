@@ -10,37 +10,20 @@ import { AccountService } from '../../core/services/account';
   styleUrls: ['./total-balance.css']
 })
 export class TotalBalance implements OnInit {
-
   totalBalance = 0;
   monthlyGrowth = 0;
+  loading = true;
 
-  constructor(
-    private accountService: AccountService
-  ) {}
+  constructor(private accountService: AccountService) {}
 
   ngOnInit(): void {
-    this.loadBalance();
+    this.accountService.getTotalBalance().subscribe({
+      next: (res: any) => {
+        this.totalBalance = res.totalBalance;
+        this.monthlyGrowth = res.monthlyGrowth;
+        this.loading = false;
+      },
+      error: () => { this.loading = false; }
+    });
   }
-
-  loadBalance(): void {
-
-    this.accountService
-      .getTotalBalance()
-      .subscribe({
-
-        next: (response: any) => {
-
-          this.totalBalance = response.totalBalance;
-          this.monthlyGrowth = response.monthlyGrowth;
-
-        },
-
-        error: (error) => {
-          console.error('Failed to load balance', error);
-        }
-
-      });
-
-  }
-
 }

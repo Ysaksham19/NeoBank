@@ -2,7 +2,7 @@
 
     min-height: 100vh;
 
-    background: #030d22;
+    background: var(--color-surface-3);
 
     padding: 40px;
 }
@@ -23,7 +23,7 @@
 
 .page-header p {
 
-    color: #94a3b8;
+    color: var(--color-text-secondary);
 }
 
 .budget-card {
@@ -33,8 +33,8 @@
     background:
         linear-gradient(
             180deg,
-            #07162e,
-            #051123
+            var(--color-surface-1),
+            var(--color-surface-2)
         );
 
     border: 1px solid rgba(255,255,255,.06);
@@ -61,7 +61,7 @@
 
 .field label {
 
-    color: #cbd5e1;
+    color: var(--color-text-secondary);
 
     font-size: 14px;
 }
@@ -87,7 +87,7 @@
 .field input:focus,
 .field select:focus {
 
-    border-color: #14d8ff;
+    border-color: var(--color-secondary);
 }
 
 .create-btn {
@@ -109,8 +109,8 @@
     background:
         linear-gradient(
             135deg,
-            #14d8ff,
-            #4f46e5
+            var(--color-secondary),
+            var(--color-tertiary)
         );
 }
 
@@ -118,7 +118,7 @@
 
     background: rgba(239,68,68,.15);
 
-    color: #ffb4b4;
+    color: var(--color-danger-light);
 
     padding: 14px;
 
@@ -135,7 +135,7 @@
 
     bottom: 30px;
 
-    background: #22c55e;
+    background: var(--color-success);
 
     color: white;
 

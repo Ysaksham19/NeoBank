@@ -1,3 +1,87 @@
 /* You can add global styles to this file, and also import other style files */
+/* =========================================================
+   DESIGN SYSTEM TOKENS
+   Primary   -> main brand / primary actions (buttons, links, focus)
+   Secondary -> accents, highlights, charts, hover glow
+   Tertiary  -> supporting accents, secondary CTAs, badges
+   Surfaces  -> page/card backgrounds (dark navy theme)
+   Semantic  -> success / danger / warning states
+   Spacing & radius scale kept consistent for repetition + alignment
+   ========================================================= */
+
+   
+:root {
+  /* Primary */
+  --color-primary: #0b5fff;
+  --color-primary-hover: #2f7bff;
+  --color-primary-light: #eef4ff;
+
+  /* Secondary */
+  --color-secondary: #14d8ff;
+  --color-secondary-hover: #66b8ff;
+  --color-secondary-light: #f0f6ff;
+
+  /* Tertiary */
+  --color-tertiary: #4f46e5;
+  --color-tertiary-hover: #7cc7ff;
+  --color-tertiary-light: #e6edf8;
+
+  /* Surfaces (dark navy theme) */
+  --color-surface-1: #07162e;
+  --color-surface-2: #051123;
+  --color-surface-3: #030d22;
+  --color-surface-light: #ffffff;
+  --color-surface-light-alt: #f7f9ff;
+
+  /* Borders / dividers */
+  --color-border: #1e2d4d;
+  --color-border-light: #e4e9f2;
+
+  /* Text */
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted: #8896ab;
+  --color-text-on-light: #101828;
+  --color-text-on-light-muted: #667085;
+
+  /* Semantic */
+  --color-success: #22c55e;
+  --color-success-dark: #16a34a;
+  --color-danger: #ef4444;
+  --color-danger-dark: #dc2626;
+  --color-danger-light: #fff1f2;
+
+  /* Spacing scale (4px base) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* Radius scale */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-pill: 999px;
+
+  /* Shadows (soft elevation for proximity grouping) */
+  --shadow-sm: 0 1px 2px rgba(3, 13, 34, 0.06);
+  --shadow-md: 0 4px 12px rgba(3, 13, 34, 0.12);
+  --shadow-lg: 0 12px 32px rgba(3, 13, 34, 0.18);
+  --shadow-glow: 0 0 24px rgba(20, 216, 255, 0.25);
+
+  /* Typography scale */
+  --font-xs: 12px;
+  --font-sm: 14px;
+  --font-base: 16px;
+  --font-lg: 18px;
+  --font-xl: 22px;
+  --font-2xl: 28px;
+  --font-3xl: 36px;
+}
 
 @import 'tailwindcss';

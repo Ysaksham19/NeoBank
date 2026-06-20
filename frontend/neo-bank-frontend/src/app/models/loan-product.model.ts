@@ -1,15 +1,10 @@
 export interface LoanProduct {
-
   id: number;
-
   productName: string;
-
-  minimumAmount: number;
-
-  maximumAmount: number;
-
-  interestRate: number;
-
-  maximumTenureMonths: number;
-
+  loanType: string;
+  minAmount: number;
+  maxAmount: number;
+  annualInterestRate: number;
+  allowedTenures: string;
+  description: string;
 }

@@ -1,1 +1,74 @@
-<p>transactions-management works!</p>
+<div class="admin-page">
+  <div class="page-header">
+    <div>
+      <h1>Transactions Management</h1>
+      <p>Monitor all user transactions across the platform.</p>
+    </div>
+
+    <button class="refresh-btn" type="button" (click)="loadTransactions()">
+      Refresh
+    </button>
+  </div>
+
+  @if(loading) {
+    <div class="state-card">Loading transactions...</div>
+  } @else if(errorMessage) {
+    <div class="state-card error">
+      <h3>Unable to load transactions</h3>
+      <p>{{ errorMessage }}</p>
+    </div>
+  } @else if(transactions.length === 0) {
+    <div class="state-card">No transactions found.</div>
+  } @else {
+    <div class="table-card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Ref No</th>
+              <th>Customer No</th>
+              <th>Customer Name</th>
+              <th>Sender A/C</th>
+              <th>Receiver A/C</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th>Amount</th>
+              <th>Available Balance</th>
+              <th>Ledger Balance</th>
+              <th>Remarks</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for(txn of transactions; track txn.id) {
+              <tr>
+                <td>{{ txn.transactionRef }}</td>
+                <td>{{ txn.customerNo || '-' }}</td>
+                <td>{{ txn.customerName || '-' }}</td>
+                <td>{{ txn.senderAccountNo || '-' }}</td>
+                <td>{{ txn.receiverAccountNo || '-' }}</td>
+                <td>
+                  <span class="pill type">{{ txn.transactionType }}</span>
+                </td>
+                <td>
+                  <span
+                    class="pill"
+                    [class.success]="txn.transactionStatus === 'SUCCESS'"
+                    [class.failed]="txn.transactionStatus === 'FAILED'"
+                    [class.pending]="txn.transactionStatus === 'PENDING'">
+                    {{ txn.transactionStatus }}
+                  </span>
+                </td>
+                <td>₹ {{ txn.amount }}</td>
+                <td>₹ {{ txn.availableBalanceAfter }}</td>
+                <td>₹ {{ txn.ledgerBalanceAfter }}</td>
+                <td>{{ txn.remarks || '-' }}</td>
+                <td>{{ txn.createdAt | date:'medium' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</div>

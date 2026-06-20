@@ -1,6 +1,6 @@
 .statement-page {
 
-    background: #030d22;
+    background: var(--color-surface-3);
 
     min-height: 100vh;
 
@@ -18,7 +18,7 @@
 
 .page-header p {
 
-    color: #94a3b8;
+    color: var(--color-text-secondary);
 
     margin-bottom: 30px;
 }
@@ -28,8 +28,8 @@
     background:
         linear-gradient(
             180deg,
-            #07162e,
-            #051123
+            var(--color-surface-1),
+            var(--color-surface-2)
         );
 
     border: 1px solid rgba(255,255,255,.06);
@@ -66,7 +66,7 @@
 
 .left-section span {
 
-    color: #94a3b8;
+    color: var(--color-text-secondary);
 
     font-size: 14px;
 }
@@ -80,10 +80,10 @@
 
 .credit {
 
-    color: #22c55e;
+    color: var(--color-success);
 }
 
 .debit {
 
-    color: #ef4444;
+    color: var(--color-danger);
 }

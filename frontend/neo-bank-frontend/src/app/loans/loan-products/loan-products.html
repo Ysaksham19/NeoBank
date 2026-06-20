@@ -28,7 +28,7 @@
 
                 <div class="rate">
 
-                    {{ product.interestRate }}%
+                    {{ product.annualInterestRate }}%
 
                 </div>
 
@@ -44,7 +44,7 @@
 
                     <strong>
 
-                        ₹{{ product.minimumAmount | number:'1.0-0' }}
+                        ₹{{ product.minAmount | number:'1.0-0' }}
 
                     </strong>
 
@@ -58,7 +58,7 @@
 
                     <strong>
 
-                        ₹{{ product.maximumAmount | number:'1.0-0' }}
+                        ₹{{ product.maxAmount | number:'1.0-0' }}
 
                     </strong>
 
@@ -72,7 +72,7 @@
 
                     <strong>
 
-                        {{ product.maximumTenureMonths }} Months
+                        {{ product.allowedTenures }} Months
 
                     </strong>
 

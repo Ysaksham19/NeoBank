@@ -1,44 +1,11 @@
 import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
+import { StorageService } from '../services/storage';
 
-import {
-  CanActivateFn,
-  Router
-} from '@angular/router';
-
-export const AuthGuard: CanActivateFn = (
-
-  route,
-
-  state
-
-) => {
-
-  const router =
-    inject(Router);
-
-  // =========================================================
-  // GET TOKEN
-  // =========================================================
-
-  const token =
-    localStorage.getItem('token');
-
-  // =========================================================
-  // CHECK AUTH
-  // =========================================================
-
-  if (token) {
-
-    return true;
-  }
-
-  // =========================================================
-  // REDIRECT TO LOGIN
-  // =========================================================
-
-  router.navigate([
-    '/login'
-  ]);
-
+export const AuthGuard: CanActivateFn = () => {
+  const storage = inject(StorageService);
+  const router  = inject(Router);
+  if (storage.getToken()) return true;
+  router.navigate(['/login']);
   return false;
 };

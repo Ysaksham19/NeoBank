@@ -1,103 +1,45 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
+import { environment } from '../../../environments/environment';
 import { LoanProduct } from '../../models/loan-product.model';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class LoanService {
-
-  private readonly BASE_URL =
-    'http://localhost:8080/api/loans';
-
-  constructor(
-    private http: HttpClient
-  ) {}
-
-  // Loan Products
+  private readonly BASE_URL = `${environment.apiUrl}/loans`;
+  constructor(private http: HttpClient) {}
 
   getLoanProducts(): Observable<LoanProduct[]> {
-
-    return this.http.get<LoanProduct[]>(
-
-      `${this.BASE_URL}/products`
-
-    );
-
+    return this.http.get<LoanProduct[]>(`${this.BASE_URL}/products`);
   }
 
-  applyLoan(payload: any) {
-
-    return this.http.post(
-
-      `${this.BASE_URL}/apply`,
-
-      payload
-
-    );
-
+  applyLoan(payload: any): Observable<any> {
+    return this.http.post(`${this.BASE_URL}/apply`, payload);
   }
 
-  getMyLoanAccounts() {
-
-    return this.http.get<any[]>(
-
-      `${this.BASE_URL}/my-accounts`
-
-    );
-
+  // FIX #10 — added missing method
+  getMyApplications(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.BASE_URL}/my-applications`);
   }
 
-  getRepaymentSchedule(loanAccountId: number) {
-
-    return this.http.get<any[]>(
-
-      `${this.BASE_URL}/${loanAccountId}/repayments`
-
-    );
-
+  getMyLoanAccounts(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.BASE_URL}/my-accounts`);
   }
 
-  markRepaymentAsPaid(
-    loanAccountId: number,
-    repaymentId: number
-  ) {
-
-    return this.http.patch(
-
-      `${this.BASE_URL}/${loanAccountId}/repayments/${repaymentId}/pay`,
-
-      {}
-
-    );
-
+  getRepaymentSchedule(loanAccountId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.BASE_URL}/${loanAccountId}/repayments`);
   }
 
-  getAllApplications() {
-
-    return this.http.get<any[]>(
-
-      `${this.BASE_URL}/admin/applications`
-
-    );
-
+  markRepaymentAsPaid(loanAccountId: number, repaymentId: number): Observable<any> {
+    return this.http.patch(`${this.BASE_URL}/${loanAccountId}/repayments/${repaymentId}/pay`, {});
   }
 
-  decideLoan(
-    applicationId: number,
-    payload: any
-  ) {
-
-    return this.http.put(
-
-      `${this.BASE_URL}/${applicationId}/decision`,
-
-      payload
-
-    );
-
+  getAllApplications(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.BASE_URL}/admin/applications`);
   }
 
+  // FIX #5 — PUT not POST
+  decideLoan(applicationId: number, payload: any): Observable<any> {
+    return this.http.put(`${this.BASE_URL}/${applicationId}/decision`, payload);
+  }
 }
