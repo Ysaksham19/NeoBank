@@ -1,92 +1,313 @@
 <div class="budget-page">
 
-    <div class="page-header">
+  <!-- Header -->
+  <div class="page-header">
 
-        <h1>
-            Create Budget
-        </h1>
+    <a routerLink="/budgets" class="back-btn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2.5">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+    </a>
 
-        <p>
-            Set monthly spending limits by category.
-        </p>
+    <div>
+      <h1>Create Budget</h1>
+      <p>
+        Set a monthly spending limit for a category and take control of your finances.
+      </p>
+    </div>
+
+  </div>
+
+  <div class="budget-layout">
+
+    <!-- LEFT PANEL -->
+    <div class="overview-panel">
+
+      <!-- Budget Overview -->
+      <div class="overview-card">
+
+        <div class="section-title">
+          <div class="icon-circle">📈</div>
+          <span>Budget Overview</span>
+        </div>
+
+        <div class="month-card">
+
+          <div class="month-left">
+            <small>This Month Overview</small>
+            <h2>₹25,000</h2>
+            <span>Total Budget Limit</span>
+          </div>
+
+          <div class="progress-circle">
+            <div class="inner-circle">
+              <strong>75%</strong>
+              <span>Used</span>
+            </div>
+          </div>
+
+          <div class="month-right">
+
+            <div>
+              <strong>₹18,750</strong>
+              <small>Used Amount</small>
+            </div>
+
+            <div>
+              <strong>₹6,250</strong>
+              <small>Remaining</small>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Top Categories -->
+      <div class="category-card">
+
+        <h3>Top Categories</h3>
+
+        <div class="category-item">
+
+          <div class="category-info">
+            <div class="cat-icon groceries">🛒</div>
+            <span>Groceries</span>
+          </div>
+
+          <div class="category-progress">
+            <div class="progress teal" style="width:75%"></div>
+          </div>
+
+          <span>75%</span>
+
+        </div>
+
+        <div class="category-item">
+
+          <div class="category-info">
+            <div class="cat-icon utility">⚡</div>
+            <span>Utilities</span>
+          </div>
+
+          <div class="category-progress">
+            <div class="progress yellow" style="width:64%"></div>
+          </div>
+
+          <span>64%</span>
+
+        </div>
+
+        <div class="category-item">
+
+          <div class="category-info">
+            <div class="cat-icon rent">🏠</div>
+            <span>Rent</span>
+          </div>
+
+          <div class="category-progress">
+            <div class="progress purple" style="width:80%"></div>
+          </div>
+
+          <span>80%</span>
+
+        </div>
+
+        <div class="category-item">
+
+          <div class="category-info">
+            <div class="cat-icon entertainment">🎬</div>
+            <span>Entertainment</span>
+          </div>
+
+          <div class="category-progress">
+            <div class="progress red" style="width:0%"></div>
+          </div>
+
+          <span>0%</span>
+
+        </div>
+
+      </div>
+
+      <!-- Smart Tip -->
+      <div class="smart-tip">
+
+        <div class="tip-left">
+
+          <div class="tip-icon">
+            💡
+          </div>
+
+          <div>
+
+            <h4>Smart Tip</h4>
+
+            <p>
+              Setting budgets helps you spend smarter and save more each month.
+            </p>
+
+          </div>
+
+        </div>
+
+        <div class="wallet-image">
+          💰
+        </div>
+
+      </div>
 
     </div>
 
-    <div class="budget-card">
+    <!-- RIGHT PANEL -->
+    <div class="budget-form">
 
-        <div class="field">
+      <div class="form-header">
 
-            <label>Category</label>
+        <div class="icon-circle form-icon">
+          📄
+        </div>
 
-            <select [(ngModel)]="budgetRequest.category">
+        <h2>Budget Details</h2>
 
-                <option value="">
-                    Select Category
-                </option>
+      </div>
 
-                @for(category of categories; track category){
+      <!-- Category -->
+      <div class="field">
 
-                <option [value]="category">
+        <label>
+          Category <span>*</span>
+        </label>
 
-                    {{ category }}
+        <div class="category-grid">
 
-                </option>
+          @for (category of categories; track category) {
 
-                }
+          <div
+            class="category-box"
+            [class.active]="budgetRequest.category === category"
+            (click)="budgetRequest.category = category">
 
-            </select>
+            <div class="category-content">
+
+              <div class="category-icon">
+
+                {{
+                category === 'GROCERIES' ? '🛒' :
+                category === 'UTILITIES' ? '⚡' :
+                category === 'RENT' ? '🏠' :
+                category === 'ENTERTAINMENT' ? '🎬' :
+                category === 'TRANSFER' ? '↔️' :
+                '📦'
+                }}
+
+              </div>
+
+              <span class="category-name">
+                {{ category }}
+              </span>
+
+            </div>
+
+          </div>
+
+          }
 
         </div>
 
-        <div class="field">
+      </div>
 
-            <label>Budget Month</label>
+      <!-- Month -->
+      <div class="field">
 
-            <input
-                type="month"
-                [(ngModel)]="budgetRequest.budgetMonth">
+        <label>
+          Budget Month <span>*</span>
+        </label>
+
+        <input
+          type="month"
+          [(ngModel)]="budgetRequest.budgetMonth">
+
+      </div>
+
+      <!-- Amount -->
+      <div class="field">
+
+        <label>
+          Limit Amount <span>*</span>
+        </label>
+
+        <div class="amount-input">
+
+          <span class="currency-symbol">
+            ₹
+          </span>
+
+          <input
+            type="number"
+            [(ngModel)]="budgetRequest.limitAmount"
+            placeholder="Enter amount">
 
         </div>
 
-        <div class="field">
+        <small class="field-note">
+          Enter the maximum amount you want to spend.
+        </small>
 
-            <label>Limit Amount</label>
+      </div>
 
-            <input
-                type="number"
-                [(ngModel)]="budgetRequest.limitAmount"
-                placeholder="₹ Enter limit amount">
+      <!-- Info Box -->
+      <div class="info-box">
+
+        <div class="check-icon">
+          ✓
+        </div>
+
+        <div>
+
+          <strong>
+            Transactions in this category will be tracked
+          </strong>
+
+          <p>
+            You will be notified when you reach 80% and 100% of your budget limit.
+          </p>
 
         </div>
 
-        @if(errorMessage){
+      </div>
 
-        <div class="error-message">
+      <!-- Error -->
+      @if(errorMessage){
 
-            {{ errorMessage }}
+      <div class="error-box">
+        {{ errorMessage }}
+      </div>
 
-        </div>
+      }
+
+      <!-- Button -->
+      <button
+        class="create-btn"
+        [disabled]="isSubmitting"
+        (click)="createBudget()">
+
+        @if(isSubmitting){
+
+          Creating...
+
+        } @else {
+
+          + Create Budget
 
         }
 
-        <button
-            class="create-btn"
-            (click)="createBudget()">
-
-            Create Budget
-
-        </button>
+      </button>
 
     </div>
 
-</div>
-
-@if(showToast){
-
-<div class="success-toast">
-
-    ✅ Budget created successfully
+  </div>
 
 </div>
-
-}

@@ -1,16 +1,23 @@
 import { Component } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { Navbar } from './shared/components/navbar/navbar';
+import { Header } from './shared/components/header/header'; 
+import { AuthService } from './core/services/auth';    // ← add this
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet,Navbar],
+  imports: [RouterOutlet,Navbar,Header],
   templateUrl: './app.html'
 })
 export class App{
 
-  constructor(public router: Router) {}
+    constructor(public router: Router, private authService: AuthService) {}  // ← inject AuthService
+
+  isLoggedIn(): boolean {
+    return this.authService.isLoggedIn();   // ← add this method
+  }
+
 
   showNavbar(): boolean {
 
@@ -18,6 +25,7 @@ export class App{
         this.router.url.startsWith('/login') ||
         this.router.url.startsWith('/register') ||
         this.router.url.startsWith('/forgot-password') ||
+        this.router.url.startsWith('/admin')  ||
         this.router.url.startsWith('/dashboard') ||
         this.router.url.startsWith('/accounts') ||
         this.router.url.startsWith('/transactions') ||

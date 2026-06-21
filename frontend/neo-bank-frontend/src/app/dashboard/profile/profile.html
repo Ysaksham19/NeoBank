@@ -1,43 +1,164 @@
 <div class="profile-page">
-  <div class="profile-card">
-    <div class="profile-header">
-      <img src="images/profile.png" alt="Profile Image">
-      <div>
-        <h1>{{ user?.fullName }}</h1>
-        <p>NeoBank Customer</p>
-      </div>
-    </div>
 
-    <div class="details-grid">
-      <div class="detail-box">
-        <label>Email</label>
-        <span>{{ user?.email }}</span>
-      </div>
-      <div class="detail-box">
-        <label>Phone Number</label>
-        <!-- backend stores as 'phone' not 'phoneNumber' -->
-        <span>{{ user?.phone }}</span>
-      </div>
-      <div class="detail-box">
-        <label>Customer ID</label>
-        <span>{{ user?.customerId }}</span>
-      </div>
-      <div class="detail-box">
-        <label>Account No</label>
-        <span>{{ user?.accountNo }}</span>
-      </div>
-      <div class="detail-box">
-        <label>Branch</label>
-        <span>{{ user?.branchName }}</span>
-      </div>
-      <div class="detail-box">
-        <label>IFSC Code</label>
-        <span>{{ user?.ifscCode }}</span>
-      </div>
-      <div class="detail-box">
-        <label>Status</label>
-        <span class="active-status">Active</span>
-      </div>
+  <!-- Loading -->
+  @if(loading) {
+    <div class="state-card">
+      <div class="loading-spinner" aria-hidden="true"></div>
+      <span>Loading profile...</span>
     </div>
-  </div>
+  }
+
+  <!-- Error -->
+  @else if(error) {
+    <div class="state-card">
+      <div class="empty-icon">⚠️</div>
+      <p class="error-msg">{{ error }}</p>
+      <button class="retry-btn" (click)="loadProfile()">Retry</button>
+    </div>
+  }
+
+  <!-- Profile Data -->
+  @else if(profile) {
+    <div class="profile-card">
+
+      <!-- ── HEADER (both roles) ── -->
+      <div class="profile-header">
+        <div class="avatar-circle" [class.avatar-admin]="isAdmin">
+          {{ avatarInitial }}
+        </div>
+        <div class="header-info">
+          <div class="role-badge" [class.role-badge--admin]="isAdmin">
+            {{ isAdmin ? '🛡️ Admin' : '👤 Customer' }}
+          </div>
+          <h1>{{ profile.fullName }}</h1>
+          <p class="role-sub">{{ displayRole }}</p>
+          <p class="joined-date">Member since {{ profile.createdAt | date:'dd MMM yyyy' }}</p>
+        </div>
+      </div>
+
+      <!-- ── ACCOUNT INFORMATION (both roles) ── -->
+      <h2 class="section-title">Account Information</h2>
+      <div class="details-grid">
+
+        <div class="detail-box">
+          <label>Full Name</label>
+          <span>{{ profile.fullName }}</span>
+        </div>
+
+        <div class="detail-box">
+          <label>Email</label>
+          <span>{{ profile.email }}</span>
+        </div>
+
+        <div class="detail-box">
+          <label>Phone Number</label>
+          <span>{{ profile.phone || '—' }}</span>
+        </div>
+
+        <div class="detail-box">
+          <label>Customer No</label>
+          <span class="mono">{{ customerNo }}</span>
+        </div>
+
+        <div class="detail-box">
+          <label>Account Status</label>
+          <span class="pill" [ngClass]="statusClass(profile.status)">
+            {{ profile.status }}
+          </span>
+        </div>
+
+        <div class="detail-box">
+          <label>KYC Status</label>
+          <span class="pill" [ngClass]="statusClass(profile.kycStatus)">
+            {{ profile.kycStatus }}
+          </span>
+        </div>
+
+      </div>
+
+      <!-- ── CUSTOMER ONLY: Banking Details ── -->
+      @if(!isAdmin) {
+        @if(primaryAccount) {
+          <h2 class="section-title">Banking Details</h2>
+          <div class="details-grid">
+
+            <div class="detail-box">
+              <label>Account Number</label>
+              <span class="mono">{{ primaryAccount.accountNumber }}</span>
+            </div>
+
+            <div class="detail-box">
+              <label>Account Type</label>
+              <span>{{ primaryAccount.accountType }}</span>
+            </div>
+
+            <div class="detail-box">
+              <label>Account Balance</label>
+              <span class="balance-value">
+                ₹{{ primaryAccount.balance | number:'1.2-2' }}
+              </span>
+            </div>
+
+            @if(primaryAccount.branchName) {
+              <div class="detail-box">
+                <label>Branch Name</label>
+                <span>{{ primaryAccount.branchName }}</span>
+              </div>
+            }
+
+            @if(primaryAccount.ifscCode) {
+              <div class="detail-box">
+                <label>IFSC Code</label>
+                <span class="mono">{{ primaryAccount.ifscCode }}</span>
+              </div>
+            }
+
+            <div class="detail-box">
+              <label>Bank Account Status</label>
+              <span class="pill" [ngClass]="statusClass(primaryAccount.status)">
+                {{ primaryAccount.status }}
+              </span>
+            </div>
+
+          </div>
+        }
+
+        @else {
+          <div class="no-account-banner">
+            <span>🏦</span>
+            <p>No bank account linked yet. Your account will appear here once activated by admin.</p>
+          </div>
+        }
+      }
+
+      <!-- ── ADMIN ONLY: Privileges Panel ── -->
+      @if(isAdmin) {
+        <h2 class="section-title">Admin Privileges</h2>
+        <div class="admin-info-panel">
+          <div class="admin-info-row">
+            <span class="admin-info-icon">🛡️</span>
+            <div>
+              <strong>Full Admin Access</strong>
+              <p>You can manage users, review KYC submissions, and oversee all banking operations.</p>
+            </div>
+          </div>
+          <div class="admin-info-row">
+            <span class="admin-info-icon">👥</span>
+            <div>
+              <strong>User Management</strong>
+              <p>Activate, block, and verify customers from the Users Management panel.</p>
+            </div>
+          </div>
+          <div class="admin-info-row">
+            <span class="admin-info-icon">📊</span>
+            <div>
+              <strong>Banking Operations</strong>
+              <p>View all accounts, transactions, and oversee platform financial activity.</p>
+            </div>
+          </div>
+        </div>
+      }
+
+    </div>
+  }
 </div>

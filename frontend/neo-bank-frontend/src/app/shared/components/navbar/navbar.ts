@@ -237,15 +237,6 @@ export class Navbar {
     }
   ];
 
-  readonly privateNavItems: NavItem[] = [
-    { key: 'dashboard', label: 'Dashboard', route: '/dashboard' },
-    { key: 'accounts', label: 'Accounts', route: '/accounts' },
-    { key: 'transactions', label: 'Transactions', route: '/transactions' },
-    { key: 'cards', label: 'Cards', route: '/cards' },
-    { key: 'payments', label: 'Payments', route: '/payments' },
-    { key: 'support', label: 'Support', route: '/support' }
-  ];
-
   notifications: NotificationItem[] = [
     {
       id: 1,

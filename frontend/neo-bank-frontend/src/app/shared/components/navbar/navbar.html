@@ -46,17 +46,6 @@
         </div>
       }
     }
-
-    @if (isLoggedIn()) {
-      @for (item of privateNavItems; track item.key) {
-        <a
-          [routerLink]="item.route"
-          [class.active]="isRouteActive(item.route)"
-          (click)="closeAllMenus()">
-          {{ item.label }}
-        </a>
-      }
-    }
   </div>
 
   <div class="right-section">
@@ -241,14 +230,6 @@
       }
 
       @if (isLoggedIn()) {
-        @for (item of privateNavItems; track item.key) {
-          <a
-            [routerLink]="item.route"
-            (click)="closeAllMenus()">
-            {{ item.label }}
-          </a>
-        }
-
         <div class="mobile-actions">
           <button
             type="button"
@@ -260,4 +241,4 @@
       }
     </div>
   </div>
-</div>
+</div>  

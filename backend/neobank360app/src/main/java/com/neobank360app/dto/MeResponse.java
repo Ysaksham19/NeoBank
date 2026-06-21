@@ -1,18 +1,9 @@
 package com.neobank360app.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
-/**
- * Returned by:
- *   GET /api/v1/users/me     (UserController)
- *   GET /api/v1/auth/me      (AuthController)
- *
- * Contains everything the frontend needs to render the profile page
- * after admin approves account status and KYC.
- *
- * NEVER includes: passwordHash
- */
 public class MeResponse {
 
     private Long userId;
@@ -20,45 +11,61 @@ public class MeResponse {
     private String fullName;
     private String email;
     private String phone;
-
-    /** ACTIVE | INACTIVE | LOCKED */
-    private String status;
-
-    /** PENDING | ACCEPTED | REJECTED */
-    private String kycStatus;
-
-    /** e.g. ["ROLE_CUSTOMER"] */
+    private String status;       // ACTIVE | INACTIVE | LOCKED
+    private String kycStatus;    // PENDING | ACCEPTED | REJECTED
     private Set<String> roles;
-
-    /** Account registration timestamp — shown as "Member since" on dashboard */
     private LocalDateTime createdAt;
 
-    public MeResponse() {}
+    // ── NEW: banking accounts (empty for admin, filled for customer) ──
+    private List<AccountSummary> accounts;
 
+    // ── Inner class ──────────────────────────────────────────────────
+    public static class AccountSummary {
+        private Long id;
+        private String accountNumber;
+        private String accountType;    // SAVINGS | CURRENT
+        private Double balance;
+        private String status;         // ACTIVE | INACTIVE
+        private String branchName;
+        private String ifscCode;
+
+        public AccountSummary() {}
+
+        public Long getId()                          { return id; }
+        public void setId(Long id)                   { this.id = id; }
+        public String getAccountNumber()             { return accountNumber; }
+        public void setAccountNumber(String v)       { this.accountNumber = v; }
+        public String getAccountType()               { return accountType; }
+        public void setAccountType(String v)         { this.accountType = v; }
+        public Double getBalance()                   { return balance; }
+        public void setBalance(Double v)             { this.balance = v; }
+        public String getStatus()                    { return status; }
+        public void setStatus(String v)              { this.status = v; }
+        public String getBranchName()                { return branchName; }
+        public void setBranchName(String v)          { this.branchName = v; }
+        public String getIfscCode()                  { return ifscCode; }
+        public void setIfscCode(String v)            { this.ifscCode = v; }
+    }
+
+    // ── Getters & Setters ────────────────────────────────────────────
     public Long getUserId()                           { return userId; }
-    public void setUserId(Long userId)                { this.userId = userId; }
-
+    public void setUserId(Long v)                     { this.userId = v; }
     public String getCustomerId()                     { return customerId; }
-    public void setCustomerId(String customerId)      { this.customerId = customerId; }
-
+    public void setCustomerId(String v)               { this.customerId = v; }
     public String getFullName()                       { return fullName; }
-    public void setFullName(String fullName)          { this.fullName = fullName; }
-
+    public void setFullName(String v)                 { this.fullName = v; }
     public String getEmail()                          { return email; }
-    public void setEmail(String email)                { this.email = email; }
-
+    public void setEmail(String v)                    { this.email = v; }
     public String getPhone()                          { return phone; }
-    public void setPhone(String phone)                { this.phone = phone; }
-
+    public void setPhone(String v)                    { this.phone = v; }
     public String getStatus()                         { return status; }
-    public void setStatus(String status)              { this.status = status; }
-
+    public void setStatus(String v)                   { this.status = v; }
     public String getKycStatus()                      { return kycStatus; }
-    public void setKycStatus(String kycStatus)        { this.kycStatus = kycStatus; }
-
+    public void setKycStatus(String v)                { this.kycStatus = v; }
     public Set<String> getRoles()                     { return roles; }
-    public void setRoles(Set<String> roles)           { this.roles = roles; }
-
+    public void setRoles(Set<String> v)               { this.roles = v; }
     public LocalDateTime getCreatedAt()               { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public void setCreatedAt(LocalDateTime v)         { this.createdAt = v; }
+    public List<AccountSummary> getAccounts()         { return accounts; }
+    public void setAccounts(List<AccountSummary> v)   { this.accounts = v; }
 }

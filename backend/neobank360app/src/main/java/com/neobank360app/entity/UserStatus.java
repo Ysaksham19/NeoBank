@@ -11,5 +11,6 @@ package com.neobank360app.entity;
 public enum UserStatus {
     ACTIVE,
     INACTIVE,
-    LOCKED
+    LOCKED,
+    BLOCKED
 }

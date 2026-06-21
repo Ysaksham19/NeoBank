@@ -1,7 +1,9 @@
+@if (isLoggedIn()) {
+  <app-header></app-header>
+}
+
 @if (showNavbar()) {
-
-  <app-navbar></app-navbar>
-
+<app-navbar></app-navbar>
 }
 
 <div class="content-padding" [class.auth-content]="isAuthPage()">

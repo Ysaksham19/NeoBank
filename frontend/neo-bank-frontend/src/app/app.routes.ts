@@ -24,16 +24,19 @@ import { PayBill } from './bills/pay-bill/pay-bill';
 import { BudgetDashboard } from './budgets/budget-dashboard/budget-dashboard';
 import { CreateBudget } from './budgets/create-budget/create-budget';
 import { RewardsDashboard } from './rewards/rewards-dashboard/rewards-dashboard';
+import { CashbackHistory } from './rewards/cashback-history/cashback-history';
 import { NotificationsPanel } from './notifications/notifications-panel/notifications-panel';
 import { Profile } from './dashboard/profile/profile';
+
+import { AdminLayout } from './admin/admin-layout/admin-layout';
 import { AdminDashboard } from './admin/admin-dashboard/admin-dashboard';
 import { UsersManagement } from './admin/users-management/users-management';
 import { LoanDecision } from './admin/loan-decision/loan-decision';
 import { TransactionsManagement } from './admin/transactions-management/transactions-management';
-import { AccountsManagement } from './admin/accounts-management/accounts-management'; 
-import { CashbackHistory } from './rewards/cashback-history/cashback-history';
+import { AccountsManagement } from './admin/accounts-management/accounts-management';
 
 export const routes: Routes = [
+
   // ── Public ──
   { path: '', component: Home },
   { path: 'login', component: Login },
@@ -71,6 +74,7 @@ export const routes: Routes = [
 
   // ── Rewards ──
   { path: 'rewards', component: RewardsDashboard, canActivate: [AuthGuard] },
+  { path: 'rewards/cashback', component: CashbackHistory, canActivate: [AuthGuard] },
 
   // ── Notifications ──
   { path: 'notifications', component: NotificationsPanel, canActivate: [AuthGuard] },
@@ -78,16 +82,19 @@ export const routes: Routes = [
   // ── Profile ──
   { path: 'profile', component: Profile, canActivate: [AuthGuard] },
 
-  // ── Admin ──
-  { path: 'admin', component: AdminDashboard, canActivate: [AuthGuard, adminGuard] },
-  { path: 'admin/users', component: UsersManagement, canActivate: [AuthGuard, adminGuard] },
-  { path: 'admin/loans', component: LoanDecision, canActivate: [AuthGuard, adminGuard] },
-  { path: 'admin/transactions', component: TransactionsManagement, canActivate: [AuthGuard, adminGuard] },
-  { path: 'admin/accounts', component: AccountsManagement, canActivate: [AuthGuard, adminGuard] },
-
-  // ── Rewards ──
-{ path: 'rewards', component: RewardsDashboard, canActivate: [AuthGuard] },
-{ path: 'rewards/cashback', component: CashbackHistory, canActivate: [AuthGuard] },  // ← ADD THIS
+  // ── Admin (shell with sidebar) ──
+  {
+    path: 'admin',
+    component: AdminLayout,
+    canActivate: [AuthGuard, adminGuard],
+    children: [
+      { path: '',                        component: AdminDashboard },
+      { path: 'users-management',        component: UsersManagement },
+      { path: 'loan-decision',           component: LoanDecision },
+      { path: 'transactions-management', component: TransactionsManagement },
+      { path: 'accounts-management',     component: AccountsManagement },
+    ]
+  },
 
   // ── Fallback ──
   { path: '**', redirectTo: '' }

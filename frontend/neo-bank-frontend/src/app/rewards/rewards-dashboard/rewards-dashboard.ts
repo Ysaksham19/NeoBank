@@ -1,13 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
 
 import { RewardService } from '../../core/services/reward';
 
 @Component({
   selector: 'app-rewards-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './rewards-dashboard.html',
   styleUrls: ['./rewards-dashboard.css']
 })

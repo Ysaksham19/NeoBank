@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
 
 import { Bill } from '../../models/bill.model';
 import { BillService } from '../../core/services/bill';
@@ -8,7 +7,7 @@ import { BillService } from '../../core/services/bill';
 @Component({
   selector: 'app-bills-list',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './bills-list.html',
   styleUrls: ['./bills-list.css']
 })

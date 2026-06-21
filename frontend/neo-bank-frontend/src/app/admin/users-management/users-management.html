@@ -58,7 +58,7 @@
           <span class="stat-value">{{ activeUsers }}</span>
         </div>
         <div class="stat-card stat-card--danger">
-          <span class="stat-label">Blocked</span>
+          <span class="stat-label">Blocked / Locked</span>
           <span class="stat-value">{{ blockedUsers }}</span>
         </div>
         <div class="stat-card stat-card--warning">
@@ -83,9 +83,12 @@
           />
         </div>
 
+        <!-- FIX: All 4 valid UserStatus enum values -->
         <select class="filter-select" [(ngModel)]="filterStatus" (change)="applyFilters()">
           <option value="">All Statuses</option>
           <option value="ACTIVE">Active</option>
+          <option value="INACTIVE">Inactive</option>
+          <option value="LOCKED">Locked</option>
           <option value="BLOCKED">Blocked</option>
         </select>
 
@@ -93,7 +96,6 @@
           <option value="">All KYC</option>
           <option value="PENDING">Pending</option>
           <option value="APPROVED">Approved</option>
-          <option value="VERIFIED">Verified</option>
           <option value="REJECTED">Rejected</option>
         </select>
 
@@ -145,21 +147,28 @@
                     </td>
                     <td>{{ user.email }}</td>
                     <td>{{ user.phone }}</td>
+
+                    <!-- KYC Status Pill -->
                     <td>
                       <span class="pill"
-                        [class.pill--success]="user.kycStatus === 'VERIFIED' || user.kycStatus === 'APPROVED'"
+                        [class.pill--success]="user.kycStatus === 'APPROVED'"
                         [class.pill--warning]="user.kycStatus === 'PENDING'"
                         [class.pill--danger]="user.kycStatus === 'REJECTED'">
                         {{ user.kycStatus }}
                       </span>
                     </td>
+
+                    <!-- FIX: Account Status Pill — covers ACTIVE, INACTIVE, LOCKED, BLOCKED -->
                     <td>
                       <span class="pill"
                         [class.pill--success]="user.status === 'ACTIVE'"
-                        [class.pill--danger]="user.status === 'BLOCKED'">
+                        [class.pill--warning]="user.status === 'INACTIVE'"
+                        [class.pill--danger]="user.status === 'BLOCKED' || user.status === 'LOCKED'">
                         {{ user.status }}
                       </span>
                     </td>
+
+                    <!-- Account Actions -->
                     <td>
                       <div class="action-btns">
                         <button
@@ -169,23 +178,26 @@
                           (click)="updateStatus(user.id, 'ACTIVE')">
                           Activate
                         </button>
+                        <!-- FIX: Disable when BLOCKED or LOCKED -->
                         <button
                           class="btn-action btn-block"
-                          [disabled]="user.status === 'BLOCKED'"
-                          [class.btn-disabled]="user.status === 'BLOCKED'"
+                          [disabled]="user.status === 'BLOCKED' || user.status === 'LOCKED'"
+                          [class.btn-disabled]="user.status === 'BLOCKED' || user.status === 'LOCKED'"
                           (click)="updateStatus(user.id, 'BLOCKED')">
                           Block
                         </button>
                       </div>
                     </td>
+
+                    <!-- KYC Actions -->
                     <td>
                       <div class="action-btns">
                         <button
                           class="btn-action btn-verify"
-                          [disabled]="user.kycStatus === 'APPROVED' || user.kycStatus === 'VERIFIED'"
-                          [class.btn-disabled]="user.kycStatus === 'APPROVED' || user.kycStatus === 'VERIFIED'"
+                          [disabled]="user.kycStatus === 'APPROVED'"
+                          [class.btn-disabled]="user.kycStatus === 'APPROVED'"
                           (click)="updateKycStatus(user.id, 'APPROVED')">
-                          Verify
+                          Approve
                         </button>
                         <button
                           class="btn-action btn-reject-kyc"
@@ -196,6 +208,7 @@
                         </button>
                       </div>
                     </td>
+
                   </tr>
                 }
               </tbody>

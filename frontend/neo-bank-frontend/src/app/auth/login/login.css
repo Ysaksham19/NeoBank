@@ -220,10 +220,46 @@
   animation: fadeIn 0.3s ease;
 }
 
+/* Error — red */
 .alert-danger {
   background: #fff1f2;
   border: 1px solid var(--color-danger-light);
   color: var(--color-danger-dark);
+}
+
+/* Session expired — amber */
+.alert-warning {
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  color: #92400e;
+}
+
+/* Logout success — green */
+.alert-success {
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  color: #166534;
+}
+
+/* Dismiss × button inside banners */
+.alert-dismiss {
+  margin-left: auto;
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 0.8rem;
+  line-height: 1;
+  color: inherit;
+  opacity: 0.6;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: opacity 0.2s ease, background 0.2s ease;
+}
+
+.alert-dismiss:hover {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.06);
 }
 
 /* ===================================================== */

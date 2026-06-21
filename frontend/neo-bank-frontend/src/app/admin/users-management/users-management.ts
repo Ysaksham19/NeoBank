@@ -16,20 +16,29 @@ import { AdminUser } from '../../models/admin-user.model';
 })
 export class UsersManagement implements OnInit {
 
-  users: AdminUser[] = [];
+  users: AdminUser[]    = [];
   filtered: AdminUser[] = [];
-  loading = true;
-  errorMessage = '';
-  successMessage = '';
+  loading               = true;
+  errorMessage          = '';
+  successMessage        = '';
 
   searchQuery  = '';
   filterStatus = '';
   filterKyc    = '';
 
+  // ── Stats (computed from filtered list) ──────────────────
+
   get totalUsers():   number { return this.filtered.length; }
   get activeUsers():  number { return this.filtered.filter(u => u.status === 'ACTIVE').length; }
-  get blockedUsers(): number { return this.filtered.filter(u => u.status === 'BLOCKED').length; }
-  get pendingKyc():   number { return this.filtered.filter(u => u.kycStatus === 'PENDING').length; }
+
+  // Counts both BLOCKED and LOCKED as "blocked/suspended" for the stat card
+  get blockedUsers(): number {
+    return this.filtered.filter(u => u.status === 'BLOCKED' || u.status === 'LOCKED').length;
+  }
+
+  get pendingKyc(): number {
+    return this.filtered.filter(u => u.kycStatus === 'PENDING').length;
+  }
 
   get hasActiveFilters(): boolean {
     return !!(this.searchQuery || this.filterStatus || this.filterKyc);
@@ -42,9 +51,11 @@ export class UsersManagement implements OnInit {
 
   ngOnInit(): void { this.loadUsers(); }
 
+  // ── Load ─────────────────────────────────────────────────
+
   loadUsers(): void {
-    this.loading = true;
-    this.errorMessage = '';
+    this.loading       = true;
+    this.errorMessage  = '';
     this.successMessage = '';
 
     this.adminService.getAllUsers().subscribe({
@@ -60,6 +71,8 @@ export class UsersManagement implements OnInit {
     });
   }
 
+  // ── Filters ──────────────────────────────────────────────
+
   applyFilters(): void {
     const q = this.searchQuery.toLowerCase().trim();
     this.filtered = this.users.filter(u => {
@@ -72,14 +85,16 @@ export class UsersManagement implements OnInit {
   }
 
   clearFilters(): void {
-    this.searchQuery = '';
+    this.searchQuery  = '';
     this.filterStatus = '';
-    this.filterKyc = '';
+    this.filterKyc    = '';
     this.applyFilters();
   }
 
+  // ── Actions ──────────────────────────────────────────────
+
   updateStatus(userId: number, status: string): void {
-    this.errorMessage = '';
+    this.errorMessage   = '';
     this.successMessage = '';
     this.adminService.updateUserStatus(userId, status).subscribe({
       next: () => {
@@ -93,7 +108,7 @@ export class UsersManagement implements OnInit {
   }
 
   updateKycStatus(userId: number, kycStatus: string): void {
-    this.errorMessage = '';
+    this.errorMessage   = '';
     this.successMessage = '';
     this.adminService.updateKycStatus(userId, kycStatus).subscribe({
       next: () => {
