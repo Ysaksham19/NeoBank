@@ -28,17 +28,11 @@ public class CustomUserPrincipal implements UserDetails {
     @Override public String getUsername()              { return user.getEmail(); }
     @Override public boolean isAccountNonExpired()     { return true; }
 
-    /**
-     * Returns false when admin sets status to LOCKED.
-     * Spring Security responds with 423 Locked on login.
-     */
+    /** Returns false if admin set status to LOCKED — Spring returns 423. */
     @Override public boolean isAccountNonLocked()      { return user.getStatus() != UserStatus.LOCKED; }
 
     @Override public boolean isCredentialsNonExpired() { return true; }
 
-    /**
-     * Returns true only when status == ACTIVE.
-     * INACTIVE (pending approval) and LOCKED users are blocked with 401.
-     */
+    /** Returns false for INACTIVE/LOCKED users — Spring blocks login with 401. */
     @Override public boolean isEnabled()               { return user.getStatus() == UserStatus.ACTIVE; }
 }

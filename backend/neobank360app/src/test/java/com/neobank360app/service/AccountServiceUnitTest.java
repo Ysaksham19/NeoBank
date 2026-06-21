@@ -42,13 +42,13 @@ class AccountServiceUnitTest {
         ReflectionTestUtils.setField(owner, "id", 1L);
         owner.setEmail("own@nb.in");
         owner.setRoles(Set.of(customerRole));
-        owner.setStatus("ACTIVE");
+        owner.setStatus(UserStatus.ACTIVE);
 
         stranger = new User();
         ReflectionTestUtils.setField(stranger, "id", 2L);
         stranger.setEmail("str@nb.in");
         stranger.setRoles(Set.of(customerRole));
-        stranger.setStatus("ACTIVE");
+        stranger.setStatus(UserStatus.ACTIVE);
 
         // Branch has no setId() either — same fix
         Branch b = new Branch();

@@ -4,14 +4,14 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 /**
- * Response DTO returned by:
+ * Returned by:
  *   GET /api/v1/users/me     (UserController)
  *   GET /api/v1/auth/me      (AuthController)
  *
- * Contains everything the Angular dashboard needs to render the
- * user profile page after admin approves account status and KYC.
+ * Contains everything the frontend needs to render the profile page
+ * after admin approves account status and KYC.
  *
- * Intentionally excluded: passwordHash (never exposed in any API response).
+ * NEVER includes: passwordHash
  */
 public class MeResponse {
 
@@ -21,16 +21,16 @@ public class MeResponse {
     private String email;
     private String phone;
 
-    /** Account lifecycle: ACTIVE | INACTIVE | LOCKED */
+    /** ACTIVE | INACTIVE | LOCKED */
     private String status;
 
-    /** KYC verification: PENDING | ACCEPTED | REJECTED */
+    /** PENDING | ACCEPTED | REJECTED */
     private String kycStatus;
 
-    /** Assigned roles, e.g. ["ROLE_CUSTOMER"] */
+    /** e.g. ["ROLE_CUSTOMER"] */
     private Set<String> roles;
 
-    /** Registration timestamp — displayed as "Member since" on dashboard */
+    /** Account registration timestamp — shown as "Member since" on dashboard */
     private LocalDateTime createdAt;
 
     public MeResponse() {}

@@ -61,16 +61,17 @@ public class AuthService {
     }
 
     // ── STEP 1: Account Type Selection ───────────────────────────────────────
+    // FIX: getAccountType() returns AccountType enum — switch on enum directly, no .toUpperCase()
     public AccountTypeSelectionResponse selectAccountType(AccountTypeSelectionRequest request) {
-        String type = request.getAccountType().toUpperCase();
-        BigDecimal minBalance = getMinimumBalance(type);
-        String description = switch (type) {
-            case "SAVINGS" -> "Standard savings account. Minimum balance: ₹1,000";
-            case "CURRENT" -> "Business current account. Minimum balance: ₹5,000";
-            case "SALARY"  -> "Zero-balance salary account";
-            default        -> throw new IllegalArgumentException("Invalid account type: " + type);
+        AccountType accountType = request.getAccountType();
+        BigDecimal minBalance = getMinimumBalance(accountType);
+        String description = switch (accountType) {
+            case SAVINGS -> "Standard savings account. Minimum balance: ₹1,000";
+            case CURRENT -> "Business current account. Minimum balance: ₹5,000";
+            case SALARY  -> "Zero-balance salary account";
         };
-        return new AccountTypeSelectionResponse(type, minBalance, description,
+        return new AccountTypeSelectionResponse(
+                accountType.name(), minBalance, description,
                 "Account type selected. Please proceed to OTP verification.");
     }
 
@@ -122,11 +123,13 @@ public class AuthService {
         kyc.setKycStatus("PENDING");
         kycDetailsRepository.save(kyc);
 
-        // FIX BUG-03 & BUG-04: Use enum types for accountType and status
+        // FIX BUG-03 & BUG-04: accountType is already AccountType enum — assign directly
+        // FIX: removed AccountType.valueOf(getAccountType().toUpperCase()) — already an enum
+        // FIX: replaced String-based getMinimumBalance() calls with enum overload
         Account account = new Account();
         account.setAccountNo(generateAccountNo());
         account.setUser(savedUser);
-        account.setAccountType(AccountType.valueOf(request.getAccountType().toUpperCase()));
+        account.setAccountType(request.getAccountType());
         account.setCurrency("INR");
         account.setAvailableBalance(getMinimumBalance(request.getAccountType()));
         account.setLedgerBalance(getMinimumBalance(request.getAccountType()));
@@ -203,6 +206,16 @@ public class AuthService {
         throw new IllegalStateException("Unable to generate unique Account Number.");
     }
 
+    // FIX: enum overload — used by selectAccountType() and register()
+    private BigDecimal getMinimumBalance(AccountType accountType) {
+        return switch (accountType) {
+            case SAVINGS -> new BigDecimal("1000.00");
+            case CURRENT -> new BigDecimal("5000.00");
+            default      -> BigDecimal.ZERO;
+        };
+    }
+
+    // Kept for any future String-based callers (backward compat)
     private BigDecimal getMinimumBalance(String accountType) {
         return switch (accountType.toUpperCase()) {
             case "SAVINGS" -> new BigDecimal("1000.00");

@@ -9,10 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 /**
  * Handles the authenticated user's own profile operations.
- * All endpoints require a valid Bearer JWT (enforced by SecurityConfig).
- *
- * GET  /api/v1/users/me  – fetch full profile (called by Angular dashboard on load)
- * PUT  /api/v1/users/me  – update fullName and phone
+ * All endpoints require a valid Bearer JWT (configured in SecurityConfig).
  */
 @RestController
 @RequestMapping("/api/v1/users")
@@ -26,9 +23,9 @@ public class UserController {
 
     /**
      * GET /api/v1/users/me
-     * Returns the full profile of the authenticated user including
-     * status (ACTIVE/INACTIVE/LOCKED), kycStatus, roles, and createdAt.
-     * This is the primary endpoint the Angular dashboard calls on load.
+     * Returns the full profile of the authenticated user.
+     * This is the primary endpoint the Angular dashboard calls on load
+     * to display name, account status, KYC status, and roles.
      */
     @GetMapping("/me")
     public ResponseEntity<MeResponse> getMe() {

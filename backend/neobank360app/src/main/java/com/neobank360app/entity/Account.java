@@ -48,33 +48,33 @@ public class Account {
 
     public Account() {}
 
-    public Long getId()                                          { return id; }
-    public void setId(Long id)                                   { this.id = id; }
+    public Long getId()                                        { return id; }
+    public void setId(Long id)                                 { this.id = id; }
 
-    public String getAccountNo()                                 { return accountNo; }
-    public void setAccountNo(String accountNo)                   { this.accountNo = accountNo; }
+    public String getAccountNo()                               { return accountNo; }
+    public void setAccountNo(String accountNo)                 { this.accountNo = accountNo; }
 
-    public User getUser()                                        { return user; }
-    public void setUser(User user)                               { this.user = user; }
+    public User getUser()                                      { return user; }
+    public void setUser(User user)                             { this.user = user; }
 
-    public AccountType getAccountType()                          { return accountType; }
-    public void setAccountType(AccountType accountType)          { this.accountType = accountType; }
+    public AccountType getAccountType()                        { return accountType; }
+    public void setAccountType(AccountType accountType)        { this.accountType = accountType; }
 
-    public String getCurrency()                                  { return currency; }
-    public void setCurrency(String currency)                     { this.currency = currency; }
+    public String getCurrency()                                { return currency; }
+    public void setCurrency(String currency)                   { this.currency = currency; }
 
-    public BigDecimal getAvailableBalance()                      { return availableBalance; }
+    public BigDecimal getAvailableBalance()                    { return availableBalance; }
     public void setAvailableBalance(BigDecimal availableBalance) { this.availableBalance = availableBalance; }
 
-    public BigDecimal getLedgerBalance()                         { return ledgerBalance; }
-    public void setLedgerBalance(BigDecimal ledgerBalance)       { this.ledgerBalance = ledgerBalance; }
+    public BigDecimal getLedgerBalance()                       { return ledgerBalance; }
+    public void setLedgerBalance(BigDecimal ledgerBalance)     { this.ledgerBalance = ledgerBalance; }
 
-    public AccountStatus getStatus()                             { return status; }
-    public void setStatus(AccountStatus status)                  { this.status = status; }
+    public AccountStatus getStatus()                           { return status; }
+    public void setStatus(AccountStatus status)                { this.status = status; }
 
-    public LocalDateTime getCreatedAt()                          { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt)            { this.createdAt = createdAt; }
+    public LocalDateTime getCreatedAt()                        { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt)          { this.createdAt = createdAt; }
 
-    public Branch getBranch()                                    { return branch; }
-    public void setBranch(Branch branch)                         { this.branch = branch; }
+    public Branch getBranch()                                  { return branch; }
+    public void setBranch(Branch branch)                       { this.branch = branch; }
 }

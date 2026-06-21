@@ -34,7 +34,7 @@ public class AdminService {
         this.accountRepository = accountRepository;
     }
 
-    // ─── USERS ───────────────────────────────────────────────────────────────────
+    // ─── USERS ──────────────────────────────────────────────────────────────────
 
     public List<AdminUserResponseDTO> getAllUsers() {
         return userRepository.findAll().stream()
@@ -49,9 +49,8 @@ public class AdminService {
     }
 
     /**
-     * Updates user account status.
-     * Validates against UserStatus enum — invalid values return 400 Bad Request.
-     * Valid values: ACTIVE, INACTIVE, LOCKED.
+     * Updates user account status. Validates against UserStatus enum —
+     * invalid values throw IllegalArgumentException → 400 Bad Request.
      */
     public AdminUserResponseDTO updateUserStatus(Long userId, String status) {
         User user = userRepository.findById(userId)
@@ -72,10 +71,10 @@ public class AdminService {
         return mapToUserDTO(userRepository.save(user));
     }
 
-    // ─── KYC ─────────────────────────────────────────────────────────────────────
+    // ─── KYC ────────────────────────────────────────────────────────────────────
 
     /**
-     * Returns all users with kycStatus = PENDING (case-insensitive filter).
+     * Returns all users with KYC status PENDING (case-insensitive).
      */
     public List<AdminUserResponseDTO> getPendingKycUsers() {
         return userRepository.findAll().stream()
@@ -85,9 +84,7 @@ public class AdminService {
     }
 
     /**
-     * Updates KYC status for a user.
-     * Validates against allowed values: PENDING, ACCEPTED, REJECTED.
-     * Invalid values return 400 Bad Request.
+     * Updates KYC status. Only PENDING, ACCEPTED, REJECTED are valid values.
      */
     public AdminUserResponseDTO updateKycStatus(Long userId, String kycStatus) {
         User user = userRepository.findById(userId)
@@ -105,7 +102,7 @@ public class AdminService {
         return mapToUserDTO(userRepository.save(user));
     }
 
-    // ─── ACCOUNTS ────────────────────────────────────────────────────────────────
+    // ─── ACCOUNTS ───────────────────────────────────────────────────────────────
 
     public List<AdminAccountResponseDTO> getAllAccounts() {
         return accountRepository.findAll().stream()
@@ -157,7 +154,7 @@ public class AdminService {
         dto.setFullName(user.getFullName());
         dto.setEmail(user.getEmail());
         dto.setPhone(user.getPhone());
-        // UserStatus is now an enum — call .name() to serialize to String
+        // UserStatus is now an enum — call .name() to get the String value
         dto.setStatus(user.getStatus() != null ? user.getStatus().name() : null);
         dto.setKycStatus(user.getKycStatus());
         return dto;

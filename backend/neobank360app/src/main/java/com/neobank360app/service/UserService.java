@@ -22,30 +22,30 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    // ─── GET PROFILE ─────────────────────────────────────────────────────────────
+    // ─── GET PROFILE ────────────────────────────────────────────────────────────
 
     /**
-     * Returns the full profile of the currently authenticated user.
+     * Returns full profile of the currently authenticated user.
      * Called by GET /api/v1/users/me.
-     * Populates: userId, customerId, fullName, email, phone,
-     *            status, kycStatus, roles, createdAt.
+     * Includes status, kycStatus, roles, and createdAt — all needed by the dashboard.
      */
     public MeResponse getMe() {
         return mapToMeResponse(getAuthenticatedUser());
     }
 
-    // ─── UPDATE PROFILE ───────────────────────────────────────────────────────────
+    // ─── UPDATE PROFILE ─────────────────────────────────────────────────────────
 
     /**
-     * Updates mutable profile fields: fullName and phone.
+     * Updates mutable fields: fullName and phone.
      * Email is the login identity and is NOT editable here.
      *
-     * Null-safe phone check: user.getPhone() may be null on first login
-     * before phone was set — using equals() on null causes NPE.
+     * NPE fix: old phone can be null on first registration
+     * — use Objects.equals() for null-safe comparison.
      */
     public MeResponse updateProfile(UpdateProfileRequest request) {
         User user = getAuthenticatedUser();
 
+        // Null-safe phone uniqueness check
         if (request.getPhone() != null
                 && !request.getPhone().equals(user.getPhone())
                 && userRepository.existsByPhone(request.getPhone())) {
@@ -58,12 +58,11 @@ public class UserService {
         return mapToMeResponse(userRepository.save(user));
     }
 
-    // ─── HELPERS ─────────────────────────────────────────────────────────────────
+    // ─── HELPERS ────────────────────────────────────────────────────────────────
 
     /**
-     * Resolves the authenticated user from the Spring SecurityContext.
-     * Throws 404 if the email in the JWT no longer exists in DB
-     * (e.g. account was deleted after token was issued).
+     * Resolves the authenticated user from the SecurityContext.
+     * Throws 404 if the email in the JWT no longer exists in DB.
      */
     private User getAuthenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -73,9 +72,10 @@ public class UserService {
     }
 
     /**
-     * Maps a User entity to MeResponse DTO.
-     * All fields populated — status (enum.name()), roles (Set<String>), createdAt.
-     * passwordHash intentionally excluded.
+     * Maps User entity → MeResponse DTO.
+     * Populates: userId, customerId, fullName, email, phone,
+     *            status, kycStatus, roles, createdAt.
+     * Intentionally excludes: passwordHash.
      */
     private MeResponse mapToMeResponse(User user) {
         MeResponse response = new MeResponse();
@@ -84,9 +84,11 @@ public class UserService {
         response.setFullName(user.getFullName());
         response.setEmail(user.getEmail());
         response.setPhone(user.getPhone());
+        // Convert UserStatus enum → String for JSON response
         response.setStatus(user.getStatus() != null ? user.getStatus().name() : null);
         response.setKycStatus(user.getKycStatus());
         response.setCreatedAt(user.getCreatedAt());
+        // Map roles Set<Role> → Set<String>
         response.setRoles(
                 user.getRoles().stream()
                         .map(Role::getName)

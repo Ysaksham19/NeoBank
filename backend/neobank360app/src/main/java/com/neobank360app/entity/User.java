@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
-
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -32,14 +31,14 @@ public class User {
     private String passwordHash;
 
     /**
-     * Account lifecycle status — stored as string in DB for readability.
-     * Default is INACTIVE (pending admin approval).
-     * Admin sets to ACTIVE to grant login access.
-     * Admin sets to LOCKED to suspend access.
+     * Stored as string in DB for readability.
+     * ACTIVE = approved by admin, can log in.
+     * INACTIVE = pending approval.
+     * LOCKED = suspended.
      */
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
-    private UserStatus status = UserStatus.INACTIVE;
+    private UserStatus status = UserStatus.INACTIVE; // default INACTIVE until admin approves
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -51,7 +50,7 @@ public class User {
 
     /**
      * KYC verification status.
-     * PENDING = awaiting review, ACCEPTED = verified, REJECTED = failed.
+     * PENDING = not yet reviewed, ACCEPTED = verified, REJECTED = failed verification.
      */
     @Column(name = "kyc_status", nullable = false, length = 30)
     private String kycStatus = "PENDING";

@@ -45,13 +45,12 @@ class TransactionServiceUnitTest {
         ReflectionTestUtils.setField(owner, "id", 1L);
         owner.setEmail("o@nb.in");
         owner.setRoles(Set.of(customerRole));
-        owner.setStatus("ACTIVE");
-
+        owner.setStatus(UserStatus.ACTIVE);
         stranger = new User();
         ReflectionTestUtils.setField(stranger, "id", 2L);
         stranger.setEmail("s@nb.in");
         stranger.setRoles(Set.of(customerRole));
-        stranger.setStatus("ACTIVE");
+        stranger.setStatus(UserStatus.ACTIVE);
 
         account = new Account();
         ReflectionTestUtils.setField(account, "id", 10L);
