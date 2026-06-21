@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
-
 import { BudgetService } from '../../core/services/budget';
 
 @Component({
@@ -51,7 +50,16 @@ export class CreateBudget {
     }
 
     this.isSubmitting = true;
-    this.budgetService.createBudget(this.budgetRequest).subscribe({
+
+    // ✅ FIX: <input type="month"> gives 'YYYY-MM'
+    //         Backend LocalDate needs 'YYYY-MM-DD' → append '-01'
+    const payload = {
+      category:     this.budgetRequest.category,
+      budgetMonth:  this.budgetRequest.budgetMonth + '-01',
+      limitAmount:  Number(this.budgetRequest.limitAmount)
+    };
+
+    this.budgetService.createBudget(payload).subscribe({
       next: () => {
         this.isSubmitting = false;
         this.showToast = true;

@@ -1,6 +1,14 @@
-<div class="admin-shell">
-  <app-admin-sidebar></app-admin-sidebar>
+<!-- Admin shell: sidebar + content sit below the global header
+<div class="admin-shell" [class.sidebar-collapsed]="sidebarCollapsed">
+  <app-admin-sidebar (collapsedChange)="sidebarCollapsed = $event"></app-admin-sidebar>
   <main class="admin-content">
+    <router-outlet></router-outlet>
+  </main>
+</div> -->
+
+<div class="admin-shell">
+  <app-admin-sidebar (collapsedChange)="onSidebarCollapse($event)"></app-admin-sidebar>
+  <main class="admin-content" [class.admin-content--collapsed]="sidebarCollapsed()">
     <router-outlet></router-outlet>
   </main>
 </div>

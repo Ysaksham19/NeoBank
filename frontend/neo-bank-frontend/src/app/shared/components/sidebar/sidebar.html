@@ -6,13 +6,18 @@
     </div>
 
     <div class="menu">
-      <a routerLink="/dashboard" routerLinkActive="active"><span>🏠</span> Dashboard</a>
+      <a routerLink="/dashboard"
+         routerLinkActive="active"
+         [routerLinkActiveOptions]="{exact: true}">
+        <span>🏠</span> Dashboard
+      </a>
       <a routerLink="/accounts" routerLinkActive="active"><span>💳</span> Accounts</a>
       <a routerLink="/transactions" routerLinkActive="active"><span>📄</span> Transactions</a>
       <a routerLink="/transactions/transfer" routerLinkActive="active"><span>💸</span> Transfer</a>
       <a routerLink="/transactions/deposit" routerLinkActive="active"><span>⬇️</span> Deposit</a>
       <a routerLink="/transactions/withdraw" routerLinkActive="active"><span>⬆️</span> Withdraw</a>
-      <a routerLink="/loans" routerLinkActive="active"><span>🏦</span> Loans</a>
+      <a routerLink="/loans" routerLinkActive="active"
+         [routerLinkActiveOptions]="{exact: true}"><span>🏦</span> Loans</a>
       <a routerLink="/loans/apply" routerLinkActive="active"><span>📝</span> Apply Loan</a>
       <a routerLink="/loans/repayments" routerLinkActive="active"><span>📅</span> Repayments</a>
       <a routerLink="/bills" routerLinkActive="active"><span>🧾</span> Bills</a>

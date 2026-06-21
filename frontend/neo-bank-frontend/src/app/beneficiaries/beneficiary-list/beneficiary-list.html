@@ -1,0 +1,184 @@
+<div class="bene-page">
+
+  <!-- ── Page Header ── -->
+  <div class="page-header">
+    <div class="page-header-left">
+      <h1 class="page-title">Beneficiaries</h1>
+      <p class="page-subtitle">Manage your saved payees for quick transfers</p>
+    </div>
+    <div class="header-actions">
+      <a routerLink="/beneficiaries/favourites" class="btn btn-outline">⭐ Favourites</a>
+      <a routerLink="/beneficiaries/add" class="btn btn-primary">
+        <span class="btn-icon">+</span> Add Beneficiary
+      </a>
+    </div>
+  </div>
+
+  <!-- ── Toast ── -->
+  @if (toastMessage) {
+    <div class="toast" [class.toast-error]="toastType === 'error'">{{ toastMessage }}</div>
+  }
+
+  <!-- ── Error ── -->
+  @if (errorMessage) {
+    <div class="alert alert-error">{{ errorMessage }}</div>
+  }
+
+  <!-- ── Filters ── -->
+  <div class="filters-bar">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input
+        type="text"
+        placeholder="Search by name, account, bank or IFSC…"
+        [(ngModel)]="searchQuery"
+        (ngModelChange)="applyFilters()"
+        class="search-input" />
+    </div>
+
+    <div class="filter-group">
+      <select [(ngModel)]="filterType" (ngModelChange)="applyFilters()" class="filter-select">
+        <option value="ALL">All Types</option>
+        <option value="INTERNAL">Internal (Same Bank)</option>
+        <option value="EXTERNAL">External (Other Bank)</option>
+      </select>
+
+      <select [(ngModel)]="filterStatus" (ngModelChange)="applyFilters()" class="filter-select">
+        <option value="ALL">All Status</option>
+        <option value="ACTIVE">Active</option>
+        <option value="BLOCKED">Blocked</option>
+      </select>
+
+      <label class="fav-toggle">
+        <input type="checkbox" [(ngModel)]="showFavOnly" (ngModelChange)="applyFilters()" />
+        <span>Favourites only</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- ── Loading Skeleton ── -->
+  @if (loading) {
+    <div class="skeleton-grid">
+      @for (_ of [1,2,3,4,5,6]; track $index) {
+        <div class="skeleton-card">
+          <div class="skeleton-avatar"></div>
+          <div class="skeleton-lines">
+            <div class="skeleton-line w60"></div>
+            <div class="skeleton-line w40"></div>
+            <div class="skeleton-line w80"></div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ── Empty State ── -->
+  @if (!loading && !errorMessage && filtered.length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">👤</div>
+      <h3>No beneficiaries found</h3>
+      <p>{{ beneficiaries.length === 0
+        ? 'Add your first beneficiary to start making quick transfers.'
+        : 'Try adjusting your search or filters.' }}</p>
+      @if (beneficiaries.length === 0) {
+        <a routerLink="/beneficiaries/add" class="btn btn-primary">Add Beneficiary</a>
+      }
+    </div>
+  }
+
+  <!-- ── Beneficiary Cards ── -->
+  @if (!loading && filtered.length > 0) {
+    <div class="bene-count">Showing {{ filtered.length }} of {{ beneficiaries.length }} beneficiaries</div>
+
+    <div class="bene-grid">
+      @for (b of filtered; track b.id) {
+        <div class="bene-card" [class.bene-blocked]="b.status === 'BLOCKED'">
+
+          <!-- Avatar + Fav Star -->
+          <div class="card-top">
+            <div class="avatar">{{ getInitials(b.nickname) }}</div>
+            <button
+              class="fav-btn"
+              [class.active]="b.isFavorite"
+              (click)="toggleFavorite(b)"
+              [title]="b.isFavorite ? 'Remove from favourites' : 'Add to favourites'"
+              aria-label="toggle favourite">
+              ★
+            </button>
+          </div>
+
+          <!-- Core Info -->
+          <div class="card-body">
+            <div class="bene-name">{{ b.nickname }}</div>
+            <div class="bene-bank">{{ b.bankName }}</div>
+            <div class="bene-acct">A/C ●●●● {{ b.accountNumber.slice(-4) }}</div>
+            <div class="bene-ifsc">IFSC: {{ b.ifscCode }}</div>
+
+            <div class="tags">
+              <span class="tag"
+                [class.tag-internal]="b.beneficiaryType === 'INTERNAL'"
+                [class.tag-external]="b.beneficiaryType === 'EXTERNAL'">
+                {{ b.beneficiaryType === 'INTERNAL' ? 'Same Bank' : 'Other Bank' }}
+              </span>
+              <span class="tag"
+                [class.tag-active]="b.status === 'ACTIVE'"
+                [class.tag-blocked]="b.status === 'BLOCKED'">
+                {{ b.status }}
+              </span>
+            </div>
+
+            <div class="bene-limit">Daily limit: ₹{{ b.dailyLimit | number }}</div>
+
+            @if (b.lastUsedAt) {
+              <div class="bene-meta">Last used: {{ b.lastUsedAt | date:'dd MMM yyyy' }}</div>
+            } @else {
+              <div class="bene-meta">Never used</div>
+            }
+          </div>
+
+          <!-- Actions -->
+          <div class="card-actions">
+            <a
+              [routerLink]="['/transactions/transfer']"
+              [queryParams]="{ beneficiaryId: b.id }"
+              class="btn btn-sm btn-send"
+              [class.disabled]="b.status === 'BLOCKED'">
+              Send Money
+            </a>
+            <a [routerLink]="['/beneficiaries', b.id, 'edit']" class="btn btn-sm btn-outline">Edit</a>
+            <button class="btn btn-sm btn-danger-ghost" (click)="openDeleteModal(b)">Remove</button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ── Delete Confirmation Modal ── -->
+  @if (showDeleteModal && deleteTarget) {
+    <div class="modal-overlay" (click)="closeDeleteModal()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Remove Beneficiary</h3>
+          <button class="modal-close" (click)="closeDeleteModal()">✕</button>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to remove <strong>{{ deleteTarget.nickname }}</strong>
+            (A/C ending {{ deleteTarget.accountNumber.slice(-4) }}) from your beneficiary list?</p>
+          <p class="modal-warning">
+            ⚠ This action cannot be undone. You will need to re-add them to make future transfers.
+          </p>
+          @if (deleteError) {
+            <div class="alert alert-error">{{ deleteError }}</div>
+          }
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" (click)="closeDeleteModal()" [disabled]="deleteInProgress">Cancel</button>
+          <button class="btn btn-danger" (click)="confirmDelete()" [disabled]="deleteInProgress">
+            {{ deleteInProgress ? 'Removing…' : 'Yes, Remove' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+</div>

@@ -1,106 +1,116 @@
+/* ================================================
+   DASHBOARD PAGE LAYOUT
+   Sidebar: fixed, 270px wide (72px on tablet)
+   Navbar:  sticky top:0 inside .dashboard-content,
+            height: 90px (matches dashboard-navbar.css)
+================================================ */
 
 .dashboard-page {
     display: flex;
     min-height: 100vh;
-    background:  #011025;
+    background: #f6f8f9;
     overflow-x: hidden;
 }
 
-/* Main content area */
+/* ── Main Content Column ── */
 .dashboard-content {
     flex: 1;
-    width: calc(100vw - 270px);
-    margin-left: 270px;
+    margin-left: 270px;   /* exactly matches .sidebar width */
+    min-width: 0;         /* prevents flex overflow */
     display: flex;
     flex-direction: column;
+    /* NO padding-top here — navbar is sticky inside this column,
+       so it naturally sits at the top without any offset needed */
 }
 
-/* Dashboard body */
+/* ── Page Body (below sticky navbar) ── */
 .dashboard-body {
-    padding: 25px;
+    padding: 28px 28px 40px;
     display: flex;
     flex-direction: column;
-    gap: 25px;
+    gap: 28px;
+    /* Takes all remaining height after the 90px sticky navbar */
+    flex: 1;
 }
 
-/* ========================= */
-/* TOP GRID */
-/* ========================= */
+/* ================================================
+   TOP GRID
+   Col 1: Total Balance (wider)
+   Col 2: Savings + Current account cards stacked
+   Col 3: Quick Actions
+================================================ */
 
 .top-grid {
-
     display: grid;
-
     grid-template-columns:
         minmax(0, 2fr)
         minmax(0, 1.2fr)
         minmax(0, 1fr);
-
     gap: 24px;
-
     align-items: start;
 }
 
-/* Savings + Current cards */
-
 .account-column {
-
     display: flex;
-
     flex-direction: column;
-
     gap: 20px;
 }
 
-/* ========================= */
-/* BOTTOM GRID */
-/* ========================= */
+/* ================================================
+   BOTTOM / MIDDLE GRID
+   Col 1: Recent Transactions (widest)
+   Col 2: Analytics chart
+   Col 3: Notifications panel
+================================================ */
 
 .middle-grid {
-
     display: grid;
-
     grid-template-columns:
         minmax(0, 1.8fr)
         minmax(0, 1.5fr)
         minmax(0, 1fr);
-
     gap: 24px;
-
     align-items: start;
 }
 
-/* Prevent cards from overflowing */
-
-.top-grid > *,
+/* Prevent any child card from overflowing its grid cell */
+.top-grid    > *,
 .middle-grid > * {
     min-width: 0;
+    overflow: hidden;
 }
 
-/* ========================= */
-/* RESPONSIVE */
-/* ========================= */
+/* ================================================
+   RESPONSIVE BREAKPOINTS
+================================================ */
 
+/* Large tablets / small desktops — stack all grids */
 @media (max-width: 1400px) {
-
     .top-grid,
     .middle-grid {
-
         grid-template-columns: 1fr;
-    }
-
-    .dashboard-content {
-
-        margin-left: 0;
-
-        width: 100%;
     }
 }
 
-@media (max-width: 768px) {
-
+/* Tablet — sidebar collapses to 72px */
+@media (max-width: 992px) {
+    .dashboard-content {
+        margin-left: 72px;
+    }
     .dashboard-body {
+        padding: 20px;
+        gap: 20px;
+    }
+}
 
-        padding: 15px;
+/* Mobile — sidebar hidden / drawer, full width */
+@media (max-width: 768px) {
+    .dashboard-content {
+        margin-left: 0;
+        width: 100%;
+    }
+    .dashboard-body {
+        padding: 14px;
+        gap: 16px;
     }
 }

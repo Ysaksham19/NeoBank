@@ -1,1 +1,51 @@
-<p>delete-beneficiary works!</p>
+<div class="confirm-page">
+
+  @if (loading) {
+    <div class="skeleton-card"></div>
+  }
+
+  @if (!loading && error && !beneficiary) {
+    <div class="alert alert-error">{{ error }}</div>
+    <a routerLink="/beneficiaries" class="btn btn-outline">Back to Beneficiaries</a>
+  }
+
+  @if (!loading && beneficiary) {
+    <div class="confirm-card">
+      <div class="warn-icon">⚠</div>
+      <h2>Remove Beneficiary?</h2>
+      <p>
+        You are about to permanently remove
+        <strong>{{ beneficiary.nickname }}</strong> from your beneficiary list.
+      </p>
+
+      <div class="detail-list">
+        <div class="detail-row">
+          <span>Account</span>
+          <span class="mono">●●●● {{ beneficiary.accountNumber.slice(-4) }}</span>
+        </div>
+        <div class="detail-row">
+          <span>Bank</span>
+          <span>{{ beneficiary.bankName }}</span>
+        </div>
+        <div class="detail-row">
+          <span>Type</span>
+          <span>{{ beneficiary.beneficiaryType === 'INTERNAL' ? 'Same Bank' : 'Other Bank' }}</span>
+        </div>
+      </div>
+
+      <p class="warning-text">
+        This action cannot be undone. You will need to re-add this payee to make future transfers.
+      </p>
+
+      @if (error) { <div class="alert alert-error">{{ error }}</div> }
+
+      <div class="actions">
+        <a routerLink="/beneficiaries" class="btn btn-outline" [class.disabled]="deleting">Cancel</a>
+        <button class="btn btn-danger" (click)="confirm()" [disabled]="deleting">
+          {{ deleting ? 'Removing…' : 'Yes, Remove' }}
+        </button>
+      </div>
+    </div>
+  }
+
+</div>

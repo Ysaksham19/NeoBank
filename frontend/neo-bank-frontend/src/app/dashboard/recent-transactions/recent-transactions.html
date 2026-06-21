@@ -3,27 +3,31 @@
     <h3>Recent Transactions</h3>
   </div>
 
-  @if(loading) {
+  @if (loading) {
     <div class="loading-rows">
-      <div class="skeleton-row" *ngFor="let i of [1,2,3,4,5]"></div>
+      @for (i of [1,2,3,4,5]; track i) {
+        <div class="skeleton-row"></div>
+      }
     </div>
-  } @else if(transactions.length === 0) {
+  } @else if (transactions.length === 0) {
     <div class="empty-state">No transactions yet.</div>
   } @else {
-    @for(tx of transactions; track tx.id) {
+    @for (tx of transactions; track tx.id) {
       <div class="tx-row">
-        <div class="tx-icon" [class.credit]="tx.transactionType === 'DEPOSIT' || tx.transactionType === 'CREDIT'"
-             [class.debit]="tx.transactionType === 'DEBIT' || tx.transactionType === 'TRANSFER'">
-          {{ tx.transactionType === 'DEPOSIT' || tx.transactionType === 'CREDIT' ? '↓' : '↑' }}
+        <div class="tx-icon"
+          [class.credit]="tx.transactionType === 'DEPOSIT' || tx.transactionType === 'CREDIT'"
+          [class.debit]="tx.transactionType === 'DEBIT'   || tx.transactionType === 'TRANSFER'">
+          {{ (tx.transactionType === 'DEPOSIT' || tx.transactionType === 'CREDIT') ? '↓' : '↑' }}
         </div>
         <div class="tx-info">
           <span class="tx-type">{{ tx.transactionType }}</span>
           <span class="tx-ref">{{ tx.transactionRef }}</span>
         </div>
         <div class="tx-amount"
-             [class.credit]="tx.transactionType === 'DEPOSIT' || tx.transactionType === 'CREDIT'"
-             [class.debit]="tx.transactionType === 'DEBIT' || tx.transactionType === 'TRANSFER'">
-          {{ (tx.transactionType === 'DEPOSIT' || tx.transactionType === 'CREDIT') ? '+' : '-' }}₹{{ tx.amount | number:'1.2-2' }}
+          [class.credit]="tx.transactionType === 'DEPOSIT' || tx.transactionType === 'CREDIT'"
+          [class.debit]="tx.transactionType === 'DEBIT'   || tx.transactionType === 'TRANSFER'">
+          {{ (tx.transactionType === 'DEPOSIT' || tx.transactionType === 'CREDIT') ? '+' : '-' }}
+          ₹{{ tx.amount | number:'1.2-2' }}
         </div>
       </div>
     }

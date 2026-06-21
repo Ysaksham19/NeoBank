@@ -19,7 +19,7 @@ import { NotificationsPanel } from '../../notifications/notifications-panel/noti
   standalone: true,
   imports: [
     Sidebar,
-    DashboardNavbar,
+   // DashboardNavbar,
     WelcomeCard,
     TotalBalance,
     SavingsAccountCard,

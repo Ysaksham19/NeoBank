@@ -1,1 +1,57 @@
-<p>favorite-beneficiary works!</p>
+<div class="fav-page">
+
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">⭐ Favourite Beneficiaries</h1>
+      <p class="page-subtitle">Your pinned payees for quick access</p>
+    </div>
+    <a routerLink="/beneficiaries" class="btn btn-outline">View All Beneficiaries</a>
+  </div>
+
+  @if (toastMsg)     { <div class="toast">{{ toastMsg }}</div> }
+  @if (errorMessage) { <div class="alert alert-error">{{ errorMessage }}</div> }
+
+  @if (loading) {
+    <div class="skeleton-list">
+      @for (_ of [1,2,3]; track $index) {
+        <div class="skeleton-row"></div>
+      }
+    </div>
+  }
+
+  @if (!loading && favorites.length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">☆</div>
+      <h3>No favourites yet</h3>
+      <p>Star any beneficiary from your list to pin them here for quick transfers.</p>
+      <a routerLink="/beneficiaries" class="btn btn-primary">Go to Beneficiaries</a>
+    </div>
+  }
+
+  @if (!loading && favorites.length > 0) {
+    <div class="fav-list">
+      @for (b of favorites; track b.id) {
+        <div class="fav-row">
+          <div class="avatar">{{ getInitials(b.nickname) }}</div>
+          <div class="fav-info">
+            <div class="fav-name">{{ b.nickname }}</div>
+            <div class="fav-bank">{{ b.bankName }} • ●●●● {{ b.accountNumber.slice(-4) }}</div>
+            <div class="fav-limit">Daily limit: ₹{{ b.dailyLimit | number }}</div>
+          </div>
+          <div class="fav-actions">
+            <a
+              [routerLink]="['/transactions/transfer']"
+              [queryParams]="{ beneficiaryId: b.id }"
+              class="btn btn-sm btn-send"
+              [class.disabled]="b.status === 'BLOCKED'">
+              Send
+            </a>
+            <a [routerLink]="['/beneficiaries', b.id, 'edit']" class="btn btn-sm btn-outline">Edit</a>
+            <button class="btn btn-sm btn-ghost-star" (click)="removeFavorite(b)" title="Remove from favourites">★</button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+</div>

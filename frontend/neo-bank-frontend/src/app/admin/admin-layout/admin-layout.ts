@@ -1,4 +1,19 @@
-import { Component } from '@angular/core';
+// import { Component } from '@angular/core';
+// import { RouterOutlet } from '@angular/router';
+// import { AdminSidebar } from '../admin-side-bar/admin-side-bar';
+
+// @Component({
+//   selector: 'app-admin-layout',
+//   standalone: true,
+//   imports: [RouterOutlet, AdminSidebar],
+//   templateUrl: './admin-layout.html',
+//   styleUrl: './admin-layout.css'
+// })
+// export class AdminLayout {
+//   sidebarCollapsed = false;
+// }
+
+import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AdminSidebar } from '../admin-side-bar/admin-side-bar';
 
@@ -9,4 +24,10 @@ import { AdminSidebar } from '../admin-side-bar/admin-side-bar';
   templateUrl: './admin-layout.html',
   styleUrl: './admin-layout.css'
 })
-export class AdminLayout {}
+export class AdminLayout {
+  sidebarCollapsed = signal(false);
+
+  onSidebarCollapse(collapsed: boolean): void {
+    this.sidebarCollapsed.set(collapsed);
+  }
+}

@@ -1,8 +1,8 @@
 .sidebar {
-
     position: fixed;
     left: 0;
-    top: 0;
+    top: 0;           /* stays at 0 — sits behind navbar via z-index */
+    padding-top: 80px; /* pushes content below the 64px navbar */
 
     width: 270px;
     height: 100vh;
@@ -14,16 +14,16 @@
     );
 
     border-right: 1px solid rgba(255,255,255,.06);
-
-    padding: 28px 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 28px;
 
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 
     overflow-y: auto;
-
-    z-index: 1000;
+    z-index: 900;   /* below navbar (navbar should be z-index: 1000+) */
 }
 
 /* ========================= */
@@ -31,36 +31,27 @@
 /* ========================= */
 
 .logo {
-
     display: flex;
     align-items: center;
     gap: 12px;
-
     color: white;
-
     font-size: 28px;
     font-weight: 800;
-
     margin-bottom: 40px;
 }
 
 .logo-icon {
-
     width: 46px;
     height: 46px;
-
     border-radius: 14px;
-
     background: linear-gradient(
         135deg,
         var(--color-secondary),
         var(--color-tertiary)
     );
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     font-size: 22px;
     font-weight: 700;
 }
@@ -70,58 +61,38 @@
 /* ========================= */
 
 .menu {
-
     display: flex;
     flex-direction: column;
-
-    gap: 10px;
+    gap: 6px;
 }
 
 .menu a {
-
     text-decoration: none;
-
     color: var(--color-text-secondary);
-
-    padding: 15px 18px;
-
-    border-radius: 18px;
-
+    padding: 12px 18px;
+    border-radius: 14px;
     display: flex;
     align-items: center;
-
     gap: 14px;
-
-    transition: .3s ease;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.2s ease, color 0.2s ease;
 }
 
 .menu a:hover {
-
-    background: rgba(20,216,255,.08);
-
+    background: rgba(20, 216, 255, .08);
     color: white;
 }
 
 .menu a.active {
-
     background: linear-gradient(
         90deg,
-        rgba(20,216,255,.18),
-        rgba(79,70,229,.18)
+        rgba(20, 216, 255, .18),
+        rgba(79, 70, 229, .18)
     );
-
-    border: 1px solid rgba(20,216,255,.3);
-
+    border: 1px solid rgba(20, 216, 255, .3);
     color: white;
-}
-
-/* ========================= */
-/* FOOTER */
-/* ========================= */
-
-.sidebar-footer {
-
-    margin-top: 30px;
+    font-weight: 600;
 }
 
 /* ========================= */
@@ -129,32 +100,20 @@
 /* ========================= */
 
 .logout-btn {
-
     width: 100%;
-
     height: 52px;
-
     border: none;
-
     border-radius: 16px;
-
-    background: rgba(239,68,68,.15);
-
+    background: rgba(239, 68, 68, .15);
     color: var(--color-danger-light);
-
     cursor: pointer;
-
     font-size: 15px;
-
     font-weight: 600;
-
-    transition: .3s ease;
+    transition: 0.2s ease;
 }
 
 .logout-btn:hover {
-
-    background: rgba(239,68,68,.25);
-
+    background: rgba(239, 68, 68, .28);
     transform: translateY(-2px);
 }
 
@@ -162,15 +121,9 @@
 /* SCROLLBAR */
 /* ========================= */
 
-.sidebar::-webkit-scrollbar {
-
-    width: 6px;
-}
-
+.sidebar::-webkit-scrollbar { width: 4px; }
 .sidebar::-webkit-scrollbar-thumb {
-
-    background: rgba(255,255,255,.15);
-
+    background: rgba(255, 255, 255, .12);
     border-radius: 20px;
 }
 
@@ -179,25 +132,17 @@
 /* ========================= */
 
 @media (max-width: 992px) {
-
     .sidebar {
-
-        width: 90px;
+        width: 72px;
+        padding-left: 10px;
+        padding-right: 10px;
     }
-
-    .logo span,
+    .logo span { display: none; }
     .menu a {
-
+        justify-content: center;
+        padding: 12px;
         font-size: 0;
     }
-
-    .menu a span {
-
-        font-size: 20px;
-    }
-
-    .sidebar-footer {
-
-        display: none;
-    }
+    .menu a span { font-size: 20px; }
+    .security-card { display: none; }
 }

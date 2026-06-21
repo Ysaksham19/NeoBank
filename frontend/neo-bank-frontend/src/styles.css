@@ -9,7 +9,6 @@
    Spacing & radius scale kept consistent for repetition + alignment
    ========================================================= */
 
-   
 :root {
   /* Primary */
   --color-primary: #0b5fff;
@@ -82,6 +81,30 @@
   --font-xl: 22px;
   --font-2xl: 28px;
   --font-3xl: 36px;
+
+  /* ── Admin Sidebar ──────────────────────────────────────── */
+  --sb-rail:       #0f1729;
+  --sb-panel:      #111e38;
+  --sb-border:     rgba(255, 255, 255, 0.06);
+  --sb-accent:     #3b82f6;
+  --sb-accent-dim: rgba(59, 130, 246, 0.13);
+  --sb-muted:      rgba(255, 255, 255, 0.3);
+  --sb-mid:        rgba(255, 255, 255, 0.55);
+  --sb-active:     #93c5fd;
+  --sb-hover:      rgba(255, 255, 255, 0.04);
+  --sb-rail-w:     58px;
+  --sb-panel-w:    174px;
+}
+
+/* ── Global Keyframes ───────────────────────────────────────── */
+@keyframes as-glow {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+@keyframes as-badge-pop {
+  from { transform: scale(0); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
 }
 
 @import 'tailwindcss';

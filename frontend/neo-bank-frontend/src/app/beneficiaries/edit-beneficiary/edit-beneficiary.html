@@ -1,1 +1,98 @@
-<p>edit-beneficiary works!</p>
+<div class="form-page">
+
+  <a routerLink="/beneficiaries" class="back-link">← Back to Beneficiaries</a>
+
+  <div class="form-card">
+    <h2 class="form-title">Edit Beneficiary</h2>
+    <p class="form-subtitle">Only the nickname and daily transfer limit can be updated.</p>
+
+    @if (loading) {
+      <div class="skeleton-block"></div>
+    }
+
+    @if (!loading && errorMessage && !beneficiary) {
+      <div class="alert alert-error">{{ errorMessage }}</div>
+      <a routerLink="/beneficiaries" class="btn btn-outline">Back to List</a>
+    }
+
+    @if (!loading && beneficiary) {
+
+      <!-- Read-only info banner -->
+      <div class="readonly-banner">
+        <div class="readonly-row">
+          <span>Account Number</span>
+          <span class="mono">●●●● {{ beneficiary.accountNumber.slice(-4) }}</span>
+        </div>
+        <div class="readonly-row">
+          <span>Bank</span>
+          <span>{{ beneficiary.bankName }}</span>
+        </div>
+        @if (beneficiary.beneficiaryType === 'EXTERNAL') {
+          <div class="readonly-row">
+            <span>IFSC</span>
+            <span class="mono">{{ beneficiary.ifscCode }}</span>
+          </div>
+        }
+        <div class="readonly-row">
+          <span>Type</span>
+          <span>{{ beneficiary.beneficiaryType === 'INTERNAL' ? 'Same Bank (NeoBank)' : 'Other Bank' }}</span>
+        </div>
+      </div>
+      <p class="readonly-note">
+        🔒 Account number, bank name, and IFSC cannot be changed.
+        Remove and re-add the beneficiary if these details need updating.
+      </p>
+
+      @if (successMsg)   { <div class="alert alert-success">✓ {{ successMsg }}</div> }
+      @if (errorMessage) { <div class="alert alert-error">{{ errorMessage }}</div>   }
+
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+
+        <!-- Nickname -->
+        <div class="form-group">
+          <label class="form-label" for="nickname">Nickname / Alias <span class="required">*</span></label>
+          <input id="nickname" type="text" formControlName="nickname"
+            class="form-input"
+            [class.input-error]="f['nickname'].invalid && f['nickname'].touched"
+            placeholder="e.g. John Savings" />
+          @if (f['nickname'].errors?.['required'] && f['nickname'].touched) {
+            <span class="field-error">Nickname is required.</span>
+          }
+          @if (f['nickname'].errors?.['minlength'] && f['nickname'].touched) {
+            <span class="field-error">Minimum 2 characters.</span>
+          }
+        </div>
+
+        <!-- Daily Limit -->
+        <div class="form-group">
+          <label class="form-label">Daily Transfer Limit <span class="required">*</span></label>
+          <div class="limit-options">
+            @for (opt of dailyLimitOptions; track opt) {
+              <button type="button" class="limit-chip"
+                [class.selected]="form.get('dailyLimit')?.value === opt"
+                (click)="form.get('dailyLimit')?.setValue(opt)">
+                ₹{{ opt | number }}
+              </button>
+            }
+          </div>
+          <input type="number" formControlName="dailyLimit"
+            class="form-input limit-custom"
+            placeholder="Custom amount (₹1,000 – ₹5,00,000)" />
+          @if (f['dailyLimit'].errors?.['min'] && f['dailyLimit'].touched) {
+            <span class="field-error">Minimum ₹1,000.</span>
+          }
+          @if (f['dailyLimit'].errors?.['max'] && f['dailyLimit'].touched) {
+            <span class="field-error">Maximum ₹5,00,000.</span>
+          }
+        </div>
+
+        <div class="form-actions">
+          <a routerLink="/beneficiaries" class="btn btn-outline">Cancel</a>
+          <button type="submit" class="btn btn-primary" [disabled]="submitting">
+            {{ submitting ? 'Saving…' : 'Save Changes' }}
+          </button>
+        </div>
+      </form>
+    }
+  </div>
+</div>

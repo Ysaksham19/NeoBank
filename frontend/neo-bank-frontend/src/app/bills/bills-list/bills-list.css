@@ -1,63 +1,219 @@
 .bills-page {
-  padding: 32px;
-  background: var(--color-bg, #f7f6f2);
-  min-height: 100vh;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  color: #1a1a2e;
 }
-.page-header { margin-bottom: 28px; }
-.page-header h1 { font-size: 1.75rem; font-weight: 700; color: var(--color-text, #28251d); margin-bottom: 6px; }
-.page-header p { font-size: 0.95rem; color: var(--color-text-muted, #7a7974); }
 
-.loading-state {
-  padding: 20px;
-  text-align: center;
-  color: var(--color-text-muted, #7a7974);
+/* Header */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+.header-title h1 { font-size: 1.65rem; font-weight: 700; margin: 0; }
+.header-title p  { font-size: 0.875rem; color: #6b7280; margin: 0.2rem 0 0; }
+
+/* Buttons */
+.back-btn {
+  background: none;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0.45rem 0.9rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  color: #374151;
+  transition: background 0.15s;
+}
+.back-btn:hover { background: #f3f4f6; }
+.btn-primary {
+  background: #01696f;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.55rem 1.25rem;
   font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-primary:hover:not(:disabled) { background: #0c4e54; }
+.btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
+.btn-full { width: 100%; padding: 0.75rem; margin-top: 0.5rem; }
+
+/* Banners */
+.banner { border-radius: 8px; padding: 0.75rem 1rem; font-size: 0.9rem; margin-bottom: 1.25rem; }
+.banner-success { background: #d1fae5; color: #065f46; }
+.banner-error   { background: #fee2e2; color: #991b1b; }
+
+/* Create Form */
+.form-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 1.75rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.form-title { font-size: 1.1rem; font-weight: 700; margin: 0 0 1.25rem; color: #1e3a5f; }
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+.form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+.form-group label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.form-group input,
+.form-group select {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.9rem;
+  color: #111827;
+  background: #f9fafb;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #01696f;
+  box-shadow: 0 0 0 3px rgba(1,105,111,0.12);
+  background: #fff;
 }
 
+/* Toolbar */
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding: 0.65rem 1rem;
+  background: #f8faff;
+  border: 1px solid #e0e7ff;
+  border-radius: 10px;
+}
+.summary-chips { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.chip {
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #374151;
+}
+.chip-warn { background: #fff7ed; border-color: #fed7aa; color: #c2410c; }
+.filter-group { display: flex; gap: 0.4rem; }
+.filter-btn {
+  background: none;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.8rem;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-weight: 500;
+}
+.filter-btn:hover { background: #f3f4f6; }
+.filter-btn.active {
+  background: #e6f7f7;
+  border-color: #01696f;
+  color: #01696f;
+  font-weight: 700;
+}
+
+/* Bill Grid */
 .bill-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 1.25rem;
 }
 .bill-card {
-  background: var(--color-surface, #f9f8f5);
-  border: 1px solid var(--color-border, #d4d1ca);
-  border-radius: 14px; padding: 22px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 1.25rem 1.4rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  transition: transform 0.15s, box-shadow 0.15s;
 }
-.bill-card:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.09); transform: translateY(-2px); }
-.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-.card-header h3 { font-size: 1rem; font-weight: 600; color: var(--color-text, #28251d); margin: 0; }
+.bill-card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.09); }
+.bill-card.overdue { border-color: #fca5a5; background: #fff8f8; }
 
-.status { padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
-.paid { background: rgba(67,122,34,0.1); color: var(--color-success, #437a22); }
-.pending { background: rgba(209,153,0,0.1); color: var(--color-gold, #d19900); }
+/* Card Header */
+.card-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.9rem; }
+.cat-icon { font-size: 1.6rem; line-height: 1; }
+.card-info { flex: 1; display: flex; flex-direction: column; gap: 0.1rem; }
+.card-info h3 { margin: 0; font-size: 0.95rem; font-weight: 700; color: #111827; }
+.category { font-size: 0.75rem; color: #6b7280; text-transform: uppercase; letter-spacing: 0.04em; }
 
-.category { font-size: 0.82rem; color: var(--color-text-muted, #7a7974); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.04em; }
-.amount { font-size: 1.55rem; font-weight: 700; color: var(--color-primary, #01696f); margin-bottom: 10px; }
-.due-date { font-size: 0.875rem; color: var(--color-text, #28251d); margin-bottom: 18px; }
+/* Status Badges */
+.status { padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; white-space: nowrap; }
+.paid         { background: rgba(5,150,105,0.1);  color: #065f46; }
+.pending      { background: rgba(209,153,0,0.12); color: #92400e; }
+.overdue-badge { background: #fee2e2; color: #991b1b; }
 
-.actions { display: flex; gap: 10px; }
+.amount   { font-size: 1.5rem; font-weight: 700; color: #01696f; margin-bottom: 0.5rem; }
+.due-date { font-size: 0.85rem; color: #374151; margin-bottom: 1rem; }
+
+/* Actions */
+.actions { display: flex; gap: 0.65rem; }
 .pay-btn {
-  flex: 1; height: 42px; border: none; border-radius: 8px;
+  flex: 1; height: 40px; border: none; border-radius: 8px;
   cursor: pointer; font-size: 0.875rem; font-weight: 600;
-  color: #fff; background: var(--color-primary, #01696f);
-  transition: background 0.18s;
+  color: #fff; background: #01696f; transition: background 0.15s;
 }
-.pay-btn:hover { background: var(--color-primary-hover, #0c4e54); }
+.pay-btn:hover { background: #0c4e54; }
 .delete-btn {
-  flex: 1; height: 42px; border: none; border-radius: 8px;
-  cursor: pointer; font-size: 0.875rem; font-weight: 600;
-  background: rgba(161,44,123,0.08); color: var(--color-error, #a12c7b);
-  display: flex; align-items: center; justify-content: center; gap: 6px;
-  transition: background 0.18s;
+  flex: 1; height: 40px; border: none; border-radius: 8px;
+  cursor: pointer; font-size: 0.85rem; font-weight: 600;
+  background: rgba(161,44,123,0.08); color: #a12c7b;
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+  transition: background 0.15s;
 }
-.delete-btn:hover { background: rgba(161,44,123,0.15); }
+.delete-btn:hover { background: rgba(161,44,123,0.16); }
 
-.empty-state { padding: 40px; text-align: center; color: var(--color-text-muted, #7a7974); font-size: 0.95rem; }
+/* Skeleton */
+@keyframes shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position:  600px 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e4e4e4 50%, #f0f0f0 75%);
+  background-size: 600px 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+  border-radius: 6px;
+}
+.skeleton-card { display: flex; flex-direction: column; gap: 0.75rem; }
+.sk-title { height: 18px; width: 55%; }
+.sk-bar   { height: 8px;  width: 100%; }
+.sk-text  { height: 14px; width: 70%; }
 
-@media (max-width: 600px) {
-  .bills-page { padding: 20px 16px; }
-  .bill-grid { grid-template-columns: 1fr; }
+/* Empty State */
+.empty-state {
+  grid-column: 1 / -1;
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center; padding: 3.5rem 2rem; color: #6b7280;
+}
+.empty-icon { font-size: 3rem; margin-bottom: 0.75rem; }
+.empty-state h3 { font-size: 1.1rem; font-weight: 700; color: #111827; margin: 0 0 0.4rem; }
+.empty-state p  { font-size: 0.875rem; margin: 0 0 1.25rem; }
+
+@media (max-width: 640px) {
+  .page-header { flex-direction: column; align-items: flex-start; }
+  .bill-grid   { grid-template-columns: 1fr; }
+  .toolbar     { flex-direction: column; align-items: flex-start; }
 }

@@ -1,35 +1,22 @@
 <div class="total-balance-card">
 
-    <div class="card-header">
+  <div class="card-header">
+    <span class="title">Total Balance</span>
+    <span class="eye-icon">👁️</span>
+  </div>
 
-        <span class="title">
-            Total Balance
-        </span>
-
-        <span class="eye-icon">
-            👁️
-        </span>
-
-    </div>
-
-    <h2>
-        ₹{{ totalBalance | number:'1.2-2' }}
-    </h2>
-
+  @if (loading) {
+    <div class="skeleton skeleton-amount"></div>
+    <div class="skeleton skeleton-growth"></div>
+  } @else {
+    <h2>₹{{ totalBalance | number:'1.2-2' }}</h2>
     <div class="growth">
-
-        <span class="positive">
-
-            + ₹{{ monthlyGrowth | number:'1.2-2' }}
-
-        </span>
-
-        <span class="month-text">
-
-            this month
-
-        </span>
-
+      <span [class.positive]="monthlyGrowth >= 0"
+            [class.negative]="monthlyGrowth < 0">
+        {{ monthlyGrowth >= 0 ? '+' : '' }}₹{{ monthlyGrowth | number:'1.2-2' }}
+      </span>
+      <span class="month-text">this month</span>
     </div>
+  }
 
 </div>

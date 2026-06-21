@@ -7,10 +7,13 @@ import { Bill } from '../../models/bill.model';
 @Injectable({ providedIn: 'root' })
 export class BillService {
   private readonly BASE_URL = `${environment.apiUrl}/bills`;
+
   constructor(private http: HttpClient) {}
 
-  createBill(payload: any): Observable<any> {
-    return this.http.post(this.BASE_URL, payload);
+  // ── Core CRUD ─────────────────────────────────────────────
+
+  createBill(payload: any): Observable<Bill> {
+    return this.http.post<Bill>(this.BASE_URL, payload);
   }
 
   getBills(): Observable<Bill[]> {
@@ -21,12 +24,18 @@ export class BillService {
     return this.http.get<Bill[]>(`${this.BASE_URL}/pending`);
   }
 
-  // FIX #4 — PATCH not PUT
-  payBill(id: number): Observable<any> {
-    return this.http.patch(`${this.BASE_URL}/pay/${id}`, {});
+  // ✅ Server-filtered overdue bills (avoids full fetch + client-side filter)
+  getOverdueBills(): Observable<Bill[]> {
+    return this.http.get<Bill[]>(`${this.BASE_URL}/overdue`);
   }
 
+  // PATCH not PUT — backend uses @PatchMapping("/pay/{id}")
+  payBill(id: number): Observable<Bill> {
+    return this.http.patch<Bill>(`${this.BASE_URL}/pay/${id}`, {});
+  }
+
+  // responseType 'text' — backend returns plain string, not JSON
   deleteBill(id: number): Observable<any> {
-    return this.http.delete(`${this.BASE_URL}/${id}`);
+    return this.http.delete(`${this.BASE_URL}/${id}`, { responseType: 'text' });
   }
 }

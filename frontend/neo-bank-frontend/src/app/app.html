@@ -1,11 +1,17 @@
+<!-- ✅ Header shows for ALL logged-in users, including admin -->
 @if (isLoggedIn()) {
   <app-header></app-header>
 }
 
 @if (showNavbar()) {
-<app-navbar></app-navbar>
+  <app-navbar></app-navbar>
 }
 
-<div class="content-padding" [class.auth-content]="isAuthPage()">
+<!-- ✅ Admin pages: no content-padding wrapper (sidebar handles layout) -->
+@if (isAdminPage()) {
   <router-outlet></router-outlet>
-</div>
+} @else {
+  <div class="content-padding" [class.auth-content]="isAuthPage()">
+    <router-outlet></router-outlet>
+  </div>
+}

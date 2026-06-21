@@ -1,58 +1,123 @@
 USE neobank_db;
 
-CREATE TABLE budgets (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+USE neobank_db;
 
-    user_id BIGINT NOT NULL,
+-- ============================================================
+-- V2 - BUDGETS, BILLS, REWARDS
+-- ============================================================
 
-    category VARCHAR(50) NOT NULL,
 
-    budget_month DATE NOT NULL,
+-- ============================================================
+-- 1. BUDGETS
+-- ============================================================
 
-    limit_amount DECIMAL(15,2) NOT NULL,
+CREATE TABLE IF NOT EXISTS budgets (
 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    id           BIGINT         NOT NULL AUTO_INCREMENT,
+
+    user_id      BIGINT         NOT NULL,
+
+    category     VARCHAR(50)    NOT NULL,
+
+    budget_month DATE           NOT NULL,
+
+    limit_amount DECIMAL(15, 2) NOT NULL,
+
+    created_at   TIMESTAMP      DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (id),
+
+    -- ✅ REQUIRED: matches @UniqueConstraint in Budget.java entity
+    UNIQUE KEY uq_user_category_month (user_id, category, budget_month),
 
     CONSTRAINT fk_budget_user
         FOREIGN KEY (user_id)
         REFERENCES users(id)
         ON DELETE CASCADE
+
 );
 
-CREATE TABLE bills (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
 
-    user_id BIGINT NOT NULL,
+-- ============================================================
+-- 2. BILLS
+-- ============================================================
 
-    biller_name VARCHAR(255) NOT NULL,
+CREATE TABLE IF NOT EXISTS bills (
 
-    category VARCHAR(100),
+    id           BIGINT         NOT NULL AUTO_INCREMENT,
 
-    amount DECIMAL(15,2) NOT NULL,
+    user_id      BIGINT         NOT NULL,
 
-    due_date DATE NOT NULL,
+    biller_name  VARCHAR(255)   NOT NULL,
 
-    status VARCHAR(20) DEFAULT 'PENDING',
+    category     VARCHAR(100),
 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    amount       DECIMAL(15, 2) NOT NULL,
+
+    due_date     DATE           NOT NULL,
+
+    -- ✅ FIXED: CHECK constraint ensures only valid status values
+    status       VARCHAR(20)    NOT NULL DEFAULT 'PENDING',
+
+    created_at   TIMESTAMP      DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (id),
 
     CONSTRAINT fk_bill_user
         FOREIGN KEY (user_id)
         REFERENCES users(id)
-        ON DELETE CASCADE
+        ON DELETE CASCADE,
+
+    CONSTRAINT chk_bill_status
+        CHECK (status IN ('PENDING', 'PAID', 'OVERDUE'))
+
 );
 
-CREATE TABLE rewards (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
 
-    user_id BIGINT UNIQUE NOT NULL,
+-- ============================================================
+-- 3. REWARDS
+-- ============================================================
 
-    points_balance INT DEFAULT 0,
+CREATE TABLE IF NOT EXISTS rewards (
 
-    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    id             BIGINT     NOT NULL AUTO_INCREMENT,
+
+    user_id        BIGINT     NOT NULL,
+
+    points_balance INT        NOT NULL DEFAULT 0,
+
+    -- ✅ FIXED: ON UPDATE so timestamp refreshes when points change
+    last_updated   TIMESTAMP  DEFAULT CURRENT_TIMESTAMP
+                              ON UPDATE CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (id),
+
+    -- One rewards record per user
+    UNIQUE KEY uq_rewards_user (user_id),
 
     CONSTRAINT fk_reward_user
         FOREIGN KEY (user_id)
         REFERENCES users(id)
         ON DELETE CASCADE
+
 );
+
+
+-- ============================================================
+-- INDEXES  (for query performance)
+-- ============================================================
+
+CREATE INDEX IF NOT EXISTS idx_budgets_user
+    ON budgets(user_id);
+
+CREATE INDEX IF NOT EXISTS idx_budgets_month
+    ON budgets(budget_month);
+
+CREATE INDEX IF NOT EXISTS idx_bills_user
+    ON bills(user_id);
+
+CREATE INDEX IF NOT EXISTS idx_bills_due_date
+    ON bills(due_date);
+
+CREATE INDEX IF NOT EXISTS idx_bills_status
+    ON bills(status);

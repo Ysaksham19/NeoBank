@@ -1,119 +1,212 @@
 <aside class="as-sidebar" [class.as-sidebar--collapsed]="collapsed">
 
-  <!-- ── Toggle button ───────────────────────────────────── -->
-  <button type="button" class="as-toggle" (click)="toggle()" [attr.aria-label]="collapsed ? 'Expand sidebar' : 'Collapse sidebar'">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
-      [class.as-toggle-icon--flipped]="collapsed">
-      <polyline points="15 18 9 12 15 6"/>
+  <!-- ══ Collapse Toggle ══ -->
+  <button type="button" class="as-toggle"
+    (click)="toggle()"
+    [attr.aria-label]="collapsed ? 'Expand sidebar' : 'Collapse sidebar'">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2.8"
+      stroke-linecap="round" stroke-linejoin="round"
+      class="as-toggle-icon"
+      [class.as-toggle-icon--rotated]="!collapsed">
+      <line x1="12" y1="5" x2="12" y2="19"/>
+      <line x1="5" y1="12" x2="19" y2="12"/>
     </svg>
   </button>
 
-  <!-- ── Admin identity ──────────────────────────────────── -->
-  <div class="as-identity">
-    <div class="as-id-avatar">{{ adminInitial }}</div>
-    <div class="as-id-meta" [class.as-id-meta--hidden]="collapsed">
-      <p class="as-id-name">{{ adminName }}</p>
-      <span class="as-id-chip">🛡️ Administrator</span>
-    </div>
-  </div>
+  <!-- ══════════════════════════════════
+       ICON RAIL — always visible
+  ══════════════════════════════════ -->
+  <div class="as-rail">
 
-  <div class="as-divider"></div>
-
-  <!-- ── Nav ─────────────────────────────────────────────── -->
-  <nav class="as-nav" aria-label="Admin navigation">
-
-    <span class="as-section-label" [class.as-section-label--hidden]="collapsed">OVERVIEW</span>
-
-    <a routerLink="/admin" routerLinkActive="as-nav-item--active"
+    <!-- Dashboard -->
+    <button type="button" class="as-rail-btn"
+      routerLink="/admin"
+      routerLinkActive="as-rail-btn--active"
       [routerLinkActiveOptions]="{exact: true}"
-      class="as-nav-item" (click)="closeMobile()">
-      <span class="as-nav-icon">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
-          <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
-        </svg>
-      </span>
-      <span class="as-nav-label" [class.as-nav-label--hidden]="collapsed">Dashboard</span>
+      (click)="closeMobile()">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+        <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+        <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+        <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+      </svg>
       <span class="as-tooltip">Dashboard</span>
-    </a>
+    </button>
 
-    <div class="as-divider"></div>
-    <span class="as-section-label" [class.as-section-label--hidden]="collapsed">MANAGEMENT</span>
-
-    <a routerLink="/admin/users-management" routerLinkActive="as-nav-item--active"
-      class="as-nav-item" (click)="closeMobile()">
-      <span class="as-nav-icon">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-          <circle cx="9" cy="7" r="4"/>
-          <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
-        </svg>
-      </span>
-      <span class="as-nav-label" [class.as-nav-label--hidden]="collapsed">Users</span>
+    <!-- Users -->
+    <button type="button" class="as-rail-btn"
+      routerLink="/admin/users-management"
+      routerLinkActive="as-rail-btn--active"
+      (click)="closeMobile()">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
       @if (pendingKycCount > 0) {
-        <span class="as-nav-badge" [class.as-nav-badge--hidden]="collapsed">{{ pendingKycCount }}</span>
+        <span class="as-rail-dot"></span>
       }
-      <span class="as-tooltip">Users</span>
-    </a>
-
-    <a routerLink="/admin/accounts-management" routerLinkActive="as-nav-item--active"
-      class="as-nav-item" (click)="closeMobile()">
-      <span class="as-nav-icon">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="5" width="20" height="14" rx="2"/>
-          <line x1="2" y1="10" x2="22" y2="10"/>
-        </svg>
+      <span class="as-tooltip">
+        Users @if (pendingKycCount > 0) { · {{ pendingKycCount }} KYC }
       </span>
-      <span class="as-nav-label" [class.as-nav-label--hidden]="collapsed">Accounts</span>
+    </button>
+
+    <!-- Accounts -->
+    <button type="button" class="as-rail-btn"
+      routerLink="/admin/accounts-management"
+      routerLinkActive="as-rail-btn--active"
+      (click)="closeMobile()">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="5" width="20" height="14" rx="2"/>
+        <line x1="2" y1="10" x2="22" y2="10"/>
+        <line x1="6" y1="15" x2="9" y2="15"/>
+      </svg>
       <span class="as-tooltip">Accounts</span>
-    </a>
+    </button>
 
-    <a routerLink="/admin/loan-decision" routerLinkActive="as-nav-item--active"
-      class="as-nav-item" (click)="closeMobile()">
-      <span class="as-nav-icon">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="12" y1="1" x2="12" y2="23"/>
-          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-        </svg>
-      </span>
-      <span class="as-nav-label" [class.as-nav-label--hidden]="collapsed">Loan Decisions</span>
+    <!-- Loan Decisions -->
+    <button type="button" class="as-rail-btn"
+      routerLink="/admin/loan-decision"
+      routerLinkActive="as-rail-btn--active"
+      (click)="closeMobile()">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="1" x2="12" y2="23"/>
+        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+      </svg>
       @if (pendingLoanCount > 0) {
-        <span class="as-nav-badge" [class.as-nav-badge--hidden]="collapsed">{{ pendingLoanCount }}</span>
+        <span class="as-rail-dot as-rail-dot--warn"></span>
       }
-      <span class="as-tooltip">Loan Decisions</span>
-    </a>
-
-    <a routerLink="/admin/transactions-management" routerLinkActive="as-nav-item--active"
-      class="as-nav-item" (click)="closeMobile()">
-      <span class="as-nav-icon">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-        </svg>
+      <span class="as-tooltip">
+        Loans @if (pendingLoanCount > 0) { · {{ pendingLoanCount }} pending }
       </span>
-      <span class="as-nav-label" [class.as-nav-label--hidden]="collapsed">Transactions</span>
+    </button>
+
+    <!-- Transactions -->
+    <button type="button" class="as-rail-btn"
+      routerLink="/admin/transactions-management"
+      routerLinkActive="as-rail-btn--active"
+      (click)="closeMobile()">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+      </svg>
       <span class="as-tooltip">Transactions</span>
-    </a>
+    </button>
 
-  </nav>
+    <div class="as-rail-sep" style="margin-top: 4px;"></div>
 
-  <!-- ── Bottom: logout ──────────────────────────────────── -->
-  <div class="as-bottom">
-    <div class="as-divider"></div>
-    <button type="button" class="as-nav-item as-logout" (click)="logout()">
-      <span class="as-nav-icon">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Settings -->
+    <button type="button" class="as-rail-btn"
+      routerLink="/admin/settings"
+      routerLinkActive="as-rail-btn--active"
+      (click)="closeMobile()">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+      <span class="as-tooltip">Settings</span>
+    </button>
+
+    <!-- Bottom cluster -->
+    <div class="as-rail-bottom">
+      <span class="as-rail-status-dot"></span>
+      <button type="button" class="as-rail-btn as-rail-btn--danger"
+        style="margin-bottom: 0;" (click)="logout()">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
           <polyline points="16 17 21 12 16 7"/>
           <line x1="21" y1="12" x2="9" y2="12"/>
         </svg>
-      </span>
-      <span class="as-nav-label" [class.as-nav-label--hidden]="collapsed">Logout</span>
-      <span class="as-tooltip">Logout</span>
-    </button>
+        <span class="as-tooltip">Logout</span>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════
+       LABEL PANEL — collapses away
+  ══════════════════════════════════ -->
+  <div class="as-panel">
+
+    <nav class="as-nav" aria-label="Admin navigation">
+
+      <p class="as-section-label">Overview</p>
+
+      <a routerLink="/admin" routerLinkActive="as-nav-item--active"
+         [routerLinkActiveOptions]="{exact: true}"
+         class="as-nav-item" (click)="closeMobile()">
+        Dashboard
+      </a>
+
+      <p class="as-section-label">Management</p>
+
+      <a routerLink="/admin/users-management" routerLinkActive="as-nav-item--active"
+         class="as-nav-item" (click)="closeMobile()">
+        <span>Users</span>
+        @if (pendingKycCount > 0) {
+          <span class="as-nav-badge">{{ pendingKycCount }}</span>
+        }
+      </a>
+
+      <a routerLink="/admin/accounts-management" routerLinkActive="as-nav-item--active"
+         class="as-nav-item" (click)="closeMobile()">
+        Accounts
+      </a>
+
+      <a routerLink="/admin/loan-decision" routerLinkActive="as-nav-item--active"
+         class="as-nav-item" (click)="closeMobile()">
+        <span>Loan Decisions</span>
+        @if (pendingLoanCount > 0) {
+          <span class="as-nav-badge as-nav-badge--warn">{{ pendingLoanCount }}</span>
+        }
+      </a>
+
+      <a routerLink="/admin/transactions-management" routerLinkActive="as-nav-item--active"
+         class="as-nav-item" (click)="closeMobile()">
+        Transactions
+      </a>
+
+      <p class="as-section-label">System</p>
+
+      <a routerLink="/admin/settings" routerLinkActive="as-nav-item--active"
+         class="as-nav-item" (click)="closeMobile()">
+        Settings
+      </a>
+
+    </nav>
+
+    <!-- Bottom -->
+    <div class="as-bottom">
+      <div class="as-panel-sep" style="margin-bottom: 8px;"></div>
+      <div class="as-status">
+        <span class="as-status-dot"></span>
+        <span class="as-status-label">System Online</span>
+      </div>
+      <button type="button" class="as-nav-item as-logout" (click)="logout()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        Logout
+      </button>
+    </div>
+
   </div>
 
 </aside>
 
 <!-- Mobile overlay -->
-<div class="as-overlay" [class.as-overlay--visible]="mobileOpen" (click)="closeMobile()"></div>
+<div class="as-overlay"
+  [class.as-overlay--visible]="mobileOpen"
+  (click)="closeMobile()"
+  aria-hidden="true">
+</div>

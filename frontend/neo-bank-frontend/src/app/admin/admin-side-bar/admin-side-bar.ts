@@ -1,6 +1,6 @@
-import { Component, inject, OnInit, HostListener } from '@angular/core';
+import { Component, inject, OnInit, HostListener, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLinkActive } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { AuthService } from '../../core/services/auth';
@@ -9,34 +9,37 @@ import { AdminService } from '../../core/services/admin';
 @Component({
   selector: 'app-admin-sidebar',
   standalone: true,
-  imports: [CommonModule, RouterLinkActive],
-  templateUrl: './admin-sidebar.html',
-  styleUrl: './admin-sidebar.css',
+  imports: [CommonModule, RouterLink, RouterLinkActive],
+  templateUrl: './admin-side-bar.html',
+  styleUrl: './admin-side-bar.css',
 })
 export class AdminSidebar implements OnInit {
 
   private readonly authService  = inject(AuthService);
   private readonly adminService = inject(AdminService);
-  private readonly router       = inject(Router);
 
-  collapsed   = false;   // desktop collapse
-  mobileOpen  = false;   // mobile drawer open
+  collapsed  = false;
+  mobileOpen = false;
 
   pendingKycCount  = 0;
   pendingLoanCount = 0;
 
+  @Output() collapsedChange = new EventEmitter<boolean>();
+
   // ── Admin identity ────────────────────────────────────────
-  get adminName():    string { return this.authService.getCurrentUser()?.fullName?.split(' ')[0] || 'Admin'; }
-  get adminInitial(): string { return this.authService.getCurrentUser()?.fullName?.charAt(0).toUpperCase() || 'A'; }
+  get adminName(): string {
+    return this.authService.getCurrentUser()?.fullName?.split(' ')[0] || 'Admin';
+  }
 
   ngOnInit(): void {
     this.loadBadgeCounts();
-    // Restore collapsed state
     const saved = localStorage.getItem('as_collapsed');
-    if (saved !== null) this.collapsed = saved === 'true';
+    if (saved !== null) {
+      this.collapsed = saved === 'true';
+      this.collapsedChange.emit(this.collapsed);
+    }
   }
 
-  // ── Load pending badge counts ─────────────────────────────
   loadBadgeCounts(): void {
     forkJoin({
       users: this.adminService.getAllUsers().pipe(catchError(() => of([]))),
@@ -47,22 +50,17 @@ export class AdminSidebar implements OnInit {
     });
   }
 
-  // ── Toggle collapse ───────────────────────────────────────
   toggle(): void {
     this.collapsed = !this.collapsed;
     localStorage.setItem('as_collapsed', String(this.collapsed));
+    this.collapsedChange.emit(this.collapsed);
   }
 
-  // ── Mobile ────────────────────────────────────────────────
   openMobile():  void { this.mobileOpen = true; }
   closeMobile(): void { this.mobileOpen = false; }
 
-  // ── Logout ────────────────────────────────────────────────
-  logout(): void {
-    this.authService.logout();
-  }
+  logout(): void { this.authService.logout(); }
 
-  // ── Close on ESC ─────────────────────────────────────────
   @HostListener('document:keydown.escape')
   onEsc(): void { this.mobileOpen = false; }
 }

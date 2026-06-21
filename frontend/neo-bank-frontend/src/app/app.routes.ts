@@ -28,12 +28,21 @@ import { CashbackHistory } from './rewards/cashback-history/cashback-history';
 import { NotificationsPanel } from './notifications/notifications-panel/notifications-panel';
 import { Profile } from './dashboard/profile/profile';
 
+// ── Beneficiaries ──
+import { BeneficiaryList } from './beneficiaries/beneficiary-list/beneficiary-list';
+import { AddBeneficiary } from './beneficiaries/add-beneficiary/add-beneficiary';
+import { EditBeneficiary } from './beneficiaries/edit-beneficiary/edit-beneficiary';
+import { DeleteBeneficiary } from './beneficiaries/delete-beneficiary/delete-beneficiary';
+import { FavoriteBeneficiary } from './beneficiaries/favorite-beneficiary/favorite-beneficiary';
+
+
 import { AdminLayout } from './admin/admin-layout/admin-layout';
 import { AdminDashboard } from './admin/admin-dashboard/admin-dashboard';
 import { UsersManagement } from './admin/users-management/users-management';
 import { LoanDecision } from './admin/loan-decision/loan-decision';
 import { TransactionsManagement } from './admin/transactions-management/transactions-management';
 import { AccountsManagement } from './admin/accounts-management/accounts-management';
+
 
 export const routes: Routes = [
 
@@ -47,34 +56,34 @@ export const routes: Routes = [
   { path: 'dashboard', component: DashboardHome, canActivate: [AuthGuard] },
 
   // ── Accounts ──
-  { path: 'accounts', component: AccountList, canActivate: [AuthGuard] },
-  { path: 'accounts/open', component: OpenAccount, canActivate: [AuthGuard] },
-  { path: 'accounts/:id', component: AccountDetails, canActivate: [AuthGuard] },
-  { path: 'accounts/:id/mini-statement', component: MiniStatement, canActivate: [AuthGuard] },
+  { path: 'accounts',                      component: AccountList,    canActivate: [AuthGuard] },
+  { path: 'accounts/open',                 component: OpenAccount,    canActivate: [AuthGuard] },
+  { path: 'accounts/:id',                  component: AccountDetails, canActivate: [AuthGuard] },
+  { path: 'accounts/:id/mini-statement',   component: MiniStatement,  canActivate: [AuthGuard] },
 
   // ── Transactions ──
-  { path: 'transactions', component: TransactionHistory, canActivate: [AuthGuard] },
-  { path: 'transactions/transfer', component: TransferMoney, canActivate: [AuthGuard] },
-  { path: 'transactions/deposit', component: DepositMoney, canActivate: [AuthGuard] },
-  { path: 'transactions/withdraw', component: WithdrawMoney, canActivate: [AuthGuard] },
+  { path: 'transactions',          component: TransactionHistory, canActivate: [AuthGuard] },
+  { path: 'transactions/transfer', component: TransferMoney,      canActivate: [AuthGuard] },
+  { path: 'transactions/deposit',  component: DepositMoney,       canActivate: [AuthGuard] },
+  { path: 'transactions/withdraw', component: WithdrawMoney,      canActivate: [AuthGuard] },
 
   // ── Loans ──
-  { path: 'loans', component: MyLoans, canActivate: [AuthGuard] },
-  { path: 'loans/products', component: LoanProducts, canActivate: [AuthGuard] },
-  { path: 'loans/apply', component: ApplyLoan, canActivate: [AuthGuard] },
-  { path: 'loans/repayments', component: RepaymentScheduleComponent, canActivate: [AuthGuard] },
+  { path: 'loans',             component: MyLoans,                   canActivate: [AuthGuard] },
+  { path: 'loans/products',    component: LoanProducts,              canActivate: [AuthGuard] },
+  { path: 'loans/apply',       component: ApplyLoan,                 canActivate: [AuthGuard] },
+  { path: 'loans/repayments',  component: RepaymentScheduleComponent, canActivate: [AuthGuard] },
 
   // ── Bills ──
-  { path: 'bills', component: BillsList, canActivate: [AuthGuard] },
-  { path: 'bills/pay', component: PayBill, canActivate: [AuthGuard] },
+  { path: 'bills',     component: BillsList, canActivate: [AuthGuard] },
+  { path: 'bills/pay', component: PayBill,   canActivate: [AuthGuard] },
 
   // ── Budgets ──
-  { path: 'budgets', component: BudgetDashboard, canActivate: [AuthGuard] },
-  { path: 'budgets/create', component: CreateBudget, canActivate: [AuthGuard] },
+  { path: 'budgets',        component: BudgetDashboard, canActivate: [AuthGuard] },
+  { path: 'budgets/create', component: CreateBudget,    canActivate: [AuthGuard] },
 
   // ── Rewards ──
-  { path: 'rewards', component: RewardsDashboard, canActivate: [AuthGuard] },
-  { path: 'rewards/cashback', component: CashbackHistory, canActivate: [AuthGuard] },
+  { path: 'rewards',          component: RewardsDashboard, canActivate: [AuthGuard] },
+  { path: 'rewards/cashback', component: CashbackHistory,  canActivate: [AuthGuard] },
 
   // ── Notifications ──
   { path: 'notifications', component: NotificationsPanel, canActivate: [AuthGuard] },
@@ -82,17 +91,24 @@ export const routes: Routes = [
   // ── Profile ──
   { path: 'profile', component: Profile, canActivate: [AuthGuard] },
 
+  // ── Beneficiaries ──
+  { path: 'beneficiaries',                component: BeneficiaryList,        canActivate: [AuthGuard] },
+  { path: 'beneficiaries/add',            component: AddBeneficiary,         canActivate: [AuthGuard] },
+  { path: 'beneficiaries/favourites',     component: FavoriteBeneficiary, canActivate: [AuthGuard] },
+  { path: 'beneficiaries/:id/edit',       component: EditBeneficiary,        canActivate: [AuthGuard] },
+  { path: 'beneficiaries/:id/delete',     component: DeleteBeneficiary,      canActivate: [AuthGuard] },
+
   // ── Admin (shell with sidebar) ──
   {
     path: 'admin',
     component: AdminLayout,
     canActivate: [AuthGuard, adminGuard],
     children: [
-      { path: '',                        component: AdminDashboard },
-      { path: 'users-management',        component: UsersManagement },
-      { path: 'loan-decision',           component: LoanDecision },
-      { path: 'transactions-management', component: TransactionsManagement },
-      { path: 'accounts-management',     component: AccountsManagement },
+      { path: '',                        component: AdminDashboard          },
+      { path: 'users-management',        component: UsersManagement         },
+      { path: 'loan-decision',           component: LoanDecision            },
+      { path: 'transactions-management', component: TransactionsManagement  },
+      { path: 'accounts-management',     component: AccountsManagement      },
     ]
   },
 

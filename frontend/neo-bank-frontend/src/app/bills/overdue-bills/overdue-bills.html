@@ -1,58 +1,54 @@
 <div class="overdue-page">
 
-    <div class="page-header">
-
-        <h1>
-            Overdue Bills
-        </h1>
-
-        <p>
-            Bills requiring immediate attention.
-        </p>
-
+  <div class="page-header">
+    <button class="back-btn" (click)="goBack()">&#8592; Back</button>
+    <div class="header-title">
+      <h1>⚠ Overdue Bills</h1>
+      <p>Bills past their due date that require immediate attention.</p>
     </div>
+  </div>
 
+  @if (successMsg) {
+    <div class="banner banner-success">✔ {{ successMsg }}</div>
+  }
+  @if (errorMsg) {
+    <div class="banner banner-error">✖ {{ errorMsg }}</div>
+  }
+
+  @if (isLoading) {
+    <div class="loading-state">Loading overdue bills…</div>
+  }
+
+  @if (!isLoading && overdueBills.length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">🎉</div>
+      <h3>No overdue bills!</h3>
+      <p>You're all caught up. Great job!</p>
+    </div>
+  }
+
+  @if (!isLoading && overdueBills.length > 0) {
     <div class="bill-grid">
+      @for (bill of overdueBills; track bill.id) {
+        <div class="bill-card">
 
-        @for(bill of overdueBills; track bill.id){
-
-        <div class="overdue-card">
-
-            <div class="badge">
-
-                OVERDUE
-
+          <div class="card-header">
+            <span class="cat-icon">{{ getCategoryIcon(bill.category) }}</span>
+            <div class="card-info">
+              <h3>{{ bill.billerName }}</h3>
+              <span class="category">{{ bill.category }}</span>
             </div>
+            <span class="overdue-badge">OVERDUE</span>
+          </div>
 
-            <h3>
+          <div class="amount">₹{{ bill.amount | number:'1.2-2' }}</div>
+          <div class="due-date">📅 Was due: {{ bill.dueDate | date:'mediumDate' }}</div>
+          <div class="days-overdue">🔴 {{ getDaysOverdue(bill.dueDate) }} day(s) overdue</div>
 
-                {{ bill.billerName }}
-
-            </h3>
-
-            <div class="category">
-
-                {{ bill.category }}
-
-            </div>
-
-            <div class="amount">
-
-                ₹{{ bill.amount }}
-
-            </div>
-
-            <div class="due-date">
-
-                Due:
-                {{ bill.dueDate }}
-
-            </div>
-
+          <button class="pay-btn" (click)="payBill(bill.id)">✔ Pay Now</button>
         </div>
-
-        }
-
+      }
     </div>
+  }
 
 </div>

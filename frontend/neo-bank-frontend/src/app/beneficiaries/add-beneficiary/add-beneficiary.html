@@ -1,1 +1,200 @@
-<p>add-beneficiary works!</p>
+<div class="form-page">
+
+  <a routerLink="/beneficiaries" class="back-link">← Back to Beneficiaries</a>
+
+  <!-- ── Progress Steps ── -->
+  <div class="steps">
+    <div class="step" [class.active]="step >= 1" [class.done]="step > 1">
+      <div class="step-circle">{{ step > 1 ? '✓' : '1' }}</div>
+      <span>Enter Details</span>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" [class.active]="step >= 2">
+      <div class="step-circle">2</div>
+      <span>Review &amp; Confirm</span>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <h2 class="form-title">
+      {{ step === 1 ? 'Add New Beneficiary' : 'Confirm Beneficiary Details' }}
+    </h2>
+    <p class="form-subtitle">
+      {{ step === 1
+        ? 'Fill in the payee details carefully — account numbers cannot be changed later.'
+        : 'Please verify the details below before confirming.' }}
+    </p>
+
+    @if (successMsg)   { <div class="alert alert-success">✓ {{ successMsg }}</div> }
+    @if (errorMessage) { <div class="alert alert-error">{{ errorMessage }}</div>   }
+
+    <!-- ════════════ STEP 1: FORM ════════════ -->
+    @if (step === 1) {
+      <form [formGroup]="form" (ngSubmit)="goToReview()" novalidate>
+
+        <!-- Beneficiary Type -->
+        <div class="form-section">
+          <label class="section-label">Beneficiary Type</label>
+          <div class="type-cards">
+            @for (t of beneficiaryTypes; track t.value) {
+              <label class="type-card" [class.selected]="form.get('beneficiaryType')?.value === t.value">
+                <input type="radio" formControlName="beneficiaryType" [value]="t.value" hidden />
+                <div class="type-card-inner">
+                  <span class="type-title">{{ t.label }}</span>
+                  <span class="type-desc">{{ t.desc }}</span>
+                </div>
+              </label>
+            }
+          </div>
+        </div>
+
+        <!-- Nickname -->
+        <div class="form-group">
+          <label class="form-label" for="nickname">Nickname / Alias <span class="required">*</span></label>
+          <input id="nickname" type="text" formControlName="nickname"
+            class="form-input"
+            [class.input-error]="f['nickname'].invalid && f['nickname'].touched"
+            placeholder="e.g. John's Salary Account" />
+          @if (f['nickname'].errors?.['required'] && f['nickname'].touched) {
+            <span class="field-error">Nickname is required.</span>
+          }
+          @if (f['nickname'].errors?.['minlength'] && f['nickname'].touched) {
+            <span class="field-error">Minimum 2 characters.</span>
+          }
+        </div>
+
+        <!-- Account Number -->
+        <div class="form-group">
+          <label class="form-label" for="accountNumber">Account Number <span class="required">*</span></label>
+          <input id="accountNumber" type="text" formControlName="accountNumber"
+            class="form-input"
+            [class.input-error]="f['accountNumber'].invalid && f['accountNumber'].touched"
+            placeholder="Enter 9–18 digit account number"
+            autocomplete="off" />
+          @if (f['accountNumber'].errors?.['required'] && f['accountNumber'].touched) {
+            <span class="field-error">Account number is required.</span>
+          }
+          @if (f['accountNumber'].errors?.['pattern'] && f['accountNumber'].touched) {
+            <span class="field-error">Enter a valid 9–18 digit account number.</span>
+          }
+        </div>
+
+        <!-- Confirm Account Number -->
+        <div class="form-group">
+          <label class="form-label" for="confirmAccount">Re-enter Account Number <span class="required">*</span></label>
+          <input id="confirmAccount" type="text" formControlName="confirmAccount"
+            class="form-input"
+            [class.input-error]="(f['confirmAccount'].invalid || form.errors?.['accountMismatch']) && f['confirmAccount'].touched"
+            placeholder="Re-enter account number"
+            autocomplete="off" />
+          @if (form.errors?.['accountMismatch'] && f['confirmAccount'].touched) {
+            <span class="field-error">Account numbers do not match.</span>
+          }
+        </div>
+
+        <!-- Bank Name (external only) -->
+        @if (isExternal) {
+          <div class="form-group">
+            <label class="form-label" for="bankName">Bank Name <span class="required">*</span></label>
+            <input id="bankName" type="text" formControlName="bankName"
+              class="form-input"
+              [class.input-error]="f['bankName'].invalid && f['bankName'].touched"
+              placeholder="e.g. State Bank of India" />
+            @if (f['bankName'].errors?.['required'] && f['bankName'].touched) {
+              <span class="field-error">Bank name is required.</span>
+            }
+          </div>
+
+          <!-- IFSC -->
+          <div class="form-group">
+            <label class="form-label" for="ifscCode">IFSC Code <span class="required">*</span></label>
+            <input id="ifscCode" type="text" formControlName="ifscCode"
+              class="form-input"
+              [class.input-error]="f['ifscCode'].invalid && f['ifscCode'].touched"
+              placeholder="e.g. SBIN0001234"
+              maxlength="11"
+              (input)="onIfscInput()" />
+            <span class="field-hint">Format: 4 letters + 0 + 6 alphanumeric (e.g. HDFC0001234)</span>
+            @if (f['ifscCode'].errors?.['required'] && f['ifscCode'].touched) {
+              <span class="field-error">IFSC code is required.</span>
+            }
+            @if (f['ifscCode'].errors?.['invalidIfsc'] && f['ifscCode'].touched) {
+              <span class="field-error">Enter a valid IFSC code.</span>
+            }
+          </div>
+        }
+
+        <!-- Daily Limit -->
+        <div class="form-group">
+          <label class="form-label">Daily Transfer Limit <span class="required">*</span></label>
+          <div class="limit-options">
+            @for (opt of dailyLimitOptions; track opt) {
+              <button type="button" class="limit-chip"
+                [class.selected]="form.get('dailyLimit')?.value === opt"
+                (click)="form.get('dailyLimit')?.setValue(opt)">
+                ₹{{ opt | number }}
+              </button>
+            }
+          </div>
+          <input type="number" formControlName="dailyLimit"
+            class="form-input limit-custom"
+            placeholder="Or enter a custom amount (₹1,000 – ₹5,00,000)" />
+          @if (f['dailyLimit'].errors?.['min'] && f['dailyLimit'].touched) {
+            <span class="field-error">Minimum limit is ₹1,000.</span>
+          }
+          @if (f['dailyLimit'].errors?.['max'] && f['dailyLimit'].touched) {
+            <span class="field-error">Maximum limit is ₹5,00,000.</span>
+          }
+        </div>
+
+        <div class="form-actions">
+          <a routerLink="/beneficiaries" class="btn btn-outline">Cancel</a>
+          <button type="submit" class="btn btn-primary">Continue to Review →</button>
+        </div>
+      </form>
+    }
+
+    <!-- ════════════ STEP 2: REVIEW ════════════ -->
+    @if (step === 2) {
+      <div class="review-card">
+        <div class="review-row">
+          <span class="review-key">Nickname</span>
+          <span class="review-val">{{ form.value.nickname }}</span>
+        </div>
+        <div class="review-row">
+          <span class="review-key">Type</span>
+          <span class="review-val">{{ isExternal ? 'External (Other Bank)' : 'Internal (NeoBank)' }}</span>
+        </div>
+        <div class="review-row">
+          <span class="review-key">Account Number</span>
+          <span class="review-val mono">{{ form.value.accountNumber }}</span>
+        </div>
+        <div class="review-row">
+          <span class="review-key">Bank Name</span>
+          <span class="review-val">{{ form.value.bankName }}</span>
+        </div>
+        @if (isExternal) {
+          <div class="review-row">
+            <span class="review-key">IFSC Code</span>
+            <span class="review-val mono">{{ form.value.ifscCode }}</span>
+          </div>
+        }
+        <div class="review-row">
+          <span class="review-key">Daily Limit</span>
+          <span class="review-val">₹{{ form.value.dailyLimit | number }}</span>
+        </div>
+      </div>
+
+      <div class="review-notice">
+        ℹ Please verify the account number carefully. Transfers to incorrect accounts may not be recoverable.
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-outline" (click)="goBack()" [disabled]="submitting">← Edit Details</button>
+        <button class="btn btn-primary" (click)="submit()" [disabled]="submitting">
+          {{ submitting ? 'Adding…' : 'Confirm & Add Beneficiary' }}
+        </button>
+      </div>
+    }
+  </div>
+</div>

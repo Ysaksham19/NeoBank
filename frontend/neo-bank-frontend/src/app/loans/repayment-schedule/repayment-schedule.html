@@ -1,54 +1,51 @@
 <div class="repayment-page">
   <div class="page-header">
     <h1>Repayment Schedule</h1>
-    <p>View and manage your EMI payments.</p>
+    <p>Loan #{{ loanId }} — EMI breakdown</p>
   </div>
 
-  <div class="search-card">
-    <input type="number" [(ngModel)]="loanAccountId" placeholder="Enter Loan Account ID">
-    <button [disabled]="loading" (click)="loadRepayments()">
-      {{ loading ? 'Loading...' : 'Load Schedule' }}
-    </button>
-  </div>
+  @if(loading) {
+    <div class="loading-skeleton">
+      @for(i of [1,2,3,4,5]; track i) { <div class="skeleton-row"></div> }
+    </div>
+  } @else if(errorMsg) {
+    <div class="error-state">{{ errorMsg }}</div>
+  } @else {
+    <div class="summary-row">
+      <div class="summary-card"><span class="s-label">Total EMIs</span><span class="s-value">{{ schedule.length }}</span></div>
+      <div class="summary-card green"><span class="s-label">Paid</span><span class="s-value">{{ paidCount }}</span></div>
+      <div class="summary-card amber"><span class="s-label">Pending</span><span class="s-value">{{ pendingCount }}</span></div>
+    </div>
 
-  @if(errorMessage) {
-    <div class="error-message">{{ errorMessage }}</div>
-  }
-
-  @if(repayments.length > 0) {
-    <table>
-      <thead>
-        <tr>
-          <th>EMI #</th>
-          <th>Due Date</th>
-          <th>EMI Amount</th>
-          <th>Principal</th>
-          <th>Interest</th>
-          <th>Status</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for(item of repayments; track item.instalmentNumber) {
+    <div class="table-wrapper">
+      <table class="schedule-table">
+        <thead>
           <tr>
-            <td>{{ item.instalmentNumber }}</td>
-            <td>{{ item.dueDate }}</td>
-            <td>₹{{ item.emiAmount | number:'1.2-2' }}</td>
-            <td>₹{{ item.principalComponent | number:'1.2-2' }}</td>
-            <td>₹{{ item.interestComponent | number:'1.2-2' }}</td>
-            <td><span class="status-badge" [class]="item.paymentStatus.toLowerCase()">{{ item.paymentStatus }}</span></td>
-            <td>
-              @if(item.paymentStatus !== 'PAID') {
-                <button class="pay-btn" (click)="markAsPaid(item.instalmentNumber)">Pay</button>
-              }
-            </td>
+            <th>#</th>
+            <th>Due Date</th>
+            <th>EMI Amount</th>
+            <th>Principal</th>
+            <th>Interest</th>
+            <th>Status</th>
           </tr>
-        }
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          @for(row of schedule; track row.instalmentNumber) {
+            <tr [class.paid-row]="row.paymentStatus === 'PAID'">
+              <td>{{ row.instalmentNumber }}</td>
+              <td>{{ row.dueDate | date:'dd MMM yyyy' }}</td>
+              <td>₹{{ row.emiAmount | number:'1.2-2' }}</td>
+              <td>₹{{ row.principalComponent | number:'1.2-2' }}</td>
+              <td>₹{{ row.interestComponent | number:'1.2-2' }}</td>
+              <td>
+                <span class="status-badge" [class]="row.paymentStatus.toLowerCase()">
+                  {{ row.paymentStatus }}
+                </span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
   }
 </div>
-
-@if(showToast) {
-  <div class="success-toast">✅ EMI paid successfully</div>
-}

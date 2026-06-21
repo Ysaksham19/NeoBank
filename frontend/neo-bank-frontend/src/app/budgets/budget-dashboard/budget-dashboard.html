@@ -1,0 +1,190 @@
+<div class="budget-page">
+
+  <!-- ── Header ── -->
+  <div class="page-header">
+    <button class="back-btn" (click)="goBack()">&#8592; Back</button>
+    <div class="header-title">
+      <h1>💰 Budget Dashboard</h1>
+      <p class="subtitle">Track and manage your monthly spending limits</p>
+    </div>
+    <button class="btn-primary" (click)="showForm = !showForm">
+      {{ showForm ? '✕ Cancel' : '+ New Budget' }}
+    </button>
+  </div>
+
+  <!-- ── Global Banners ── -->
+  @if (successMsg) {
+    <div class="banner banner-success">✔ {{ successMsg }}</div>
+  }
+  @if (errorMsg && !showForm && editingId === null) {
+    <div class="banner banner-error">✖ {{ errorMsg }}</div>
+  }
+
+  <!-- ── Create Budget Form ── -->
+  @if (showForm) {
+    <div class="form-card">
+      <h2 class="form-title">Create New Budget</h2>
+      @if (errorMsg) {
+        <div class="banner banner-error">✖ {{ errorMsg }}</div>
+      }
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="cat">Category</label>
+          <select id="cat" [(ngModel)]="newBudget.category">
+            @for (cat of categories; track cat) {
+              <option [value]="cat">{{ getCategoryIcon(cat) }} {{ cat }}</option>
+            }
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="mon">Month</label>
+          <input id="mon" type="month" [(ngModel)]="newBudget.month" />
+        </div>
+        <div class="form-group">
+          <label for="lim">Limit Amount (₹)</label>
+          <input id="lim" type="number" min="1" placeholder="e.g. 5000"
+            [(ngModel)]="newBudget.limitAmount" />
+        </div>
+      </div>
+      <button class="btn-primary btn-full" [disabled]="submitting" (click)="createBudget()">
+        {{ submitting ? 'Creating...' : 'Create Budget' }}
+      </button>
+    </div>
+  }
+
+  <!-- ── Month Filter ── -->
+  <div class="month-filter">
+    <span class="filter-label">📅 Showing budgets for</span>
+    <input type="month" class="month-input"
+      [value]="selectedMonth"
+      (change)="selectedMonth = $any($event.target).value" />
+    <button class="btn-ghost" (click)="selectedMonth = ''" [class.active]="!selectedMonth">
+      Show All
+    </button>
+  </div>
+
+  <!-- ── Summary Cards ── -->
+  @if (!isLoading && filteredBudgets.length > 0) {
+    <div class="summary-row">
+      <div class="summary-card">
+        <span class="summary-label">Total Budgets</span>
+        <span class="summary-value">{{ filteredBudgets.length }}</span>
+      </div>
+      <div class="summary-card">
+        <span class="summary-label">Categories</span>
+        <span class="summary-value">{{ getUniqueCategoryCount() }}</span>
+      </div>
+      <div class="summary-card">
+        <span class="summary-label">Total Allocated</span>
+        <span class="summary-value">₹{{ getTotalAllocated() | number:'1.2-2' }}</span>
+      </div>
+      <div class="summary-card">
+        <span class="summary-label">Total Spent</span>
+        <span class="summary-value spent">₹{{ getTotalSpent() | number:'1.2-2' }}</span>
+      </div>
+    </div>
+  }
+
+  <!-- ── Skeleton Loader ── -->
+  @if (isLoading) {
+    <div class="skeleton-list">
+      @for (i of [1, 2, 3]; track i) {
+        <div class="skeleton-card">
+          <div class="skeleton skeleton-title"></div>
+          <div class="skeleton skeleton-bar"></div>
+          <div class="skeleton skeleton-text"></div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ── Budget Cards Grid ── -->
+  @if (!isLoading && filteredBudgets.length > 0) {
+    <div class="budget-grid">
+      @for (b of filteredBudgets; track b.id) {
+        <div class="budget-card" [class.over-budget]="isOverBudget(b)" [class.editing]="editingId === b.id">
+
+          <!-- Card Header -->
+          <div class="card-top">
+            <span class="cat-icon">{{ getCategoryIcon(b.category) }}</span>
+            <div class="cat-info">
+              <span class="cat-name">{{ b.category }}</span>
+              <span class="cat-month">{{ formatMonth(b.budgetMonth) }}</span>
+            </div>
+            <!-- Action Buttons -->
+            <div class="card-actions">
+              @if (editingId !== b.id) {
+                <button class="edit-btn" title="Edit limit" (click)="startEdit(b)">✏️</button>
+                <button class="delete-btn" title="Delete budget" (click)="deleteBudget(b.id)">🗑</button>
+              }
+            </div>
+          </div>
+
+          <!-- ── Inline Edit Form ── -->
+          @if (editingId === b.id) {
+            <div class="edit-form">
+              <label class="edit-label">New Limit Amount (₹)</label>
+              <div class="edit-row">
+                <input
+                  type="number"
+                  class="edit-input"
+                  min="1"
+                  placeholder="Enter new limit"
+                  [(ngModel)]="editLimitAmount"
+                  (keyup.enter)="saveEdit(b)"
+                  (keyup.escape)="cancelEdit()"
+                  autofocus
+                />
+                <button class="btn-save" [disabled]="editSubmitting" (click)="saveEdit(b)">
+                  {{ editSubmitting ? '...' : '✔ Save' }}
+                </button>
+                <button class="btn-cancel-edit" (click)="cancelEdit()">✕</button>
+              </div>
+              @if (errorMsg) {
+                <p class="edit-error">{{ errorMsg }}</p>
+              }
+            </div>
+          }
+
+          <!-- Progress Bar -->
+          <div class="progress-wrap">
+            <div
+              class="progress-bar"
+              [class.over]="isOverBudget(b)"
+              [style.width.%]="getProgress(b)"
+            ></div>
+          </div>
+
+          <!-- Stats Row -->
+          <div class="card-stats">
+            <span class="spent">Spent: ₹{{ b.spentAmount | number:'1.2-2' }}</span>
+            <span class="limit">Limit: ₹{{ b.limitAmount | number:'1.2-2' }}</span>
+            <span class="percent" [class.over-text]="isOverBudget(b)">{{ getProgress(b) }}%</span>
+          </div>
+
+          <!-- Over Budget Badge -->
+          @if (isOverBudget(b)) {
+            <div class="over-badge">⚠ Over Budget!</div>
+          }
+
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ── Empty State ── -->
+  @if (!isLoading && filteredBudgets.length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">📊</div>
+      @if (selectedMonth) {
+        <h3>No budgets for {{ formatMonth(selectedMonth + '-01') }}</h3>
+        <p>No budgets found for this month. Create one or switch to another month.</p>
+      } @else {
+        <h3>No budgets yet</h3>
+        <p>Create your first budget to start tracking your monthly spending.</p>
+      }
+      <button class="btn-primary" (click)="showForm = true">+ Create Budget</button>
+    </div>
+  }
+
+</div>

@@ -1,10 +1,18 @@
 <header class="nh-header" [class.nh-header--scrolled]="isScrolled">
   <div class="nh-header-inner">
 
-    <!-- ── Logo ─────────────────────────────────────────── -->
+    <!-- ── Logo ── -->
     <a class="nh-logo" [routerLink]="isAdmin() ? '/admin' : '/dashboard'" aria-label="NeoBank360">
-      <div class="nh-logo-mark">
-        <svg width="28" height="28" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+      <img
+        src="images/logo.png"
+        alt="NeoBank360"
+        class="nh-logo-img"
+        width="36" height="36"
+        loading="eager"
+        onerror="this.style.display='none';this.nextElementSibling.style.display='grid';" />
+      <!-- SVG fallback -->
+      <div class="nh-logo-fallback" style="display:none" aria-hidden="true">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
           <rect width="32" height="32" rx="9" fill="#1a6fff"/>
           <path d="M7 22V10l5.5 7.5L18 10v12" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
           <circle cx="24" cy="11" r="3" fill="#5eb8ff"/>
@@ -13,10 +21,10 @@
       <span class="nh-logo-text">NeoBank<span class="nh-logo-accent">360</span></span>
     </a>
 
-    <!-- ── Right: role-aware content ────────────────────── -->
+    <!-- ── Right ── -->
     <div class="nh-right">
 
-      <!-- ADMIN: module shortcut pills -->
+      <!-- ADMIN: quick-nav pills (desktop) -->
       @if (isAdmin()) {
         <nav class="nh-admin-pills" aria-label="Admin quick nav">
           <a routerLink="/admin"                         class="nh-pill" routerLinkActive="nh-pill--active" [routerLinkActiveOptions]="{exact:true}">Dashboard</a>
@@ -27,24 +35,26 @@
         </nav>
       }
 
-      <!-- CUSTOMER: quick action links -->
+      <!-- CUSTOMER: quick-nav links (desktop) -->
       @if (!isAdmin() && isLoggedIn()) {
         <nav class="nh-customer-nav" aria-label="Customer quick nav">
-          <a routerLink="/dashboard"       class="nh-nav-link" routerLinkActive="nh-nav-link--active" [routerLinkActiveOptions]="{exact:true}">Home</a>
-          <a routerLink="/accounts"        class="nh-nav-link" routerLinkActive="nh-nav-link--active">Accounts</a>
-          <a routerLink="/payments"        class="nh-nav-link" routerLinkActive="nh-nav-link--active">Payments</a>
-          <a routerLink="/loans"           class="nh-nav-link" routerLinkActive="nh-nav-link--active">Loans</a>
+          <a routerLink="/dashboard"     class="nh-nav-link" routerLinkActive="nh-nav-link--active" [routerLinkActiveOptions]="{exact:true}">Home</a>
+          <a routerLink="/accounts"      class="nh-nav-link" routerLinkActive="nh-nav-link--active">Accounts</a>
+          <a routerLink="/transactions"  class="nh-nav-link" routerLinkActive="nh-nav-link--active">Transactions</a>
+          <a routerLink="/beneficiaries" class="nh-nav-link" routerLinkActive="nh-nav-link--active">Beneficiaries</a>
+          <a routerLink="/loans"         class="nh-nav-link" routerLinkActive="nh-nav-link--active">Loans</a>
         </nav>
       }
 
-      <!-- Notification Bell -->
+      <!-- ── Notification Bell ── -->
       @if (isLoggedIn()) {
         <div class="nh-notif-wrap">
           <button type="button" class="nh-icon-btn"
             [class.nh-icon-btn--active]="notifOpen"
             (click)="toggleNotif($event)"
-            aria-label="Notifications">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            aria-label="Notifications"
+            [attr.aria-expanded]="notifOpen">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
               <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
             </svg>
@@ -53,60 +63,113 @@
             }
           </button>
 
-          <!-- Notif dropdown -->
+          <!-- Notif Dropdown -->
           @if (notifOpen) {
             <div class="nh-dropdown nh-notif-panel" role="dialog" aria-label="Notifications">
+
+              <!-- Head -->
               <div class="nh-dropdown-head">
-                <span class="nh-dropdown-title">Notifications</span>
-                @if (unreadCount > 0) {
-                  <button type="button" class="nh-text-btn" (click)="markAllRead()">Mark all read</button>
-                }
+                <span class="nh-dropdown-title">
+                  Notifications
+                  @if (unreadCount > 0) {
+                    <span class="nh-unread-pill">{{ unreadCount }} new</span>
+                  }
+                </span>
+                <div class="nh-dropdown-head-actions">
+                  @if (unreadCount > 0) {
+                    <button type="button" class="nh-text-btn" (click)="markAllRead()">Mark all read</button>
+                  }
+                  <a routerLink="/notifications" class="nh-text-btn" (click)="closeAll()">View all</a>
+                </div>
               </div>
-              <div class="nh-notif-list">
-                @for (n of notifications; track n.id) {
-                  <div class="nh-notif-row" [class.nh-notif-row--unread]="!n.read">
-                    <span class="nh-notif-dot" [class.nh-notif-dot--active]="!n.read"></span>
-                    <div class="nh-notif-content">
-                      <p class="nh-notif-title">{{ n.title }}</p>
-                      <p class="nh-notif-msg">{{ n.message }}</p>
-                      <span class="nh-notif-time">{{ n.time }}</span>
+
+              <!-- Loading state -->
+              @if (notifLoading && notifications.length === 0) {
+                <div class="nh-notif-list">
+                  @for (_ of [1,2,3]; track $index) {
+                    <div class="nh-notif-skeleton">
+                      <div class="nh-skel-dot"></div>
+                      <div class="nh-skel-lines">
+                        <div class="nh-skel-line w55"></div>
+                        <div class="nh-skel-line w80"></div>
+                        <div class="nh-skel-line w35"></div>
+                      </div>
                     </div>
-                  </div>
-                } @empty {
-                  <div class="nh-empty-notif">
-                    <span>🔔</span>
-                    <p>No notifications yet</p>
-                  </div>
-                }
-              </div>
+                  }
+                </div>
+              }
+
+              <!-- Error state -->
+              @if (notifError && notifications.length === 0) {
+                <div class="nh-notif-error">
+                  <span>⚠️</span>
+                  <p>{{ notifError }}</p>
+                </div>
+              }
+
+              <!-- List -->
+              @if (!notifLoading || notifications.length > 0) {
+                <div class="nh-notif-list">
+                  @for (n of notifications; track trackByNotif($index, n)) {
+                    <div class="nh-notif-row"
+                      [class.nh-notif-row--unread]="!n.read"
+                      (click)="markOneRead(n, $event)">
+
+                      <!-- Type icon -->
+                      <div class="nh-notif-icon-wrap" [ngClass]="'nh-notif-icon--' + (n.type?.toLowerCase() ?? 'system')">
+                        <span>{{ getNotifIcon(n.type) }}</span>
+                      </div>
+
+                      <div class="nh-notif-content">
+                        <div class="nh-notif-top-row">
+                          <p class="nh-notif-title">{{ n.title }}</p>
+                          @if (!n.read) {
+                            <span class="nh-notif-unread-dot" aria-label="unread"></span>
+                          }
+                        </div>
+                        <p class="nh-notif-msg">{{ n.message }}</p>
+                        <span class="nh-notif-time">{{ n.time | date:'dd MMM, h:mm a' }}</span>
+                      </div>
+
+                      <!-- Delete btn -->
+                      <button type="button" class="nh-notif-delete"
+                        (click)="deleteNotif(n, $event)"
+                        aria-label="Dismiss notification">✕</button>
+                    </div>
+                  } @empty {
+                    @if (!notifLoading) {
+                      <div class="nh-empty-notif">
+                        <span>🔔</span>
+                        <p>You're all caught up!</p>
+                      </div>
+                    }
+                  }
+                </div>
+              }
+
             </div>
           }
         </div>
       }
 
-      <!-- Profile button -->
+      <!-- ── Profile Button ── -->
       @if (isLoggedIn()) {
         <div class="nh-profile-wrap">
           <button type="button" class="nh-profile-btn"
             [class.nh-profile-btn--active]="profileOpen"
             (click)="toggleProfile($event)"
-            aria-label="Open profile menu">
-            <!-- Avatar -->
-            <div class="nh-avatar" [class.nh-avatar--admin]="isAdmin()">
-              {{ userInitial }}
-            </div>
-            <!-- Name + role -->
+            aria-label="Open profile menu"
+            [attr.aria-expanded]="profileOpen">
+            <div class="nh-avatar" [class.nh-avatar--admin]="isAdmin()">{{ userInitial }}</div>
             <div class="nh-profile-meta">
               <span class="nh-profile-name">{{ userName }}</span>
               <span class="nh-profile-role" [class.nh-profile-role--admin]="isAdmin()">
                 {{ isAdmin() ? '🛡️ Admin' : '👤 Customer' }}
               </span>
             </div>
-            <!-- Chevron -->
             <svg class="nh-chevron" [class.nh-chevron--open]="profileOpen"
               width="13" height="13" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2.5"
-              stroke-linecap="round" stroke-linejoin="round">
+              stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <polyline points="6 9 12 15 18 9"/>
             </svg>
           </button>
@@ -115,15 +178,12 @@
           @if (profileOpen) {
             <div class="nh-dropdown nh-profile-panel" role="dialog" aria-label="Profile menu">
 
-              <!-- ── Identity card ── -->
+              <!-- Identity card -->
               <div class="nh-id-card">
-                <div class="nh-id-avatar" [class.nh-id-avatar--admin]="isAdmin()">
-                  {{ userInitial }}
-                </div>
+                <div class="nh-id-avatar" [class.nh-id-avatar--admin]="isAdmin()">{{ userInitial }}</div>
                 <div class="nh-id-info">
                   <p class="nh-id-name">{{ fullName }}</p>
                   <p class="nh-id-email">{{ userEmail }}</p>
-                  <!-- Admin: no customer chip -->
                   @if (!isAdmin()) {
                     <div class="nh-id-chips">
                       <span class="nh-chip"
@@ -136,7 +196,7 @@
                         [class.nh-chip--kyc-done]="kycStatus === 'VERIFIED' || kycStatus === 'APPROVED'"
                         [class.nh-chip--kyc-pending]="kycStatus === 'PENDING'"
                         [class.nh-chip--kyc-rejected]="kycStatus === 'REJECTED'">
-                        {{ kycStatus === 'VERIFIED' || kycStatus === 'APPROVED' ? '🪪 KYC Verified' : kycStatus === 'REJECTED' ? '❌ KYC Rejected' : '🕐 KYC Pending' }}
+                        {{ (kycStatus === 'VERIFIED' || kycStatus === 'APPROVED') ? '🪪 KYC Verified' : kycStatus === 'REJECTED' ? '❌ KYC Rejected' : '🕐 KYC Pending' }}
                       </span>
                     </div>
                     @if (customerNo) {
@@ -150,45 +210,25 @@
 
               <div class="nh-divider"></div>
 
-              <!-- ── ADMIN menu ── -->
+              <!-- ADMIN menu -->
               @if (isAdmin()) {
-                <a routerLink="/admin"                          (click)="closeAll()" class="nh-menu-item">
-                  <span class="nh-menu-icon">🏠</span><span>Dashboard</span>
-                </a>
-                <a routerLink="/admin/users-management"         (click)="closeAll()" class="nh-menu-item">
-                  <span class="nh-menu-icon">👥</span><span>User Management</span>
-                </a>
-                <a routerLink="/admin/accounts-management"      (click)="closeAll()" class="nh-menu-item">
-                  <span class="nh-menu-icon">🏦</span><span>Accounts</span>
-                </a>
-                <a routerLink="/admin/loan-decision"            (click)="closeAll()" class="nh-menu-item">
-                  <span class="nh-menu-icon">💰</span><span>Loan Decisions</span>
-                </a>
-                <a routerLink="/admin/transactions-management"  (click)="closeAll()" class="nh-menu-item">
-                  <span class="nh-menu-icon">📄</span><span>Transactions</span>
-                </a>
+                <a routerLink="/admin"                         (click)="closeAll()" class="nh-menu-item"><span class="nh-menu-icon">🏠</span><span>Dashboard</span></a>
+                <a routerLink="/admin/users-management"        (click)="closeAll()" class="nh-menu-item"><span class="nh-menu-icon">👥</span><span>User Management</span></a>
+                <a routerLink="/admin/accounts-management"     (click)="closeAll()" class="nh-menu-item"><span class="nh-menu-icon">🏦</span><span>Accounts</span></a>
+                <a routerLink="/admin/loan-decision"           (click)="closeAll()" class="nh-menu-item"><span class="nh-menu-icon">💰</span><span>Loan Decisions</span></a>
+                <a routerLink="/admin/transactions-management" (click)="closeAll()" class="nh-menu-item"><span class="nh-menu-icon">📄</span><span>Transactions</span></a>
               }
 
-              <!-- ── CUSTOMER menu ── -->
+              <!-- CUSTOMER menu -->
               @if (!isAdmin()) {
-                <a routerLink="/dashboard"        (click)="closeAll()" class="nh-menu-item">
-                  <span class="nh-menu-icon">🏠</span><span>Dashboard</span>
-                </a>
-                <a routerLink="/accounts"         (click)="closeAll()" class="nh-menu-item">
-                  <span class="nh-menu-icon">💳</span><span>My Accounts</span>
-                </a>
-                <a routerLink="/payments"         (click)="closeAll()" class="nh-menu-item">
-                  <span class="nh-menu-icon">💸</span><span>Money Transfer</span>
-                </a>
-                <a routerLink="/loans"            (click)="closeAll()" class="nh-menu-item">
-                  <span class="nh-menu-icon">📋</span><span>My Loans</span>
-                </a>
-                <a routerLink="/profile"          (click)="closeAll()" class="nh-menu-item">
-                  <span class="nh-menu-icon">👤</span><span>My Profile</span>
-                </a>
-                <a routerLink="/settings"         (click)="closeAll()" class="nh-menu-item">
-                  <span class="nh-menu-icon">⚙️</span><span>Settings</span>
-                </a>
+                <a routerLink="/dashboard"     (click)="closeAll()" class="nh-menu-item"><span class="nh-menu-icon">🏠</span><span>Dashboard</span></a>
+                <a routerLink="/accounts"      (click)="closeAll()" class="nh-menu-item"><span class="nh-menu-icon">💳</span><span>My Accounts</span></a>
+                <a routerLink="/transactions"  (click)="closeAll()" class="nh-menu-item"><span class="nh-menu-icon">💸</span><span>Transactions</span></a>
+                <a routerLink="/beneficiaries" (click)="closeAll()" class="nh-menu-item"><span class="nh-menu-icon">👥</span><span>Beneficiaries</span></a>
+                <a routerLink="/loans"         (click)="closeAll()" class="nh-menu-item"><span class="nh-menu-icon">📋</span><span>My Loans</span></a>
+                <a routerLink="/bills"         (click)="closeAll()" class="nh-menu-item"><span class="nh-menu-icon">🧾</span><span>Bills</span></a>
+                <a routerLink="/rewards"       (click)="closeAll()" class="nh-menu-item"><span class="nh-menu-icon">🎁</span><span>Rewards</span></a>
+                <a routerLink="/profile"       (click)="closeAll()" class="nh-menu-item"><span class="nh-menu-icon">👤</span><span>My Profile</span></a>
               }
 
               <div class="nh-divider"></div>
@@ -202,9 +242,47 @@
         </div>
       }
 
+      <!-- ── Mobile Hamburger ── -->
+      @if (isLoggedIn()) {
+        <button type="button" class="nh-hamburger"
+          [class.nh-hamburger--open]="mobileMenuOpen"
+          (click)="toggleMobileMenu($event)"
+          aria-label="Toggle menu">
+          <span></span><span></span><span></span>
+        </button>
+      }
+
     </div>
   </div>
+
+  <!-- ── Mobile Menu Drawer ── -->
+  @if (mobileMenuOpen && isLoggedIn()) {
+    <div class="nh-mobile-drawer">
+
+      @if (!isAdmin()) {
+        <a routerLink="/dashboard"     class="nh-mob-link" routerLinkActive="nh-mob-link--active" [routerLinkActiveOptions]="{exact:true}" (click)="closeAll()">🏠 Home</a>
+        <a routerLink="/accounts"      class="nh-mob-link" routerLinkActive="nh-mob-link--active" (click)="closeAll()">💳 Accounts</a>
+        <a routerLink="/transactions"  class="nh-mob-link" routerLinkActive="nh-mob-link--active" (click)="closeAll()">💸 Transactions</a>
+        <a routerLink="/beneficiaries" class="nh-mob-link" routerLinkActive="nh-mob-link--active" (click)="closeAll()">👥 Beneficiaries</a>
+        <a routerLink="/loans"         class="nh-mob-link" routerLinkActive="nh-mob-link--active" (click)="closeAll()">📋 Loans</a>
+        <a routerLink="/bills"         class="nh-mob-link" routerLinkActive="nh-mob-link--active" (click)="closeAll()">🧾 Bills</a>
+        <a routerLink="/rewards"       class="nh-mob-link" routerLinkActive="nh-mob-link--active" (click)="closeAll()">🎁 Rewards</a>
+        <a routerLink="/profile"       class="nh-mob-link" routerLinkActive="nh-mob-link--active" (click)="closeAll()">👤 Profile</a>
+      }
+
+      @if (isAdmin()) {
+        <a routerLink="/admin"                         class="nh-mob-link" routerLinkActive="nh-mob-link--active" [routerLinkActiveOptions]="{exact:true}" (click)="closeAll()">🏠 Dashboard</a>
+        <a routerLink="/admin/users-management"        class="nh-mob-link" routerLinkActive="nh-mob-link--active" (click)="closeAll()">👥 Users</a>
+        <a routerLink="/admin/accounts-management"     class="nh-mob-link" routerLinkActive="nh-mob-link--active" (click)="closeAll()">🏦 Accounts</a>
+        <a routerLink="/admin/loan-decision"           class="nh-mob-link" routerLinkActive="nh-mob-link--active" (click)="closeAll()">💰 Loans</a>
+        <a routerLink="/admin/transactions-management" class="nh-mob-link" routerLinkActive="nh-mob-link--active" (click)="closeAll()">📄 Transactions</a>
+      }
+
+      <div class="nh-divider" style="margin: 6px 0"></div>
+      <button type="button" (click)="logout()" class="nh-mob-link nh-mob-logout">🚪 Logout</button>
+    </div>
+  }
+
 </header>
 
-<!-- Spacer so page content isn't hidden under fixed header -->
 <div class="nh-header-spacer"></div>
