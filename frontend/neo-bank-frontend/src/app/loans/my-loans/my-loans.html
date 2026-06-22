@@ -5,44 +5,66 @@
   </div>
 
   <div class="tab-bar">
-    <button [class.active]="activeTab === 'accounts'" (click)="activeTab = 'accounts'">Loan Accounts</button>
+    <button [class.active]="activeTab === 'accounts'"     (click)="activeTab = 'accounts'">Loan Accounts</button>
     <button [class.active]="activeTab === 'applications'" (click)="activeTab = 'applications'">My Applications</button>
   </div>
 
-  @if(activeTab === 'accounts') {
-    @if(loading) {
+  <!-- Loan Accounts Tab -->
+  @if (activeTab === 'accounts') {
+    @if (loading) {
       <div class="loading">Loading loans...</div>
-    } @else if(loans.length === 0) {
-      <div class="empty-state">No active loan accounts.</div>
+    } @else if (errorMessage) {
+      <div class="error-card">{{ errorMessage }}</div>
+    } @else if (loans.length === 0) {
+      <div class="empty-state">
+        <p>No active loan accounts.</p>
+        <a [routerLink]="['/loans/apply']" class="apply-btn">Apply for a Loan</a>
+      </div>
     } @else {
       <div class="loan-grid">
-        @for(loan of loans; track loan.id) {
-          <div class="loan-card">
-            <h3>{{ loan.loanProductName }}</h3>
-            <div class="info-row"><span>Principal</span><strong>₹{{ loan.principalAmount | number:'1.2-2' }}</strong></div>
-            <div class="info-row"><span>EMI Amount</span><strong>₹{{ loan.emiAmount | number:'1.2-2' }}</strong></div>
-            <div class="info-row"><span>Tenure</span><strong>{{ loan.tenureMonths }} Months</strong></div>
+        @for (loan of loans; track loan.id) {
+          <div class="loan-card" [class.closed]="loan.status === 'CLOSED'">
+            <div class="card-top">
+              <h3>{{ loan.loanProductName }}</h3>
+              <span class="status-badge" [class]="loan.status.toLowerCase()">{{ loan.status }}</span>
+            </div>
+            <div class="info-row"><span>Principal</span>    <strong>₹{{ loan.principalAmount   | number:'1.2-2' }}</strong></div>
+            <div class="info-row"><span>Outstanding</span>  <strong>₹{{ loan.outstandingAmount | number:'1.2-2' }}</strong></div>
+            <div class="info-row"><span>EMI Amount</span>   <strong>₹{{ loan.emiAmount         | number:'1.2-2' }}</strong></div>
+            <div class="info-row"><span>Tenure</span>       <strong>{{ loan.tenureMonths }} Months</strong></div>
+            @if (loan.status === 'ACTIVE') {
+              <a [routerLink]="['/loans/repayment-schedule', loan.id]" class="schedule-link">
+                View Repayment Schedule →
+              </a>
+            }
           </div>
         }
       </div>
     }
   }
 
-  @if(activeTab === 'applications') {
-    @if(applications.length === 0) {
-      <div class="empty-state">No loan applications yet.</div>
+  <!-- Applications Tab -->
+  @if (activeTab === 'applications') {
+    @if (appsLoading) {
+      <div class="loading">Loading applications...</div>
+    } @else if (applications.length === 0) {
+      <div class="empty-state">
+        <p>No loan applications yet.</p>
+        <a [routerLink]="['/loans/apply']" class="apply-btn">Apply Now</a>
+      </div>
     } @else {
       <div class="applications-list">
-        @for(app of applications; track app.applicationId) {
+        @for (app of applications; track app.applicationId) {
           <div class="application-card">
             <div class="app-header">
               <h3>{{ app.productName }}</h3>
               <span class="status-badge" [class]="app.status.toLowerCase()">{{ app.status }}</span>
             </div>
-            <div class="info-row"><span>Requested Amount</span><strong>₹{{ app.requestedAmount | number:'1.2-2' }}</strong></div>
-            <div class="info-row"><span>Tenure</span><strong>{{ app.requestedTenureMonths }} Months</strong></div>
-            @if(app.adminRemarks) {
-              <div class="remarks">Remarks: {{ app.adminRemarks }}</div>
+            <div class="info-row"><span>Requested Amount</span> <strong>₹{{ app.requestedAmount        | number:'1.2-2' }}</strong></div>
+            <div class="info-row"><span>Tenure</span>           <strong>{{ app.requestedTenureMonths }} Months</strong></div>
+            <div class="info-row"><span>Applied On</span>       <strong>{{ app.appliedAt | date:'dd MMM yyyy' }}</strong></div>
+            @if (app.adminRemarks) {
+              <div class="remarks">💬 Remarks: {{ app.adminRemarks }}</div>
             }
           </div>
         }

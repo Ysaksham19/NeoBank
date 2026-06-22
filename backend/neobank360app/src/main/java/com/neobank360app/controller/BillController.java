@@ -16,10 +16,7 @@ public class BillController {
 
     private final BillService billService;
 
-    public BillController(
-            BillService billService
-    ) {
-
+    public BillController(BillService billService) {
         this.billService = billService;
     }
 
@@ -28,21 +25,12 @@ public class BillController {
     // =========================================================
 
     @PostMapping
-    public ResponseEntity<BillResponseDTO>
-    createBill(
-
-            @Valid
-            @RequestBody
-            BillRequestDTO request
+    public ResponseEntity<BillResponseDTO> createBill(
+            @Valid @RequestBody BillRequestDTO request
     ) {
-
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(
-                        billService.createBill(
-                                request
-                        )
-                );
+                .body(billService.createBill(request));
     }
 
     // =========================================================
@@ -50,12 +38,8 @@ public class BillController {
     // =========================================================
 
     @GetMapping
-    public ResponseEntity<List<BillResponseDTO>>
-    getMyBills() {
-
-        return ResponseEntity.ok(
-                billService.getMyBills()
-        );
+    public ResponseEntity<List<BillResponseDTO>> getMyBills() {
+        return ResponseEntity.ok(billService.getMyBills());
     }
 
     // =========================================================
@@ -63,12 +47,17 @@ public class BillController {
     // =========================================================
 
     @GetMapping("/pending")
-    public ResponseEntity<List<BillResponseDTO>>
-    getPendingBills() {
+    public ResponseEntity<List<BillResponseDTO>> getPendingBills() {
+        return ResponseEntity.ok(billService.getPendingBills());
+    }
 
-        return ResponseEntity.ok(
-                billService.getPendingBills()
-        );
+    // =========================================================
+    // GET OVERDUE BILLS — was missing, frontend calls /overdue
+    // =========================================================
+
+    @GetMapping("/overdue")
+    public ResponseEntity<List<BillResponseDTO>> getOverdueBills() {
+        return ResponseEntity.ok(billService.getOverdueBills());
     }
 
     // =========================================================
@@ -76,18 +65,10 @@ public class BillController {
     // =========================================================
 
     @PutMapping("/pay/{billId}")
-    public ResponseEntity<BillResponseDTO>
-    payBill(
-
-            @PathVariable
-            Long billId
+    public ResponseEntity<BillResponseDTO> payBill(
+            @PathVariable Long billId
     ) {
-
-        return ResponseEntity.ok(
-                billService.payBill(
-                        billId
-                )
-        );
+        return ResponseEntity.ok(billService.payBill(billId));
     }
 
     // =========================================================
@@ -95,19 +76,10 @@ public class BillController {
     // =========================================================
 
     @DeleteMapping("/{billId}")
-    public ResponseEntity<String>
-    deleteBill(
-
-            @PathVariable
-            Long billId
+    public ResponseEntity<String> deleteBill(
+            @PathVariable Long billId
     ) {
-
-        billService.deleteBill(
-                billId
-        );
-
-        return ResponseEntity.ok(
-                "Bill deleted successfully."
-        );
+        billService.deleteBill(billId);
+        return ResponseEntity.ok("Bill deleted successfully.");
     }
 }

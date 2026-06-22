@@ -31,9 +31,8 @@ export class BillService {
 
   // PATCH not PUT — backend uses @PatchMapping("/pay/{id}")
   payBill(id: number): Observable<Bill> {
-    return this.http.patch<Bill>(`${this.BASE_URL}/pay/${id}`, {});
+   return this.http.put<Bill>(`${this.BASE_URL}/pay/${id}`, {});
   }
-
   // responseType 'text' — backend returns plain string, not JSON
   deleteBill(id: number): Observable<any> {
     return this.http.delete(`${this.BASE_URL}/${id}`, { responseType: 'text' });

@@ -1,39 +1,172 @@
 <div class="apply-loan-page">
+
+  <!-- Back Button — route matches /loans from app.routes.ts -->
+  <a [routerLink]="['/loans']" class="back-btn">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M19 12H5M12 5l-7 7 7 7"/>
+    </svg>
+    Back to My Loans
+  </a>
+
+  <!-- Page Header -->
   <div class="page-header">
-    <h1>Apply for Loan</h1>
-    <p>Submit your loan application quickly and securely.</p>
+    <div class="header-icon">🏦</div>
+    <h1>Apply for a Loan</h1>
+    <p>Fill in the details below. Your application will be reviewed within 24–48 hours.</p>
+  </div>
+
+  <!-- Steps Bar -->
+  <div class="steps-bar">
+    <div class="step active">
+      <span class="step-num">1</span>
+      <span class="step-label">Choose Product</span>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" [class.active]="!!application.requestedAmount">
+      <span class="step-num">2</span>
+      <span class="step-label">Enter Amount</span>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" [class.active]="!!application.requestedTenureMonths">
+      <span class="step-num">3</span>
+      <span class="step-label">Select Tenure</span>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" [class.active]="!!emiPreview">
+      <span class="step-num">4</span>
+      <span class="step-label">Review &amp; Submit</span>
+    </div>
   </div>
 
   <div class="loan-card">
+
+    <!-- Product Selector -->
     <div class="field">
-      <label>Loan Product</label>
-      <select [(ngModel)]="application.loanProductId">
-        @for(product of products; track product.id) {
-          <option [value]="product.id">{{ product.productName }}</option>
+      <label>Loan Product <span class="required">*</span></label>
+      <select [(ngModel)]="application.loanProductId" (ngModelChange)="onProductChange()">
+        @for (product of products; track product.id) {
+          <option [value]="product.id">{{ product.productName }} — {{ product.loanType }}</option>
         }
       </select>
     </div>
 
+    <!-- Product Info Card -->
+    @if (selectedProduct) {
+      <div class="product-info-card">
+        <div class="product-info-grid">
+          <div class="info-item">
+            <span class="info-icon">💰</span>
+            <div>
+              <div class="info-label">Loan Range</div>
+              <div class="info-value">₹{{ selectedProduct.minAmount | number }} – ₹{{ selectedProduct.maxAmount | number }}</div>
+            </div>
+          </div>
+          <div class="info-item">
+            <span class="info-icon">📈</span>
+            <div>
+              <div class="info-label">Interest Rate</div>
+              <div class="info-value">{{ selectedProduct.annualInterestRate }}% p.a.</div>
+            </div>
+          </div>
+          <div class="info-item">
+            <span class="info-icon">🏷️</span>
+            <div>
+              <div class="info-label">Loan Type</div>
+              <div class="info-value">{{ selectedProduct.loanType }}</div>
+            </div>
+          </div>
+          <div class="info-item">
+            <span class="info-icon">📋</span>
+            <div>
+              <div class="info-label">Description</div>
+              <div class="info-value">{{ selectedProduct.description }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Loan Amount -->
     <div class="field">
-      <label>Loan Amount (₹)</label>
-      <input type="number" [(ngModel)]="application.requestedAmount" placeholder="Enter amount">
+      <label>Loan Amount (₹) <span class="required">*</span></label>
+      <div class="input-wrapper">
+        <span class="input-prefix">₹</span>
+        <input
+          type="number"
+          [(ngModel)]="application.requestedAmount"
+          placeholder="e.g. 500000"
+          [min]="selectedProduct ? selectedProduct.minAmount : null"
+          [max]="selectedProduct ? selectedProduct.maxAmount : null">
+      </div>
+      @if (selectedProduct) {
+        <div class="field-hint">
+          <span>Min: ₹{{ selectedProduct.minAmount | number }}</span>
+          <span>Max: ₹{{ selectedProduct.maxAmount | number }}</span>
+        </div>
+      }
     </div>
 
+    <!-- Tenure -->
     <div class="field">
-      <label>Tenure (Months)</label>
-      <input type="number" [(ngModel)]="application.requestedTenureMonths" placeholder="Enter tenure in months">
+      <label>Tenure (Months) <span class="required">*</span></label>
+      @if (allowedTenureList.length > 0) {
+        <div class="tenure-chips">
+          @for (t of allowedTenureList; track t) {
+            <button
+              type="button"
+              class="tenure-chip"
+              [class.selected]="application.requestedTenureMonths === t"
+              (click)="application.requestedTenureMonths = t">
+              {{ t }} Mo
+            </button>
+          }
+        </div>
+      } @else {
+        <input type="number" [(ngModel)]="application.requestedTenureMonths" placeholder="Enter tenure in months">
+      }
     </div>
 
-    @if(errorMessage) {
-      <div class="error-card">{{ errorMessage }}</div>
+    <!-- EMI Preview -->
+    @if (emiPreview) {
+      <div class="emi-preview-card">
+        <div class="emi-left">
+          <div class="emi-label">Estimated Monthly EMI</div>
+          <div class="emi-amount">₹{{ emiPreview | number:'1.2-2' }}</div>
+        </div>
+        <div class="emi-right">
+          <div class="emi-detail">
+            <span>Total Repayment</span>
+            <strong>₹{{ (emiPreview * (application.requestedTenureMonths ?? 0)) | number:'1.2-2' }}</strong>
+          </div>
+          <div class="emi-detail">
+            <span>Interest Cost</span>
+            <strong>₹{{ ((emiPreview * (application.requestedTenureMonths ?? 0)) - (application.requestedAmount ?? 0)) | number:'1.2-2' }}</strong>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Disclaimer -->
+    <div class="disclaimer">
+      ⚠️ EMI is an estimate based on the reducing balance method. Final terms are subject to approval and credit assessment.
+    </div>
+
+    @if (errorMessage) {
+      <div class="error-card">⛔ {{ errorMessage }}</div>
     }
 
     <button class="apply-btn" [disabled]="loading" (click)="applyLoan()">
-      {{ loading ? 'Submitting...' : 'Apply Now' }}
+      @if (loading) {
+        <span class="spinner"></span> Submitting...
+      } @else {
+        🚀 Submit Application
+      }
     </button>
+
   </div>
 </div>
 
-@if(showToast) {
-  <div class="success-toast">✅ Loan application submitted successfully</div>
+@if (showToast) {
+  <div class="success-toast">✅ Loan application submitted! Redirecting...</div>
 }

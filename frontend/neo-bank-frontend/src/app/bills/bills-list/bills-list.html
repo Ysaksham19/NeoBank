@@ -1,141 +1,280 @@
 <div class="bills-page">
 
-  <!-- Header -->
+  <!-- Page Header -->
   <div class="page-header">
-    <button class="back-btn" (click)="goBack()">&#8592; Back</button>
+    <button class="back-btn" (click)="goBack()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Back
+    </button>
     <div class="header-title">
-      <h1>🧾 Bills</h1>
-      <p>Manage and pay your upcoming bills.</p>
+      <h1>Bill Payments</h1>
+      <p>Manage, track and pay all your bills in one place</p>
     </div>
-    <button class="btn-primary" (click)="showForm = !showForm">
-      {{ showForm ? '✕ Cancel' : '+ New Bill' }}
+    <button class="btn-primary" (click)="showForm ? cancelForm() : (showForm = true)">
+      <svg *ngIf="!showForm" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+      <svg *ngIf="showForm" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      {{ showForm ? 'Cancel' : 'Add Bill' }}
     </button>
   </div>
 
-  <!-- Banners -->
+  <!-- Toast Banners -->
   @if (successMsg) {
-    <div class="banner banner-success">✔ {{ successMsg }}</div>
+    <div class="toast toast-success">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      {{ successMsg }}
+    </div>
   }
   @if (errorMsg && !showForm) {
-    <div class="banner banner-error">✖ {{ errorMsg }}</div>
+    <div class="toast toast-error">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      {{ errorMsg }}
+    </div>
   }
 
-  <!-- Create Form -->
+  <!-- Summary Cards -->
+  @if (!isLoading) {
+    <div class="summary-row">
+      <div class="summary-card summary-pending" (click)="activeTab = 'upcoming'">
+        <div class="summary-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="summary-info">
+          <span class="summary-label">Upcoming Bills</span>
+          <span class="summary-value">{{ getPendingCount() }}</span>
+          <span class="summary-amount">₹{{ getTotalPending() | number:'1.0-2' }}</span>
+        </div>
+      </div>
+      <div class="summary-card summary-overdue" (click)="activeTab = 'overdue'">
+        <div class="summary-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div class="summary-info">
+          <span class="summary-label">Overdue</span>
+          <span class="summary-value">{{ getOverdueCount() }}</span>
+          <span class="summary-amount" *ngIf="getOverdueCount() > 0">Needs attention</span>
+          <span class="summary-amount" *ngIf="getOverdueCount() === 0">All clear</span>
+        </div>
+      </div>
+      <div class="summary-card summary-paid" (click)="activeTab = 'paid'">
+        <div class="summary-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <div class="summary-info">
+          <span class="summary-label">Paid This Month</span>
+          <span class="summary-value">₹{{ getTotalPaid() | number:'1.0-2' }}</span>
+          <span class="summary-amount">Total cleared</span>
+        </div>
+      </div>
+      <div class="summary-card summary-duesoon" *ngIf="getDueSoonCount() > 0">
+        <div class="summary-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </div>
+        <div class="summary-info">
+          <span class="summary-label">Due This Week</span>
+          <span class="summary-value">{{ getDueSoonCount() }}</span>
+          <span class="summary-amount">Pay soon</span>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Add Bill Form -->
   @if (showForm) {
     <div class="form-card">
-      <h2 class="form-title">Create New Bill</h2>
+      <div class="form-card-header">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <h2>Add New Bill</h2>
+      </div>
       @if (errorMsg) {
-        <div class="banner banner-error">✖ {{ errorMsg }}</div>
+        <div class="toast toast-error" style="margin-bottom:1rem">{{ errorMsg }}</div>
       }
       <div class="form-grid">
         <div class="form-group">
-          <label>Biller Name</label>
-          <input type="text" placeholder="e.g. BESCOM" [(ngModel)]="newBill.billerName" />
+          <label for="billerName">Biller / Provider Name</label>
+          <input id="billerName" type="text" placeholder="e.g. BESCOM, Airtel, LIC" [(ngModel)]="newBill.billerName" />
         </div>
         <div class="form-group">
-          <label>Category</label>
-          <select [(ngModel)]="newBill.category">
-            @for (cat of categories; track cat) {
-              <option [value]="cat">{{ getCategoryIcon(cat) }} {{ cat }}</option>
+          <label for="category">Category</label>
+          <select id="category" [(ngModel)]="newBill.category">
+            @for (cat of categories; track cat.value) {
+              <option [value]="cat.value">{{ cat.icon }} {{ cat.label }}</option>
             }
           </select>
         </div>
         <div class="form-group">
-          <label>Amount (₹)</label>
-          <input type="number" min="1" placeholder="e.g. 1200" [(ngModel)]="newBill.amount" />
+          <label for="amount">Bill Amount (₹)</label>
+          <div class="input-with-prefix">
+            <span class="input-prefix">₹</span>
+            <input id="amount" type="number" min="1" placeholder="0.00" [(ngModel)]="newBill.amount" />
+          </div>
         </div>
         <div class="form-group">
-          <label>Due Date</label>
-          <input type="date" [(ngModel)]="newBill.dueDate" />
+          <label for="dueDate">Due Date</label>
+          <input id="dueDate" type="date" [(ngModel)]="newBill.dueDate" />
         </div>
-        <div class="form-group">
-          <label>Account ID</label>
-          <input type="number" min="1" placeholder="Your account ID" [(ngModel)]="newBill.accountId" />
-        </div>
+        
       </div>
-      <button class="btn-primary btn-full" [disabled]="submitting" (click)="createBill()">
-        {{ submitting ? 'Creating…' : 'Create Bill' }}
-      </button>
-    </div>
-  }
-
-  <!-- Summary + Filter -->
-  @if (!isLoading && bills.length > 0) {
-    <div class="toolbar">
-      <div class="summary-chips">
-        <span class="chip">Total: {{ bills.length }}</span>
-        <span class="chip chip-warn">Pending: ₹{{ getTotalPending() | number:'1.0-2' }}</span>
-      </div>
-      <div class="filter-group">
-        <button class="filter-btn" [class.active]="statusFilter === ''"       (click)="statusFilter = ''">All</button>
-        <button class="filter-btn" [class.active]="statusFilter === 'PENDING'" (click)="statusFilter = 'PENDING'">Pending</button>
-        <button class="filter-btn" [class.active]="statusFilter === 'PAID'"    (click)="statusFilter = 'PAID'">Paid</button>
+      <div class="form-actions">
+        <button class="btn-ghost" (click)="cancelForm()">Cancel</button>
+        <button class="btn-primary" [disabled]="submitting" (click)="createBill()">
+          <svg *ngIf="!submitting" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+          {{ submitting ? 'Adding…' : 'Add Bill' }}
+        </button>
       </div>
     </div>
   }
 
-  <!-- Skeleton -->
+  <!-- Tab Bar -->
+  <div class="tab-bar">
+    <button class="tab-btn" [class.active]="activeTab === 'all'" (click)="activeTab = 'all'">
+      All Bills
+      <span class="tab-count">{{ bills.length }}</span>
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'upcoming'" (click)="activeTab = 'upcoming'">
+      Upcoming
+      <span class="tab-count pending-count">{{ getPendingCount() }}</span>
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'overdue'" (click)="activeTab = 'overdue'">
+      Overdue
+      <span class="tab-count overdue-count" *ngIf="getOverdueCount() > 0">{{ getOverdueCount() }}</span>
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'paid'" (click)="activeTab = 'paid'">
+      Paid
+    </button>
+  </div>
+
+  <!-- Skeleton Loader -->
   @if (isLoading) {
-    <div class="bill-grid">
+    <div class="bill-list">
       @for (i of [1, 2, 3]; track i) {
-        <div class="bill-card skeleton-card">
-          <div class="skeleton sk-title"></div>
-          <div class="skeleton sk-bar"></div>
-          <div class="skeleton sk-text"></div>
+        <div class="bill-row skeleton-row">
+          <div class="skeleton sk-icon"></div>
+          <div class="skeleton-body">
+            <div class="skeleton sk-title"></div>
+            <div class="skeleton sk-text"></div>
+          </div>
+          <div class="skeleton sk-amount"></div>
         </div>
       }
     </div>
   }
 
-  <!-- Bill Cards -->
+  <!-- Bills Table / List -->
   @if (!isLoading) {
-    <div class="bill-grid">
+    <div class="bill-list">
       @for (bill of filteredBills; track bill.id) {
-        <div class="bill-card" [class.overdue]="isOverdue(bill)">
+        <div class="bill-row"
+          [class.row-overdue]="isOverdue(bill)"
+          [class.row-paid]="bill.status === 'PAID'"
+          [class.row-duesoon]="isDueSoon(bill)">
 
-          <div class="card-header">
-            <span class="cat-icon">{{ getCategoryIcon(bill.category) }}</span>
-            <div class="card-info">
-              <h3>{{ bill.billerName }}</h3>
-              <span class="category">{{ bill.category }}</span>
-            </div>
-            <span class="status"
-              [class.paid]="bill.status === 'PAID'"
-              [class.pending]="bill.status === 'PENDING'"
-              [class.overdue-badge]="isOverdue(bill)">
-              {{ isOverdue(bill) ? 'OVERDUE' : bill.status }}
-            </span>
+          <!-- Category Icon -->
+          <div class="row-icon" [class.icon-paid]="bill.status === 'PAID'" [class.icon-overdue]="isOverdue(bill)">
+            {{ getCategoryIcon(bill.category) }}
           </div>
 
-          <div class="amount">₹{{ bill.amount | number:'1.2-2' }}</div>
-          <div class="due-date">📅 Due: {{ bill.dueDate | date:'mediumDate' }}</div>
+          <!-- Bill Info -->
+          <div class="row-info">
+            <div class="row-top">
+              <span class="row-name">{{ bill.billerName }}</span>
+              <span class="row-badge"
+                [class.badge-paid]="bill.status === 'PAID'"
+                [class.badge-overdue]="isOverdue(bill)"
+                [class.badge-duesoon]="isDueSoon(bill)"
+                [class.badge-pending]="!isOverdue(bill) && !isDueSoon(bill) && bill.status !== 'PAID'">
+                {{ getBillStatus(bill) }}
+              </span>
+            </div>
+            <div class="row-meta">
+              <span class="row-category">{{ getCategoryLabel(bill.category) }}</span>
+              <span class="dot">·</span>
+              <span class="row-due" [class.due-overdue]="isOverdue(bill)" [class.due-soon]="isDueSoon(bill)">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Due {{ bill.dueDate | date:'dd MMM yyyy' }}
+              </span>
+              @if (bill.status !== 'PAID' && !isOverdue(bill)) {
+                <span class="dot">·</span>
+                <span class="row-days" [class.days-soon]="isDueSoon(bill)">
+                  @if (getDaysUntilDue(bill) === 0) { Due today }
+                  @else if (getDaysUntilDue(bill) === 1) { Due tomorrow }
+                  @else { {{ getDaysUntilDue(bill) }} days left }
+                </span>
+              }
+              @if (isOverdue(bill)) {
+                <span class="dot">·</span>
+                <span class="row-days days-overdue">{{ -getDaysUntilDue(bill) }} days overdue</span>
+              }
+            </div>
+          </div>
 
-          <div class="actions">
+          <!-- Amount -->
+          <div class="row-amount" [class.amount-paid]="bill.status === 'PAID'">
+            ₹{{ bill.amount | number:'1.2-2' }}
+          </div>
+
+          <!-- Actions -->
+          <div class="row-actions">
             @if (bill.status !== 'PAID') {
-              <button class="pay-btn" (click)="payBill(bill.id)">✔ Pay Now</button>
+              <button class="btn-pay"
+                [disabled]="payingId === bill.id"
+                (click)="payBill(bill.id)">
+                @if (payingId === bill.id) {
+                  <span class="spinner"></span> Paying…
+                } @else {
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+                  Pay Now
+                }
+              </button>
+            } @else {
+              <span class="paid-label">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                Paid
+              </span>
             }
-            <button class="delete-btn" (click)="deleteBill(bill.id)">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="3 6 5 6 21 6"/>
-                <path d="M19 6l-1 14H6L5 6"/>
-                <path d="M10 11v6M14 11v6"/>
-                <path d="M9 6V4h6v2"/>
-              </svg>
-              Delete
+            <button class="btn-delete"
+              [disabled]="deletingId === bill.id"
+              (click)="deleteBill(bill.id)"
+              title="Remove bill">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
             </button>
           </div>
 
         </div>
       } @empty {
         <div class="empty-state">
-          <div class="empty-icon">🧾</div>
-          <h3>No bills found</h3>
-          <p>Create your first bill to get started.</p>
-          <button class="btn-primary" (click)="showForm = true">+ New Bill</button>
+          <div class="empty-illustration">
+            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.35"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          </div>
+          @if (activeTab === 'all') {
+            <h3>No bills added yet</h3>
+            <p>Add your electricity, internet, phone and other bills to track and pay them here.</p>
+            <button class="btn-primary" (click)="showForm = true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+              Add Your First Bill
+            </button>
+          }
+          @if (activeTab === 'upcoming') {
+            <h3>No upcoming bills</h3>
+            <p>You have no pending bills at the moment. Great job staying on top!</p>
+          }
+          @if (activeTab === 'overdue') {
+            <h3>No overdue bills</h3>
+            <p>You're all clear! No overdue bills found.</p>
+          }
+          @if (activeTab === 'paid') {
+            <h3>No paid bills</h3>
+            <p>Bills you pay will appear here for your records.</p>
+          }
         </div>
       }
+    </div>
+  }
+
+  <!-- Cashback Note -->
+  @if (!isLoading && bills.length > 0) {
+    <div class="cashback-note">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Pay bills on time and earn <strong>2% cashback</strong> on every payment as NeoBank rewards.
     </div>
   }
 

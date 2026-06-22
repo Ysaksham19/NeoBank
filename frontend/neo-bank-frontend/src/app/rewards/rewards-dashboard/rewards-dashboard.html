@@ -1,28 +1,277 @@
 <div class="rewards-page">
 
+  <!-- Header -->
   <div class="page-header">
-    <h1>Rewards</h1>
-    <p>Your cashback and reward points summary.</p>
+    <button class="back-btn" (click)="goBack()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Back
+    </button>
+    <div class="header-title">
+      <h1>Rewards</h1>
+      <p>Your cashback, tier status and full transaction history</p>
+    </div>
   </div>
 
-  <div class="rewards-summary">
-
-    <div class="reward-card">
-      <div class="reward-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2"
-          stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="20 12 20 22 4 22 4 12"/>
-          <rect x="2" y="7" width="20" height="5"/>
-          <line x1="12" y1="22" x2="12" y2="7"/>
-          <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/>
-          <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>
-        </svg>
+  <!-- Skeleton -->
+  @if (isLoading) {
+    <div class="skeleton-wrap">
+      <div class="skeleton sk-hero"></div>
+      <div class="skeleton-row-3">
+        <div class="skeleton sk-stat"></div>
+        <div class="skeleton sk-stat"></div>
+        <div class="skeleton sk-stat"></div>
       </div>
-      <span class="reward-label">Total Rewards</span>
-      <div class="reward-amount">₹{{ totalRewards }}</div>
+      <div class="skeleton sk-list"></div>
+    </div>
+  }
+
+  @if (!isLoading) {
+
+    <!-- ── Tier Hero Card ── -->
+    <div class="tier-card" [style.--tier-color]="currentTier.color">
+      <div class="tier-top">
+        <div class="tier-left">
+          <span class="tier-icon">{{ currentTier.icon }}</span>
+          <div>
+            <div class="tier-name">{{ currentTier.name }} Member</div>
+            <div class="tier-desc">NeoBank Rewards Program</div>
+          </div>
+        </div>
+        <div class="tier-balance">
+          <div class="tier-balance-label">Total Cashback</div>
+          <div class="tier-balance-amount">₹{{ totalRewards | number:'1.2-2' }}</div>
+        </div>
+      </div>
+      <div class="tier-progress-section">
+        <div class="tier-progress-labels">
+          <span>{{ currentTier.name }}</span>
+          @if (nextTier) {
+            <span>{{ nextTier.name }} — ₹{{ amountToNextTier | number:'1.0-0' }} away</span>
+          } @else {
+            <span>🏆 Maximum tier reached!</span>
+          }
+        </div>
+        <div class="tier-progress-bar">
+          <div class="tier-progress-fill" [style.width.%]="tierProgress"></div>
+        </div>
+      </div>
+      <div class="tier-perks">
+        @for (perk of currentTier.perks; track perk) {
+          <span class="perk-chip">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            {{ perk }}
+          </span>
+        }
+      </div>
     </div>
 
-  </div>
+    <!-- ── Stats Row ── -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-green">💰</div>
+        <div class="stat-info">
+          <span class="stat-label">Total Earned</span>
+          <span class="stat-value">₹{{ totalRewards | number:'1.2-2' }}</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-blue">📅</div>
+        <div class="stat-info">
+          <span class="stat-label">This Month</span>
+          <span class="stat-value">₹{{ thisMonthEarned | number:'1.2-2' }}</span>
+          @if (lastMonthEarned > 0) {
+            <span class="stat-sub">₹{{ lastMonthEarned | number:'1.2-2' }} last month</span>
+          }
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-gold">📊</div>
+        <div class="stat-info">
+          <span class="stat-label">Transactions</span>
+          <span class="stat-value">{{ rewards.length }}</span>
+          <span class="stat-sub">reward entries</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Tab Bar ── -->
+    <div class="tab-bar">
+      <button class="tab-btn" [class.active]="activeTab === 'overview'"
+        (click)="activeTab = 'overview'">Overview</button>
+      <button class="tab-btn" [class.active]="activeTab === 'history'"
+        (click)="activeTab = 'history'">
+        Transaction History
+        <span class="tab-count" [class.active]="activeTab === 'history'">
+          {{ rewards.length }}
+        </span>
+      </button>
+    </div>
+
+    <!-- ════════════════════════════════════════ -->
+    <!-- OVERVIEW TAB                             -->
+    <!-- ════════════════════════════════════════ -->
+    @if (activeTab === 'overview') {
+
+      <!-- Cashback Rate Guide -->
+      <div class="section-card">
+        <h3 class="section-title">💡 How Cashback is Calculated</h3>
+        <div class="rate-table">
+          <div class="rate-row rate-header">
+            <span>Bill Amount</span>
+            <span>Cashback Rate</span>
+            <span>Example Earning</span>
+          </div>
+          <div class="rate-row">
+            <span>Under ₹500</span>
+            <span class="rate-badge rate-1">1%</span>
+            <span class="rate-eg">₹300 → ₹3.00</span>
+          </div>
+          <div class="rate-row">
+            <span>₹500 – ₹1,999</span>
+            <span class="rate-badge rate-2">2%</span>
+            <span class="rate-eg">₹1,200 → ₹24.00</span>
+          </div>
+          <div class="rate-row">
+            <span>₹2,000 – ₹4,999</span>
+            <span class="rate-badge rate-25">2.5%</span>
+            <span class="rate-eg">₹3,500 → ₹87.50</span>
+          </div>
+          <div class="rate-row rate-top">
+            <span>₹5,000 and above</span>
+            <span class="rate-badge rate-3">3% 🔥</span>
+            <span class="rate-eg">₹8,000 → ₹240.00</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Breakdown by reward type -->
+      @if (rewardTypeBreakdown.length > 0) {
+        <div class="section-card">
+          <h3 class="section-title">Earnings Breakdown</h3>
+          @for (item of rewardTypeBreakdown; track item.type) {
+            <div class="breakdown-row">
+              <span class="breakdown-icon">{{ item.icon }}</span>
+              <div class="breakdown-info">
+                <span class="breakdown-name">{{ typeLabel(item.type) }}</span>
+                <span class="breakdown-count">{{ item.count }} transaction{{ item.count !== 1 ? 's' : '' }}</span>
+              </div>
+              <div class="breakdown-right">
+                <span class="breakdown-amount">₹{{ item.total | number:'1.2-2' }}</span>
+                <span class="breakdown-pct">
+                  {{ totalRewards > 0 ? ((item.total / totalRewards) * 100 | number:'1.0-0') : 0 }}%
+                </span>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Tier Roadmap -->
+      <div class="section-card">
+        <h3 class="section-title">Membership Tiers</h3>
+        <div class="tiers-list">
+          @for (tier of tiers; track tier.name) {
+            <div class="tier-row" [class.tier-row-active]="tier.name === currentTier.name">
+              <span class="tier-row-icon">{{ tier.icon }}</span>
+              <div class="tier-row-info">
+                <span class="tier-row-name">{{ tier.name }}</span>
+                <span class="tier-row-range">
+                  ₹{{ tier.min | number:'1.0-0' }}
+                  @if (tier.name !== 'Platinum') { – ₹{{ tier.max | number:'1.0-0' }} }
+                  @else { + }
+                </span>
+              </div>
+              @if (tier.name === currentTier.name) {
+                <span class="tier-current-badge">● Current</span>
+              } @else if (tiers.indexOf(tier) < tiers.indexOf(currentTier)) {
+                <span class="tier-done-badge">✔ Achieved</span>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- ════════════════════════════════════════ -->
+    <!-- HISTORY TAB                              -->
+    <!-- ════════════════════════════════════════ -->
+    @if (activeTab === 'history') {
+
+      @if (rewards.length === 0) {
+        <div class="empty-state">
+          <div class="empty-icon">🏅</div>
+          <h3>No rewards yet</h3>
+          <p>Pay your first bill to earn cashback and start building rewards history.</p>
+        </div>
+      } @else {
+
+        <!-- Filter + Sort Bar -->
+        <div class="history-toolbar">
+          <div class="filter-chips">
+
+            <!-- ✅ FIX: use setFilter() — direct assignment to union type is not allowed in templates -->
+            <button class="chip-btn" [class.active]="historyFilter === 'ALL'"
+              (click)="setFilter('ALL')">All</button>
+
+            @for (type of uniqueTypes; track type) {
+              <!-- ✅ FIX: setFilter(type) instead of historyFilter = type -->
+              <button class="chip-btn" [class.active]="historyFilter === type"
+                (click)="setFilter(type)">
+                {{ typeIcon(type) }} {{ typeLabel(type) }}
+              </button>
+            }
+
+          </div>
+          <select class="sort-select" [(ngModel)]="sortOrder">
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="highest">Highest amount</option>
+            <option value="lowest">Lowest amount</option>
+          </select>
+        </div>
+
+        <!-- Filtered summary line -->
+        <div class="history-summary-line">
+          <span>{{ filteredHistory.length }} transaction{{ filteredHistory.length !== 1 ? 's' : '' }}</span>
+          <span class="history-summary-total">Total: ₹{{ filteredTotal | number:'1.2-2' }}</span>
+        </div>
+
+        <!-- Grouped Transaction List -->
+        @for (group of groupedHistory; track group.label) {
+          <div class="history-group">
+
+            <!-- Date Group Header -->
+            <div class="group-label">{{ group.label }}</div>
+
+            <!-- Transactions in this group -->
+            @for (reward of group.items; track reward.id) {
+              <div class="history-row">
+                <div class="history-icon-wrap">
+                  <span class="history-icon">{{ typeIcon(reward.rewardType) }}</span>
+                </div>
+                <div class="history-info">
+                  <span class="history-desc">{{ reward.description }}</span>
+                  <div class="history-meta">
+                    <span class="history-type-badge">{{ typeLabel(reward.rewardType) }}</span>
+                    <span class="history-dot">·</span>
+                    <span class="history-date">{{ formatDate(reward.createdAt) }}</span>
+                    <span class="history-dot">·</span>
+                    <span class="history-time">{{ formatTime(reward.createdAt) }}</span>
+                  </div>
+                </div>
+                <div class="history-amount-col">
+                  <span class="history-amount">+₹{{ reward.amount | number:'1.2-2' }}</span>
+                  <span class="history-credited">Credited</span>
+                </div>
+              </div>
+            }
+
+          </div>
+        }
+
+      }
+    }
+
+  }
 
 </div>

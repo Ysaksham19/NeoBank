@@ -78,23 +78,23 @@ CREATE TABLE IF NOT EXISTS bills (
 -- 3. REWARDS
 -- ============================================================
 
-CREATE TABLE IF NOT EXISTS rewards (
+CREATE TABLE rewards (
 
-    id             BIGINT     NOT NULL AUTO_INCREMENT,
+    id           BIGINT          NOT NULL AUTO_INCREMENT,
 
-    user_id        BIGINT     NOT NULL,
+    user_id      BIGINT          NOT NULL,
 
-    points_balance INT        NOT NULL DEFAULT 0,
+    reward_type  VARCHAR(50)     NOT NULL,
 
-    -- ✅ FIXED: ON UPDATE so timestamp refreshes when points change
-    last_updated   TIMESTAMP  DEFAULT CURRENT_TIMESTAMP
-                              ON UPDATE CURRENT_TIMESTAMP,
+    amount       DECIMAL(15, 2)  NOT NULL,
+
+    description  VARCHAR(500)    NOT NULL,
+
+    created_at   TIMESTAMP       DEFAULT CURRENT_TIMESTAMP,
 
     PRIMARY KEY (id),
 
-    -- One rewards record per user
-    UNIQUE KEY uq_rewards_user (user_id),
-
+    -- NO unique constraint on user_id — one user can have many reward rows
     CONSTRAINT fk_reward_user
         FOREIGN KEY (user_id)
         REFERENCES users(id)
@@ -102,6 +102,11 @@ CREATE TABLE IF NOT EXISTS rewards (
 
 );
 
+-- Step 3: Index for fast lookup by user
+CREATE INDEX idx_rewards_user ON rewards(user_id);
+
+-- Step 4: Index for lookup by user + reward_type (used by upsert in RewardService)
+CREATE INDEX idx_rewards_user_type ON rewards(user_id, reward_type);
 
 -- ============================================================
 -- INDEXES  (for query performance)

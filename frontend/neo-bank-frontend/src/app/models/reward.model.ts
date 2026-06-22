@@ -1,13 +1,7 @@
 export interface Reward {
-
-  id: number;
-
-  rewardType: string;
-
-  amount: number;
-
+  id:          number;
+  rewardType:  string;
+  amount:      number;
   description: string;
-
-  createdAt: string;
-
+  createdAt:   string;
 }

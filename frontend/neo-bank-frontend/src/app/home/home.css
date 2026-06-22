@@ -50,7 +50,7 @@ img {
 }
 
 .container {
-  max-width: 1240px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 0 24px;
 }
@@ -279,7 +279,7 @@ img {
 
 /* SERVICES */
 .services-section {
-  padding: 44px 0 30px;
+  padding: 10px 0 30px;
   background: var(--color-surface-light);
 }
 
@@ -305,9 +305,9 @@ img {
 
 .services-reference-grid {
   display: grid;
-  grid-template-columns: repeat(6, minmax(235px, 1fr));
-  gap: 22px;
-  transform: translateX(-15%);
+  grid-template-columns: repeat(6, minmax(225px, 2fr));
+  gap: 10px;
+  justify-content: center;
 }
 
 .service-reference-card {

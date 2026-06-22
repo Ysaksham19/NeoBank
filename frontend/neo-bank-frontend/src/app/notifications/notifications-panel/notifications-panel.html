@@ -1,37 +1,150 @@
 <div class="notifications-page">
 
+  <!-- ── Page Header ── -->
+  <div class="page-header">
+    <div class="page-header-left">
+      <button class="back-btn" (click)="goBack()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Back
+      </button>
+      <span class="page-label">NEOBANK</span>
+      <h1>Notifications</h1>
+      <p class="page-desc">Your recent activity, alerts and account updates.</p>
+    </div>
+    @if (unreadCount > 0) {
+      <button class="mark-all-btn" (click)="markAllRead()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        Mark all read
+      </button>
+    }
+  </div>
+
+  <!-- ── Error Banner ── -->
+  @if (errorMessage) {
+    <div class="error-banner">⚠️ {{ errorMessage }}</div>
+  }
+
+  <!-- ── Notifications Card ── -->
   <div class="notifications-card">
 
     <div class="card-header">
-      <h3>Notifications</h3>
-      <span class="count-badge">{{ notifications.length }}</span>
+      <div class="card-header-left">
+        <div class="header-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+        </div>
+        <div>
+          <h3>All Notifications</h3>
+          <p class="card-subtitle">Your recent activity &amp; alerts</p>
+        </div>
+      </div>
+      <div class="card-header-right">
+        @if (notifications.length > 0) {
+          <span class="count-badge">{{ notifications.length }}</span>
+        }
+        @if (unreadCount > 0) {
+          <span class="unread-badge">{{ unreadCount }} unread</span>
+        }
+      </div>
     </div>
 
-    @if(notifications.length === 0) {
-      <div class="empty-state">No new notifications.</div>
-    } @else {
-      @for(notification of notifications; track notification.id) {
-        <div class="notification-item">
-
-          <div class="notification-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-            </svg>
+    <!-- Loading skeleton -->
+    @if (loading) {
+      <div class="notif-list">
+        @for (_ of [1,2,3,4]; track $index) {
+          <div class="skeleton-row">
+            <div class="skel-icon"></div>
+            <div class="skel-content">
+              <div class="skel-line w40"></div>
+              <div class="skel-line w70"></div>
+              <div class="skel-line w25"></div>
+            </div>
           </div>
+        }
+      </div>
+    }
 
-          <div class="notification-content">
-            <h4>{{ notification.title }}</h4>
-            <p>{{ notification.message }}</p>
-            <span class="timestamp">{{ notification.time | date:'short' }}</span>
+    <!-- Error -->
+    @if (!loading && errorMessage && notifications.length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon-wrap empty-icon-wrap--error">⚠️</div>
+        <p class="empty-title">Failed to load</p>
+        <span class="empty-sub">{{ errorMessage }}</span>
+      </div>
+    }
+
+    <!-- Empty -->
+    @if (!loading && !errorMessage && notifications.length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon-wrap">🔔</div>
+        <p class="empty-title">You're all caught up!</p>
+        <span class="empty-sub">No notifications right now.</span>
+      </div>
+    }
+
+    <!-- List -->
+    @if (!loading && notifications.length > 0) {
+      <div class="notif-list">
+        @for (notification of notifications; track notification.id) {
+          <div class="notification-item"
+            [class.unread]="!notification.read"
+            (click)="markRead(notification)">
+
+            <!-- Left accent bar for unread -->
+            @if (!notification.read) {
+              <div class="unread-bar"></div>
+            }
+
+            <!-- Type icon -->
+            <div class="notification-icon"
+              [ngClass]="'icon-type--' + (notification.type | lowercase)">
+              <span>{{ getIcon(notification.type) }}</span>
+            </div>
+
+            <!-- Content -->
+            <div class="notification-content">
+              <div class="notif-top-row">
+                <h4>{{ notification.title }}</h4>
+                <div class="notif-meta">
+                  @if (!notification.read) {
+                    <span class="unread-dot" aria-label="unread"></span>
+                  }
+                  @if (notification.type) {
+                    <span class="type-badge type-badge--{{ notification.type | lowercase }}">
+                      {{ notification.type }}
+                    </span>
+                  }
+                </div>
+              </div>
+              <p>{{ notification.message }}</p>
+              <span class="timestamp">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                </svg>
+                {{ notification.time | date:'dd MMM y, h:mm a' }}
+              </span>
+            </div>
+
+            <!-- Delete -->
+            <button class="delete-btn"
+              (click)="deleteNotif(notification, $event)"
+              aria-label="Dismiss notification">✕</button>
+
           </div>
-
-        </div>
-      }
+        }
+      </div>
     }
 
   </div>
-
 </div>

@@ -1,20 +1,26 @@
 <div class="repayment-page">
   <div class="page-header">
+    <a [routerLink]="['/loans/my-loans']" class="back-link">← Back to My Loans</a>
     <h1>Repayment Schedule</h1>
     <p>Loan #{{ loanId }} — EMI breakdown</p>
   </div>
 
-  @if(loading) {
+  @if (loading) {
     <div class="loading-skeleton">
-      @for(i of [1,2,3,4,5]; track i) { <div class="skeleton-row"></div> }
+      @for (i of [1,2,3,4,5]; track i) { <div class="skeleton-row"></div> }
     </div>
-  } @else if(errorMsg) {
+  } @else if (errorMsg) {
     <div class="error-state">{{ errorMsg }}</div>
   } @else {
     <div class="summary-row">
-      <div class="summary-card"><span class="s-label">Total EMIs</span><span class="s-value">{{ schedule.length }}</span></div>
-      <div class="summary-card green"><span class="s-label">Paid</span><span class="s-value">{{ paidCount }}</span></div>
-      <div class="summary-card amber"><span class="s-label">Pending</span><span class="s-value">{{ pendingCount }}</span></div>
+      <div class="summary-card">         <span class="s-label">Total EMIs</span>  <span class="s-value">{{ schedule.length }}</span></div>
+      <div class="summary-card green">   <span class="s-label">Paid</span>         <span class="s-value">{{ paidCount }}</span></div>
+      <div class="summary-card amber">   <span class="s-label">Pending</span>      <span class="s-value">{{ pendingCount }}</span></div>
+      @if (overdueCount > 0) {
+        <div class="summary-card red">   <span class="s-label">Overdue</span>      <span class="s-value">{{ overdueCount }}</span></div>
+      }
+      <div class="summary-card blue">    <span class="s-label">Amount Paid</span>  <span class="s-value">₹{{ totalPaid    | number:'1.2-2' }}</span></div>
+      <div class="summary-card orange">  <span class="s-label">Amount Due</span>   <span class="s-value">₹{{ totalPending | number:'1.2-2' }}</span></div>
     </div>
 
     <div class="table-wrapper">
@@ -30,13 +36,14 @@
           </tr>
         </thead>
         <tbody>
-          @for(row of schedule; track row.instalmentNumber) {
-            <tr [class.paid-row]="row.paymentStatus === 'PAID'">
+          @for (row of schedule; track row.instalmentNumber) {
+            <tr [class.paid-row]="row.paymentStatus === 'PAID'"
+                [class.overdue-row]="row.paymentStatus === 'OVERDUE'">
               <td>{{ row.instalmentNumber }}</td>
               <td>{{ row.dueDate | date:'dd MMM yyyy' }}</td>
-              <td>₹{{ row.emiAmount | number:'1.2-2' }}</td>
+              <td>₹{{ row.emiAmount          | number:'1.2-2' }}</td>
               <td>₹{{ row.principalComponent | number:'1.2-2' }}</td>
-              <td>₹{{ row.interestComponent | number:'1.2-2' }}</td>
+              <td>₹{{ row.interestComponent  | number:'1.2-2' }}</td>
               <td>
                 <span class="status-badge" [class]="row.paymentStatus.toLowerCase()">
                   {{ row.paymentStatus }}
