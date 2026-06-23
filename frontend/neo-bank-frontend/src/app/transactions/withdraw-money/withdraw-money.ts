@@ -16,9 +16,12 @@ import { TransactionService } from '../../core/services/transaction';
 export class WithdrawMoney implements OnInit {
   accounts: Account[] = [];
   selectedAccountId!: number;
-  showToast    = false;
-  loading      = false;
-  errorMessage = '';
+  showToast      = false;
+  toastMessage   = '';
+  toastType: 'success' | 'error' = 'success';
+  loading        = false;
+  errorMessage   = '';
+  withdrawnAmount: number | null = null;
   withdrawRequest = { amount: null as number | null, remarks: '' };
 
   constructor(
@@ -42,8 +45,10 @@ export class WithdrawMoney implements OnInit {
   }
 
   resetForm(): void {
-    this.withdrawRequest = { amount: null, remarks: '' };
-    this.errorMessage    = '';
+    this.withdrawRequest  = { amount: null, remarks: '' };
+    this.errorMessage     = '';
+    this.withdrawnAmount  = null;
+    this.showToast        = false;
   }
 
   withdrawMoney(): void {
@@ -51,8 +56,17 @@ export class WithdrawMoney implements OnInit {
       this.errorMessage = 'Please enter a valid amount greater than zero.';
       return;
     }
-    this.errorMessage = '';
-    this.loading      = true;
+
+    const selectedAccount = this.accounts.find(a => a.id === +this.selectedAccountId);
+    if (selectedAccount && this.withdrawRequest.amount > selectedAccount.availableBalance) {
+      this.errorMessage = 'Insufficient balance in the selected account.';
+      return;
+    }
+
+    this.errorMessage    = '';
+    this.loading         = true;
+    this.showToast       = false;
+    this.withdrawnAmount = this.withdrawRequest.amount;
 
     this.transactionService.withdrawMoney(
       +this.selectedAccountId,
@@ -60,11 +74,17 @@ export class WithdrawMoney implements OnInit {
       this.withdrawRequest.remarks?.trim() || ''
     ).subscribe({
       next: () => {
-        this.loading      = false;
-        this.showToast    = true;
+        this.loading         = false;
+        this.showToast       = true;
+        this.toastType       = 'success';
+        this.toastMessage    = `₹${this.withdrawnAmount?.toLocaleString('en-IN')} withdrawn successfully!`;
         this.withdrawRequest = { amount: null, remarks: '' };
         this.accountState.loadAccounts();
-        setTimeout(() => this.showToast = false, 3000);
+        // refresh local accounts list so balance updates in dropdown
+        this.accountState.accounts$.subscribe(accounts => {
+          if (accounts.length > 0) this.accounts = accounts;
+        });
+        setTimeout(() => this.showToast = false, 5000);
       },
       error: (err) => {
         this.loading      = false;

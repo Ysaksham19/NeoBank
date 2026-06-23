@@ -1,13 +1,19 @@
 export interface Transaction {
   id: number;
   transactionRef: string;
-  transactionType: string;   // matches your component's tx.transactionType
+  transactionType: string;         // 'DEPOSIT' | 'DEBIT' | 'TRANSFER'
+  transactionStatus: string;       // 'SUCCESS' | 'PENDING' | 'FAILED'
   amount: number;
-  balanceAfter: number;
-  remarks: string;           // matches your component's tx.remarks
-  status: string;
+  availableBalanceAfter: number;   // matches backend DTO field
+  ledgerBalanceAfter: number;      // matches backend DTO field
+  remarks: string;
   createdAt: string;
-  accountNo: string;
+
+  // sender account (always present)
   accountId: number;
-  customerName: string;
+  accountNo: string;
+
+  // receiver account (TRANSFER only, null otherwise)
+  receiverAccountId: number | null;
+  receiverAccountNo: string | null;
 }

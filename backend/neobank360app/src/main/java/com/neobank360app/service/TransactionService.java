@@ -1,5 +1,6 @@
 package com.neobank360app.service;
 
+import com.neobank360app.dto.TransactionResponseDTO;
 import com.neobank360app.dto.TransferRequestDTO;
 import com.neobank360app.entity.*;
 import com.neobank360app.exception.ResourceNotFoundException;
@@ -8,6 +9,7 @@ import com.neobank360app.repository.AccountRepository;
 import com.neobank360app.repository.TransactionRepository;
 import com.neobank360app.repository.UserRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TransactionService {
@@ -47,7 +50,7 @@ public class TransactionService {
     // ───────────────── DEPOSIT MONEY ─────────────────
 
     @Transactional
-    public Transaction deposit(Long accountId, BigDecimal amount, String remarks) {
+    public TransactionResponseDTO deposit(Long accountId, BigDecimal amount, String remarks) {
 
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Amount must be greater than zero.");
@@ -84,7 +87,7 @@ public class TransactionService {
             );
         }
 
-        // ── Notification ──                    FIXED: account.getUser() + title
+        // ── Notification ──
         try {
             notificationService.createNotification(
                     account.getUser(),
@@ -96,13 +99,13 @@ public class TransactionService {
             System.err.println("Notification failed on deposit: " + e.getMessage());
         }
 
-        return savedTransaction;
+        return toDTO(savedTransaction);
     }
 
     // ───────────────── TRANSFER MONEY ─────────────────
 
     @Transactional
-    public Transaction transferMoney(Long senderAccountId, TransferRequestDTO requestDTO) {
+    public TransactionResponseDTO transferMoney(Long senderAccountId, TransferRequestDTO requestDTO) {
 
         if (requestDTO.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Transfer amount must be greater than zero.");
@@ -160,7 +163,7 @@ public class TransactionService {
             );
         }
 
-        // ── Sender Notification ──             FIXED: title added
+        // ── Sender Notification ──
         try {
             notificationService.createNotification(
                     senderAccount.getUser(),
@@ -173,7 +176,7 @@ public class TransactionService {
             System.err.println("Sender notification failed on transfer: " + e.getMessage());
         }
 
-        // ── Receiver Notification ──           FIXED: title added
+        // ── Receiver Notification ──
         try {
             notificationService.createNotification(
                     receiverAccount.getUser(),
@@ -186,13 +189,13 @@ public class TransactionService {
             System.err.println("Receiver notification failed on transfer: " + e.getMessage());
         }
 
-        return savedTransaction;
+        return toDTO(savedTransaction);
     }
 
     // ───────────────── WITHDRAW MONEY ─────────────────
 
     @Transactional
-    public Transaction withdraw(Long accountId, BigDecimal amount, String remarks) {
+    public TransactionResponseDTO withdraw(Long accountId, BigDecimal amount, String remarks) {
 
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Amount must be greater than zero.");
@@ -221,7 +224,7 @@ public class TransactionService {
 
         Transaction savedTransaction = transactionRepository.save(transaction);
 
-        // ── Notification ──                    FIXED: title added
+        // ── Notification ──
         try {
             notificationService.createNotification(
                     account.getUser(),
@@ -233,32 +236,67 @@ public class TransactionService {
             System.err.println("Notification failed on withdraw: " + e.getMessage());
         }
 
-        return savedTransaction;
+        return toDTO(savedTransaction);
     }
 
     // ───────────────── GET ACCOUNT TRANSACTIONS ─────────────────
 
-    public List<Transaction> getAccountTransactions(Long accountId) {
+    public List<TransactionResponseDTO> getAccountTransactions(Long accountId) {
         Account account = getValidatedAccount(accountId);
-        return transactionRepository.findByAccountOrderByCreatedAtDesc(account);
+        return transactionRepository
+                .findByAccountOrderByCreatedAtDesc(account)
+                .stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
     }
 
     // ───────────────── MINI STATEMENT ─────────────────
 
-    public List<Transaction> getMiniStatement(Long accountId) {
+    public List<TransactionResponseDTO> getMiniStatement(Long accountId) {
         Account account = getValidatedAccount(accountId);
-        return transactionRepository.findTop10ByAccountOrderByCreatedAtDesc(account);
+        return transactionRepository
+                .findTop10ByAccountOrderByCreatedAtDesc(account)
+                .stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
     }
 
     // ───────────────── PAGINATED TRANSACTIONS ─────────────────
 
-    public Page<Transaction> getPaginatedTransactions(Long accountId, int page, int size) {
+    public Page<TransactionResponseDTO> getPaginatedTransactions(Long accountId, int page, int size) {
         Account account = getValidatedAccount(accountId);
         Pageable pageable = PageRequest.of(page, size);
-        return transactionRepository.findByAccount(account, pageable);
+        Page<Transaction> entityPage = transactionRepository.findByAccount(account, pageable);
+        List<TransactionResponseDTO> dtoList = entityPage.getContent()
+                .stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+        return new PageImpl<>(dtoList, pageable, entityPage.getTotalElements());
     }
 
     // ───────────────── PRIVATE HELPERS ─────────────────
+
+    private TransactionResponseDTO toDTO(Transaction t) {
+        TransactionResponseDTO dto = new TransactionResponseDTO();
+        dto.setId(t.getId());
+        dto.setTransactionRef(t.getTransactionRef());
+        dto.setTransactionType(t.getTransactionType() != null ? t.getTransactionType().name() : null);
+        dto.setTransactionStatus(t.getTransactionStatus() != null ? t.getTransactionStatus().name() : null);
+        dto.setAmount(t.getAmount());
+        dto.setAvailableBalanceAfter(t.getAvailableBalanceAfter());
+        dto.setLedgerBalanceAfter(t.getLedgerBalanceAfter());
+        dto.setRemarks(t.getRemarks());
+        dto.setCreatedAt(t.getCreatedAt());
+        if (t.getAccount() != null) {
+            dto.setAccountId(t.getAccount().getId());
+            dto.setAccountNo(t.getAccount().getAccountNo());
+        }
+        if (t.getReceiverAccount() != null) {
+            dto.setReceiverAccountId(t.getReceiverAccount().getId());
+            dto.setReceiverAccountNo(t.getReceiverAccount().getAccountNo());
+        }
+        return dto;
+    }
 
     private Account getValidatedAccount(Long accountId) {
         User user = getAuthenticatedUser();

@@ -27,6 +27,18 @@
     </div>
   </div>
 
+  <!-- ── Success Banner (inline, inside the card) ── -->
+  @if (showToast && toastType === 'success') {
+    <div class="success-banner">
+      <div class="success-banner-icon">✅</div>
+      <div class="success-banner-body">
+        <strong>Withdrawal Successful!</strong>
+        <p>{{ toastMessage }}</p>
+      </div>
+      <button class="banner-close" (click)="showToast = false">✕</button>
+    </div>
+  }
+
   <div class="form-card">
 
     <div class="field">
@@ -81,6 +93,10 @@
   </div>
 </div>
 
-@if (showToast) {
-  <div class="success-toast">✅ Withdrawal successful!</div>
+<!-- ── Fixed Toast (bottom-right corner) ── -->
+@if (showToast && toastType === 'success') {
+  <div class="success-toast">
+    ✅ {{ toastMessage }}
+    <button class="toast-close" (click)="showToast = false">✕</button>
+  </div>
 }

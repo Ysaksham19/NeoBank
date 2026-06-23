@@ -8,7 +8,7 @@
              stroke="currentColor" stroke-width="2.5">
           <path d="M19 12H5M12 5l-7 7 7 7"/>
         </svg>
-        Dashboard
+        Back
       </a>
     </div>
     <div class="header-title">
@@ -42,7 +42,6 @@
       <select [(ngModel)]="selectedAccountId" (ngModelChange)="onAccountChange()">
         @for (acc of accounts; track acc.id) {
           <option [ngValue]="acc.id">
-            <!-- ✅ FIXED: removed ?. since accountNumber is string, not string | undefined -->
             {{ acc.accountType }} — ****{{ acc.accountNumber.slice(-4) }}
           </option>
         }
@@ -151,8 +150,8 @@
               [class.debit]="!isCredit(txn.transactionType)">
               {{ isCredit(txn.transactionType) ? '+' : '-' }}₹{{ txn.amount | number:'1.2-2' }}
             </div>
-            @if (txn.balanceAfter) {
-              <div class="txn-balance">Bal: ₹{{ txn.balanceAfter | number:'1.2-2' }}</div>
+            @if (txn.availableBalanceAfter) {
+              <div class="txn-balance">Bal: ₹{{ txn.availableBalanceAfter | number:'1.2-2' }}</div>
             }
           </div>
 

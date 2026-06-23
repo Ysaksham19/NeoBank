@@ -81,9 +81,9 @@
               {{ tx.transactionType === 'DEPOSIT' ? '+' : '-' }}₹{{ tx.amount | number:'1.2-2' }}
             </div>
             <!-- ✅ FIXED: was availableBalanceAfter → balanceAfter -->
-            @if (tx.balanceAfter) {
-              <div class="tx-bal">₹{{ tx.balanceAfter | number:'1.2-2' }}</div>
-            }
+                @if (tx.availableBalanceAfter) {
+                <div class="tx-bal">₹{{ tx.availableBalanceAfter | number:'1.2-2' }}</div>
+                }
           </div>
 
         </div>

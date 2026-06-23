@@ -190,19 +190,20 @@ export class TransactionService {
     const user    = account.user ?? {};
 
     return {
-      id:              t.id               ?? 0,
-      transactionRef:  t.transactionRef   ?? t.txnRef          ?? t.ref      ?? '',
-      transactionType: t.transactionType  ?? t.type            ?? t.txnType  ?? '',
-      amount:          t.amount           ?? t.txnAmount       ?? 0,
-      balanceAfter:    t.balanceAfter     ?? t.availableBalanceAfter
-                                          ?? t.closingBalance  ?? t.balance  ?? 0,
-      remarks:         t.remarks          ?? t.description     ?? t.narration ?? '',
-      status:          t.status           ?? 'SUCCESS',
-      createdAt:       t.createdAt        ?? t.transactionDate ?? t.date     ?? '',
-      accountNo:       account.accountNo  ?? account.accountNumber
-                                          ?? t.accountNo       ?? '',
-      accountId:       account.id         ?? t.accountId       ?? 0,
-      customerName:    user.fullName      ?? user.name         ?? t.customerName ?? ''
+      id:                   t.id                    ?? 0,
+      transactionRef:       t.transactionRef        ?? t.txnRef   ?? t.ref   ?? '',
+      transactionType:      t.transactionType       ?? t.type     ?? t.txnType ?? '',
+      transactionStatus:    t.transactionStatus     ?? t.status   ?? 'SUCCESS',
+      amount:               t.amount                ?? t.txnAmount ?? 0,
+      availableBalanceAfter: t.availableBalanceAfter ?? t.balanceAfter
+                                                     ?? t.closingBalance ?? t.balance ?? 0,
+      ledgerBalanceAfter:   t.ledgerBalanceAfter    ?? t.availableBalanceAfter ?? 0,
+      remarks:              t.remarks               ?? t.description ?? t.narration ?? '',
+      createdAt:            t.createdAt             ?? t.transactionDate ?? t.date ?? '',
+      accountId:            t.accountId             ?? 0,
+      accountNo:            t.accountNo             ?? '',
+      receiverAccountId:    t.receiverAccountId     ?? null,
+      receiverAccountNo:    t.receiverAccountNo     ?? null,
     };
   }
 }
