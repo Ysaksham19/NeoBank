@@ -91,11 +91,17 @@ public class AdminService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found."));
 
         String normalized = kycStatus.toUpperCase();
+
+        // ✅ FIX: APPROVED is sent by Angular admin UI → stored as VERIFIED
+        if (normalized.equals("APPROVED")) {
+            normalized = "VERIFIED";
+        }
+
         if (!normalized.equals("PENDING")
-                && !normalized.equals("ACCEPTED")
+                && !normalized.equals("VERIFIED")
                 && !normalized.equals("REJECTED")) {
             throw new IllegalArgumentException(
-                    "Invalid KYC status: '" + kycStatus + "'. Valid values: PENDING, ACCEPTED, REJECTED");
+                    "Invalid KYC status: '" + kycStatus + "'. Valid values: PENDING, APPROVED, VERIFIED, REJECTED");
         }
 
         user.setKycStatus(normalized);

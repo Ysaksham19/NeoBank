@@ -1,5 +1,6 @@
 package com.neobank360app.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.neobank360app.entity.BillCategory;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
@@ -23,6 +24,7 @@ public class BillRequestDTO {
 
     @NotNull(message = "Due date is required")
     @FutureOrPresent(message = "Due date cannot be in the past")
+    @JsonFormat(pattern = "yyyy-MM-dd")  
     private LocalDate dueDate;
 
     public BillRequestDTO() {}

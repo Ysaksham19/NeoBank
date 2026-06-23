@@ -42,15 +42,12 @@ public class LoanApplicationService {
         String email = getCurrentUserEmail();
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("User not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found."));
 
-        LoanProduct loanProduct = loanProductRepository
-                .findById(dto.getLoanProductId())
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Loan product not found."));
+        LoanProduct loanProduct = loanProductRepository.findById(dto.getLoanProductId())
+                .orElseThrow(() -> new ResourceNotFoundException("Loan product not found."));
 
-        // ✅ Amount range validation — 400
+        // Amount range validation
         if (dto.getRequestedAmount().compareTo(loanProduct.getMinAmount()) < 0
                 || dto.getRequestedAmount().compareTo(loanProduct.getMaxAmount()) > 0) {
             throw new IllegalArgumentException(
@@ -59,26 +56,21 @@ public class LoanApplicationService {
                     + loanProduct.getMaxAmount() + ".");
         }
 
-        // ✅ Tenure validation — 400
-        List<String> tenures = Arrays.asList(
-                loanProduct.getAllowedTenures().split(","));
+        // Tenure validation
+        List<String> tenures = Arrays.asList(loanProduct.getAllowedTenures().split(","));
         if (!tenures.contains(String.valueOf(dto.getRequestedTenureMonths()))) {
             throw new IllegalArgumentException(
-                    "Invalid tenure. Allowed tenures: "
-                    + loanProduct.getAllowedTenures() + " months.");
+                    "Invalid tenure. Allowed tenures: " + loanProduct.getAllowedTenures() + " months.");
         }
 
-        // ✅ Duplicate pending application — 409
+        // Duplicate pending application check
         boolean alreadyExists = loanApplicationRepository
                 .findByUserIdAndLoanProductIdAndStatus(
-                        user.getId(),
-                        loanProduct.getId(),
-                        LoanApplicationStatus.PENDING)
+                        user.getId(), loanProduct.getId(), LoanApplicationStatus.PENDING)
                 .isPresent();
 
         if (alreadyExists) {
-            throw new ConflictException(
-                    "You already have a pending application for this loan product.");
+            throw new ConflictException("You already have a pending application for this loan product.");
         }
 
         LoanApplication application = new LoanApplication();
@@ -86,6 +78,8 @@ public class LoanApplicationService {
         application.setLoanProduct(loanProduct);
         application.setRequestedAmount(dto.getRequestedAmount());
         application.setRequestedTenureMonths(dto.getRequestedTenureMonths());
+        application.setMonthlyIncome(dto.getMonthlyIncome());     // ✅ NEW
+        application.setLoanPurpose(dto.getLoanPurpose());         // ✅ NEW
         application.setStatus(LoanApplicationStatus.PENDING);
 
         return mapToResponse(loanApplicationRepository.save(application));
@@ -94,33 +88,24 @@ public class LoanApplicationService {
     // ─── MY APPLICATIONS ─────────────────────────────────
 
     public List<LoanApplicationResponseDTO> getMyApplications() {
-
         String email = getCurrentUserEmail();
-
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("User not found."));
-
+                .orElseThrow(() -> new ResourceNotFoundException("User not found."));
         return loanApplicationRepository.findByUserId(user.getId())
-                .stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+                .stream().map(this::mapToResponse).collect(Collectors.toList());
     }
 
     // ─── ADMIN — GET ALL APPLICATIONS ────────────────────
 
     public List<LoanApplicationResponseDTO> getAllApplications() {
         return loanApplicationRepository.findAll()
-                .stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+                .stream().map(this::mapToResponse).collect(Collectors.toList());
     }
 
     // ─── HELPERS ─────────────────────────────────────────
 
     private String getCurrentUserEmail() {
-        Authentication auth = SecurityContextHolder
-                .getContext().getAuthentication();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return auth.getName();
     }
 
@@ -130,6 +115,8 @@ public class LoanApplicationService {
         dto.setProductName(application.getLoanProduct().getProductName());
         dto.setRequestedAmount(application.getRequestedAmount());
         dto.setRequestedTenureMonths(application.getRequestedTenureMonths());
+        dto.setMonthlyIncome(application.getMonthlyIncome());     // ✅ NEW
+        dto.setLoanPurpose(application.getLoanPurpose());         // ✅ NEW
         dto.setStatus(application.getStatus().name());
         dto.setAdminRemarks(application.getAdminRemarks());
         dto.setAppliedAt(application.getAppliedAt());

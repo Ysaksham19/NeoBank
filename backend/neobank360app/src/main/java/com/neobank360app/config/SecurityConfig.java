@@ -25,125 +25,78 @@ import org.springframework.web.client.RestTemplate;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter
-            jwtAuthenticationFilter;
-
-    private final CustomUserDetailsService
-            customUserDetailsService;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final CustomUserDetailsService customUserDetailsService;
 
     public SecurityConfig(
-
-            JwtAuthenticationFilter
-                    jwtAuthenticationFilter,
-
-            CustomUserDetailsService
-                    customUserDetailsService
-    ) {
-
-        this.jwtAuthenticationFilter =
-                jwtAuthenticationFilter;
-
-        this.customUserDetailsService =
-                customUserDetailsService;
+            JwtAuthenticationFilter jwtAuthenticationFilter,
+            CustomUserDetailsService customUserDetailsService) {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.customUserDetailsService = customUserDetailsService;
     }
 
     @Bean
-    public SecurityFilterChain
-    securityFilterChain(
-
-            HttpSecurity http
-    ) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-
-            .csrf(
-                    AbstractHttpConfigurer::disable
-            )
-
-            .cors(
-                    Customizer.withDefaults()
-            )
-
+            .csrf(AbstractHttpConfigurer::disable)
+            .cors(Customizer.withDefaults())
             .sessionManagement(session ->
-                    session.sessionCreationPolicy(
-                            SessionCreationPolicy.STATELESS
-                    )
-            )
+                    session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
             .authorizeHttpRequests(auth -> auth
 
                 .requestMatchers(
-
+                        // ── Auth & OTP ──────────────────────────────
                         "/api/v1/auth/register/account-type",
                         "/api/v1/auth/register",
                         "/api/v1/auth/login",
-
                         "/api/v1/otp/send",
                         "/api/v1/otp/verify",
 
+                        // ── Public data ─────────────────────────────
                         "/api/v1/branches",
+                        "/api/v1/loans/products",    // ✅ ADDED — loan products are public
+                        "/api/v1/loans/products/**", // ✅ ADDED — single product by id
 
+                        // ── Swagger ──────────────────────────────────
                         "/swagger-ui/**",
                         "/swagger-ui.html",
                         "/v3/api-docs/**"
 
                 ).permitAll()
 
-                .anyRequest()
-                .authenticated()
+                .anyRequest().authenticated()
             )
 
-            .authenticationProvider(
-                    authenticationProvider()
-            )
-
-            .addFilterBefore(
-
-                    jwtAuthenticationFilter,
-
-                    UsernamePasswordAuthenticationFilter.class
-            );
+            .authenticationProvider(authenticationProvider())
+            .addFilterBefore(jwtAuthenticationFilter,
+                    UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
     @Bean
-    public AuthenticationProvider
-    authenticationProvider() {
-
-        DaoAuthenticationProvider provider =
-                new DaoAuthenticationProvider();
-
-        provider.setUserDetailsService(
-                customUserDetailsService
-        );
-
-        provider.setPasswordEncoder(
-                passwordEncoder()
-        );
-
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(customUserDetailsService);
+        provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }
 
     @Bean
-    public AuthenticationManager
-    authenticationManager(
-
-            AuthenticationConfiguration config
-    ) throws Exception {
-
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-
         return new BCryptPasswordEncoder();
     }
 
     @Bean
     public RestTemplate restTemplate() {
-
         return new RestTemplate();
     }
 }

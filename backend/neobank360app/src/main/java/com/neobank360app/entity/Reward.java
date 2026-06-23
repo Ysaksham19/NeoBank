@@ -30,11 +30,16 @@ public class Reward {
     @Column(nullable = false)
     private String description;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    public Reward() {
-        this.createdAt = LocalDateTime.now();
+    public Reward() {}
+
+    @PrePersist
+    protected void onCreate() {
+        if (this.createdAt == null) {
+            this.createdAt = LocalDateTime.now();
+        }
     }
 
     public Long getId() {
@@ -45,9 +50,7 @@ public class Reward {
         return user;
     }
 
-    public void setUser(
-            User user
-    ) {
+    public void setUser(User user) {
         this.user = user;
     }
 
@@ -55,9 +58,7 @@ public class Reward {
         return rewardType;
     }
 
-    public void setRewardType(
-            RewardType rewardType
-    ) {
+    public void setRewardType(RewardType rewardType) {
         this.rewardType = rewardType;
     }
 
@@ -65,9 +66,7 @@ public class Reward {
         return amount;
     }
 
-    public void setAmount(
-            BigDecimal amount
-    ) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 
@@ -75,9 +74,7 @@ public class Reward {
         return description;
     }
 
-    public void setDescription(
-            String description
-    ) {
+    public void setDescription(String description) {
         this.description = description;
     }
 

@@ -1,5 +1,6 @@
 package com.neobank360app.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
@@ -18,30 +19,27 @@ public class LoanApplicationRequestDTO {
     @Positive(message = "Requested tenure must be positive")
     private Integer requestedTenureMonths;
 
-    public LoanApplicationRequestDTO() {
-    }
+    @NotNull(message = "Monthly income is required")         // ✅ NEW
+    @Positive(message = "Monthly income must be positive")   // ✅ NEW
+    private BigDecimal monthlyIncome;
 
-    public Long getLoanProductId() {
-        return loanProductId;
-    }
+    @NotBlank(message = "Loan purpose is required")          // ✅ NEW
+    private String loanPurpose;
 
-    public void setLoanProductId(Long loanProductId) {
-        this.loanProductId = loanProductId;
-    }
+    public LoanApplicationRequestDTO() {}
 
-    public BigDecimal getRequestedAmount() {
-        return requestedAmount;
-    }
+    public Long getLoanProductId() { return loanProductId; }
+    public void setLoanProductId(Long loanProductId) { this.loanProductId = loanProductId; }
 
-    public void setRequestedAmount(BigDecimal requestedAmount) {
-        this.requestedAmount = requestedAmount;
-    }
+    public BigDecimal getRequestedAmount() { return requestedAmount; }
+    public void setRequestedAmount(BigDecimal requestedAmount) { this.requestedAmount = requestedAmount; }
 
-    public Integer getRequestedTenureMonths() {
-        return requestedTenureMonths;
-    }
+    public Integer getRequestedTenureMonths() { return requestedTenureMonths; }
+    public void setRequestedTenureMonths(Integer requestedTenureMonths) { this.requestedTenureMonths = requestedTenureMonths; }
 
-    public void setRequestedTenureMonths(Integer requestedTenureMonths) {
-        this.requestedTenureMonths = requestedTenureMonths;
-    }
+    public BigDecimal getMonthlyIncome() { return monthlyIncome; }
+    public void setMonthlyIncome(BigDecimal monthlyIncome) { this.monthlyIncome = monthlyIncome; }
+
+    public String getLoanPurpose() { return loanPurpose; }
+    public void setLoanPurpose(String loanPurpose) { this.loanPurpose = loanPurpose; }
 }

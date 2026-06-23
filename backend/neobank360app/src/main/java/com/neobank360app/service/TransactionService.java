@@ -22,17 +22,12 @@ import java.util.List;
 @Service
 public class TransactionService {
 
-    private static final SecureRandom SECURE_RANDOM =
-            new SecureRandom();
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     private final TransactionRepository transactionRepository;
-
     private final AccountRepository accountRepository;
-
     private final UserRepository userRepository;
-
     private final RewardService rewardService;
-
     private final NotificationService notificationService;
 
     public TransactionService(
@@ -42,7 +37,6 @@ public class TransactionService {
             RewardService rewardService,
             NotificationService notificationService
     ) {
-
         this.transactionRepository = transactionRepository;
         this.accountRepository = accountRepository;
         this.userRepository = userRepository;
@@ -53,102 +47,54 @@ public class TransactionService {
     // ───────────────── DEPOSIT MONEY ─────────────────
 
     @Transactional
-    public Transaction deposit(
-            Long accountId,
-            BigDecimal amount,
-            String remarks
-    ) {
+    public Transaction deposit(Long accountId, BigDecimal amount, String remarks) {
 
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-
-            throw new IllegalArgumentException(
-                    "Amount must be greater than zero."
-            );
+            throw new IllegalArgumentException("Amount must be greater than zero.");
         }
 
-        Account account =
-                getValidatedAccount(accountId);
+        Account account = getValidatedAccount(accountId);
 
-        BigDecimal updatedAvailableBalance =
-                account.getAvailableBalance()
-                        .add(amount);
+        BigDecimal updatedAvailableBalance = account.getAvailableBalance().add(amount);
+        BigDecimal updatedLedgerBalance    = account.getLedgerBalance().add(amount);
 
-        BigDecimal updatedLedgerBalance =
-                account.getLedgerBalance()
-                        .add(amount);
-
-        account.setAvailableBalance(
-                updatedAvailableBalance
-        );
-
-        account.setLedgerBalance(
-                updatedLedgerBalance
-        );
-
+        account.setAvailableBalance(updatedAvailableBalance);
+        account.setLedgerBalance(updatedLedgerBalance);
         accountRepository.save(account);
 
-        Transaction transaction =
-                new Transaction();
-
-        transaction.setTransactionRef(
-                generateTransactionRef()
-        );
-
+        Transaction transaction = new Transaction();
+        transaction.setTransactionRef(generateTransactionRef());
         transaction.setAccount(account);
-
-        transaction.setTransactionType(
-                TransactionType.DEPOSIT
-        );
-
-        transaction.setTransactionStatus(
-                TransactionStatus.SUCCESS
-        );
-
+        transaction.setTransactionType(TransactionType.DEPOSIT);
+        transaction.setTransactionStatus(TransactionStatus.SUCCESS);
         transaction.setAmount(amount);
-
-        transaction.setAvailableBalanceAfter(
-                updatedAvailableBalance
-        );
-
-        transaction.setLedgerBalanceAfter(
-                updatedLedgerBalance
-        );
-
+        transaction.setAvailableBalanceAfter(updatedAvailableBalance);
+        transaction.setLedgerBalanceAfter(updatedLedgerBalance);
         transaction.setRemarks(remarks);
 
-        Transaction savedTransaction =
-                transactionRepository.save(transaction);
+        Transaction savedTransaction = transactionRepository.save(transaction);
 
-        // ───────────────── REWARD ENGINE ─────────────────
-
-        if (amount.compareTo(
-                BigDecimal.valueOf(5000)
-        ) >= 0) {
-
+        // ── Reward Engine ──
+        if (amount.compareTo(BigDecimal.valueOf(5000)) >= 0) {
             rewardService.createReward(
-
                     account.getUser(),
-
                     RewardType.REWARD_POINTS,
-
                     BigDecimal.valueOf(10),
-
                     "Deposit reward points"
             );
         }
 
-        // ───────────────── NOTIFICATION ─────────────────
-
-        notificationService.createNotification(
-
-                account.getUser(),
-
-                NotificationType.TRANSACTION,
-
-                "₹" + amount +
-                        " deposited successfully into account " +
-                        account.getAccountNo()
-        );
+        // ── Notification ──                    FIXED: account.getUser() + title
+        try {
+            notificationService.createNotification(
+                    account.getUser(),
+                    NotificationType.TRANSACTION,
+                    "Deposit Successful",
+                    "₹" + amount + " deposited to account " + account.getAccountNo()
+            );
+        } catch (Exception e) {
+            System.err.println("Notification failed on deposit: " + e.getMessage());
+        }
 
         return savedTransaction;
     }
@@ -156,163 +102,89 @@ public class TransactionService {
     // ───────────────── TRANSFER MONEY ─────────────────
 
     @Transactional
-    public Transaction transferMoney(
-            Long senderAccountId,
-            TransferRequestDTO requestDTO
-    ) {
+    public Transaction transferMoney(Long senderAccountId, TransferRequestDTO requestDTO) {
 
-        if (requestDTO.getAmount()
-                .compareTo(BigDecimal.ZERO) <= 0) {
-
-            throw new IllegalArgumentException(
-                    "Transfer amount must be greater than zero."
-            );
+        if (requestDTO.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Transfer amount must be greater than zero.");
         }
 
-        Account senderAccount =
-                getValidatedAccount(senderAccountId);
+        Account senderAccount = getValidatedAccount(senderAccountId);
 
-        Account receiverAccount =
-                accountRepository.findByAccountNo(
-                        requestDTO.getReceiverAccountNo()
-                ).orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Receiver account not found."
-                        ));
+        Account receiverAccount = accountRepository
+                .findByAccountNo(requestDTO.getReceiverAccountNo())
+                .orElseThrow(() -> new ResourceNotFoundException("Receiver account not found."));
 
-        if (senderAccount.getAccountNo()
-                .equals(receiverAccount.getAccountNo())) {
-
-            throw new IllegalArgumentException(
-                    "Cannot transfer money to same account."
-            );
+        if (senderAccount.getAccountNo().equals(receiverAccount.getAccountNo())) {
+            throw new IllegalArgumentException("Cannot transfer money to same account.");
         }
 
-        if (senderAccount.getAvailableBalance()
-                .compareTo(requestDTO.getAmount()) < 0) {
-
-            throw new IllegalArgumentException(
-                    "Insufficient balance."
-            );
+        if (senderAccount.getAvailableBalance().compareTo(requestDTO.getAmount()) < 0) {
+            throw new IllegalArgumentException("Insufficient balance.");
         }
 
-        // ───── DEBIT SENDER ─────
-
+        // ── Debit Sender ──
         BigDecimal senderUpdatedBalance =
-                senderAccount.getAvailableBalance()
-                        .subtract(requestDTO.getAmount());
-
-        senderAccount.setAvailableBalance(
-                senderUpdatedBalance
-        );
-
-        senderAccount.setLedgerBalance(
-                senderUpdatedBalance
-        );
-
+                senderAccount.getAvailableBalance().subtract(requestDTO.getAmount());
+        senderAccount.setAvailableBalance(senderUpdatedBalance);
+        senderAccount.setLedgerBalance(senderUpdatedBalance);
         accountRepository.save(senderAccount);
 
-        // ───── CREDIT RECEIVER ─────
-
+        // ── Credit Receiver ──
         BigDecimal receiverUpdatedBalance =
-                receiverAccount.getAvailableBalance()
-                        .add(requestDTO.getAmount());
-
-        receiverAccount.setAvailableBalance(
-                receiverUpdatedBalance
-        );
-
-        receiverAccount.setLedgerBalance(
-                receiverUpdatedBalance
-        );
-
+                receiverAccount.getAvailableBalance().add(requestDTO.getAmount());
+        receiverAccount.setAvailableBalance(receiverUpdatedBalance);
+        receiverAccount.setLedgerBalance(receiverUpdatedBalance);
         accountRepository.save(receiverAccount);
 
-        // ───── CREATE TRANSACTION ─────
-
-        Transaction transaction =
-                new Transaction();
-
-        transaction.setTransactionRef(
-                generateTransactionRef()
-        );
-
+        // ── Create Transaction ──
+        Transaction transaction = new Transaction();
+        transaction.setTransactionRef(generateTransactionRef());
         transaction.setAccount(senderAccount);
+        transaction.setReceiverAccount(receiverAccount);
+        transaction.setTransactionType(TransactionType.TRANSFER);
+        transaction.setTransactionStatus(TransactionStatus.SUCCESS);
+        transaction.setAmount(requestDTO.getAmount());
+        transaction.setAvailableBalanceAfter(senderUpdatedBalance);
+        transaction.setLedgerBalanceAfter(senderUpdatedBalance);
+        transaction.setRemarks(requestDTO.getRemarks());
 
-        transaction.setReceiverAccount(
-                receiverAccount
-        );
+        Transaction savedTransaction = transactionRepository.save(transaction);
 
-        transaction.setTransactionType(
-                TransactionType.TRANSFER
-        );
-
-        transaction.setTransactionStatus(
-                TransactionStatus.SUCCESS
-        );
-
-        transaction.setAmount(
-                requestDTO.getAmount()
-        );
-
-        transaction.setAvailableBalanceAfter(
-                senderUpdatedBalance
-        );
-
-        transaction.setLedgerBalanceAfter(
-                senderUpdatedBalance
-        );
-
-        transaction.setRemarks(
-                requestDTO.getRemarks()
-        );
-
-        Transaction savedTransaction =
-                transactionRepository.save(transaction);
-
-        // ───────────────── REWARD ENGINE ─────────────────
-
-        if (requestDTO.getAmount().compareTo(
-                BigDecimal.valueOf(1000)
-        ) >= 0) {
-
+        // ── Reward Engine ──
+        if (requestDTO.getAmount().compareTo(BigDecimal.valueOf(1000)) >= 0) {
             rewardService.createReward(
-
                     senderAccount.getUser(),
-
                     RewardType.REWARD_POINTS,
-
                     BigDecimal.valueOf(25),
-
                     "Transfer reward points"
             );
         }
 
-        // ───────────────── SENDER NOTIFICATION ─────────────────
+        // ── Sender Notification ──             FIXED: title added
+        try {
+            notificationService.createNotification(
+                    senderAccount.getUser(),
+                    NotificationType.TRANSACTION,
+                    "Transfer Successful",
+                    "₹" + requestDTO.getAmount() +
+                            " transferred to account " + receiverAccount.getAccountNo()
+            );
+        } catch (Exception e) {
+            System.err.println("Sender notification failed on transfer: " + e.getMessage());
+        }
 
-        notificationService.createNotification(
-
-                senderAccount.getUser(),
-
-                NotificationType.TRANSACTION,
-
-                "₹" + requestDTO.getAmount() +
-                        " transferred to account " +
-                        receiverAccount.getAccountNo()
-        );
-
-        // ───────────────── RECEIVER NOTIFICATION ─────────────────
-
-        notificationService.createNotification(
-
-                receiverAccount.getUser(),
-
-                NotificationType.TRANSACTION,
-
-                "₹" + requestDTO.getAmount() +
-                        " received from account " +
-                        senderAccount.getAccountNo()
-        );
+        // ── Receiver Notification ──           FIXED: title added
+        try {
+            notificationService.createNotification(
+                    receiverAccount.getUser(),
+                    NotificationType.TRANSACTION,
+                    "Money Received",
+                    "₹" + requestDTO.getAmount() +
+                            " received from account " + senderAccount.getAccountNo()
+            );
+        } catch (Exception e) {
+            System.err.println("Receiver notification failed on transfer: " + e.getMessage());
+        }
 
         return savedTransaction;
     }
@@ -320,191 +192,94 @@ public class TransactionService {
     // ───────────────── WITHDRAW MONEY ─────────────────
 
     @Transactional
-    public Transaction withdraw(
-            Long accountId,
-            BigDecimal amount,
-            String remarks
-    ) {
+    public Transaction withdraw(Long accountId, BigDecimal amount, String remarks) {
 
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-
-            throw new IllegalArgumentException(
-                    "Amount must be greater than zero."
-            );
+            throw new IllegalArgumentException("Amount must be greater than zero.");
         }
 
-        Account account =
-                getValidatedAccount(accountId);
+        Account account = getValidatedAccount(accountId);
 
-        if (account.getAvailableBalance()
-                .compareTo(amount) < 0) {
-
-            throw new IllegalArgumentException(
-                    "Insufficient balance."
-            );
+        if (account.getAvailableBalance().compareTo(amount) < 0) {
+            throw new IllegalArgumentException("Insufficient balance.");
         }
 
-        BigDecimal updatedBalance =
-                account.getAvailableBalance()
-                        .subtract(amount);
-
-        account.setAvailableBalance(
-                updatedBalance
-        );
-
-        account.setLedgerBalance(
-                updatedBalance
-        );
-
+        BigDecimal updatedBalance = account.getAvailableBalance().subtract(amount);
+        account.setAvailableBalance(updatedBalance);
+        account.setLedgerBalance(updatedBalance);
         accountRepository.save(account);
 
-        Transaction transaction =
-                new Transaction();
-
-        transaction.setTransactionRef(
-                generateTransactionRef()
-        );
-
+        Transaction transaction = new Transaction();
+        transaction.setTransactionRef(generateTransactionRef());
         transaction.setAccount(account);
-
-        transaction.setTransactionType(
-                TransactionType.DEBIT
-        );
-
-        transaction.setTransactionStatus(
-                TransactionStatus.SUCCESS
-        );
-
+        transaction.setTransactionType(TransactionType.DEBIT);
+        transaction.setTransactionStatus(TransactionStatus.SUCCESS);
         transaction.setAmount(amount);
-
-        transaction.setAvailableBalanceAfter(
-                updatedBalance
-        );
-
-        transaction.setLedgerBalanceAfter(
-                updatedBalance
-        );
-
+        transaction.setAvailableBalanceAfter(updatedBalance);
+        transaction.setLedgerBalanceAfter(updatedBalance);
         transaction.setRemarks(remarks);
 
-        Transaction savedTransaction =
-                transactionRepository.save(transaction);
+        Transaction savedTransaction = transactionRepository.save(transaction);
 
-        // ───────────────── NOTIFICATION ─────────────────
-
-        notificationService.createNotification(
-
-                account.getUser(),
-
-                NotificationType.TRANSACTION,
-
-                "₹" + amount +
-                        " withdrawn from account " +
-                        account.getAccountNo()
-        );
+        // ── Notification ──                    FIXED: title added
+        try {
+            notificationService.createNotification(
+                    account.getUser(),
+                    NotificationType.TRANSACTION,
+                    "Withdrawal Successful",
+                    "₹" + amount + " withdrawn from account " + account.getAccountNo()
+            );
+        } catch (Exception e) {
+            System.err.println("Notification failed on withdraw: " + e.getMessage());
+        }
 
         return savedTransaction;
     }
 
     // ───────────────── GET ACCOUNT TRANSACTIONS ─────────────────
 
-    public List<Transaction> getAccountTransactions(
-            Long accountId
-    ) {
-
-        Account account =
-                getValidatedAccount(accountId);
-
-        return transactionRepository
-                .findByAccountOrderByCreatedAtDesc(
-                        account
-                );
+    public List<Transaction> getAccountTransactions(Long accountId) {
+        Account account = getValidatedAccount(accountId);
+        return transactionRepository.findByAccountOrderByCreatedAtDesc(account);
     }
 
     // ───────────────── MINI STATEMENT ─────────────────
 
-    public List<Transaction> getMiniStatement(
-            Long accountId
-    ) {
-
-        Account account =
-                getValidatedAccount(accountId);
-
-        return transactionRepository
-                .findTop10ByAccountOrderByCreatedAtDesc(
-                        account
-                );
+    public List<Transaction> getMiniStatement(Long accountId) {
+        Account account = getValidatedAccount(accountId);
+        return transactionRepository.findTop10ByAccountOrderByCreatedAtDesc(account);
     }
 
     // ───────────────── PAGINATED TRANSACTIONS ─────────────────
 
-    public Page<Transaction> getPaginatedTransactions(
-            Long accountId,
-            int page,
-            int size
-    ) {
-
-        Account account =
-                getValidatedAccount(accountId);
-
-        Pageable pageable =
-                PageRequest.of(page, size);
-
-        return transactionRepository.findByAccount(
-                account,
-                pageable
-        );
+    public Page<Transaction> getPaginatedTransactions(Long accountId, int page, int size) {
+        Account account = getValidatedAccount(accountId);
+        Pageable pageable = PageRequest.of(page, size);
+        return transactionRepository.findByAccount(account, pageable);
     }
 
     // ───────────────── PRIVATE HELPERS ─────────────────
 
-    private Account getValidatedAccount(
-            Long accountId
-    ) {
-
-        User user =
-                getAuthenticatedUser();
-
-        Account account =
-                accountRepository.findById(accountId)
-                        .orElseThrow(() ->
-                                new ResourceNotFoundException(
-                                        "Account not found."
-                                ));
-
-        if (!account.getUser()
-                .getId()
-                .equals(user.getId())) {
-
+    private Account getValidatedAccount(Long accountId) {
+        User user = getAuthenticatedUser();
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found."));
+        if (!account.getUser().getId().equals(user.getId())) {
             throw new UnauthorizedAccountAccessException(
-                    "You are not authorized to access this account."
-            );
+                    "You are not authorized to access this account.");
         }
-
         return account;
     }
 
     private User getAuthenticatedUser() {
-
         Authentication authentication =
-                SecurityContextHolder
-                        .getContext()
-                        .getAuthentication();
-
-        String email =
-                authentication.getName();
-
+                SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
         return userRepository.findByEmail(email)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "User not found."
-                        ));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found."));
     }
 
     private String generateTransactionRef() {
-
-        return "TXN" +
-                (SECURE_RANDOM.nextInt(90000000)
-                        + 10000000);
+        return "TXN" + (SECURE_RANDOM.nextInt(90000000) + 10000000);
     }
 }

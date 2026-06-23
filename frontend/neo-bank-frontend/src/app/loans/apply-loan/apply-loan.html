@@ -1,6 +1,5 @@
 <div class="apply-loan-page">
 
-  <!-- Back Button — route matches /loans from app.routes.ts -->
   <a [routerLink]="['/loans']" class="back-btn">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
          stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -9,7 +8,6 @@
     Back to My Loans
   </a>
 
-  <!-- Page Header -->
   <div class="page-header">
     <div class="header-icon">🏦</div>
     <h1>Apply for a Loan</h1>
@@ -25,33 +23,32 @@
     <div class="step-line"></div>
     <div class="step" [class.active]="!!application.requestedAmount">
       <span class="step-num">2</span>
-      <span class="step-label">Enter Amount</span>
+      <span class="step-label">Amount & Tenure</span>
     </div>
     <div class="step-line"></div>
-    <div class="step" [class.active]="!!application.requestedTenureMonths">
+    <div class="step" [class.active]="!!application.monthlyIncome">
       <span class="step-num">3</span>
-      <span class="step-label">Select Tenure</span>
+      <span class="step-label">Income & Purpose</span>
     </div>
     <div class="step-line"></div>
-    <div class="step" [class.active]="!!emiPreview">
+    <div class="step" [class.active]="!!emiPreview && !!application.loanPurpose">
       <span class="step-num">4</span>
-      <span class="step-label">Review &amp; Submit</span>
+      <span class="step-label">Review & Submit</span>
     </div>
   </div>
 
   <div class="loan-card">
 
-    <!-- Product Selector -->
+    <!-- STEP 1: Product Selector -->
     <div class="field">
       <label>Loan Product <span class="required">*</span></label>
       <select [(ngModel)]="application.loanProductId" (ngModelChange)="onProductChange()">
         @for (product of products; track product.id) {
-          <option [value]="product.id">{{ product.productName }} — {{ product.loanType }}</option>
+          <option [value]="product.id">{{ product.productName }}</option>  <!-- ✅ removed loanType -->
         }
       </select>
     </div>
 
-    <!-- Product Info Card -->
     @if (selectedProduct) {
       <div class="product-info-card">
         <div class="product-info-grid">
@@ -70,31 +67,22 @@
             </div>
           </div>
           <div class="info-item">
-            <span class="info-icon">🏷️</span>
+            <span class="info-icon">📅</span>
             <div>
-              <div class="info-label">Loan Type</div>
-              <div class="info-value">{{ selectedProduct.loanType }}</div>
-            </div>
-          </div>
-          <div class="info-item">
-            <span class="info-icon">📋</span>
-            <div>
-              <div class="info-label">Description</div>
-              <div class="info-value">{{ selectedProduct.description }}</div>
+              <div class="info-label">Allowed Tenures</div>
+              <div class="info-value">{{ selectedProduct.allowedTenures }} months</div>  <!-- ✅ replaced loanType -->
             </div>
           </div>
         </div>
       </div>
     }
 
-    <!-- Loan Amount -->
+    <!-- STEP 2: Amount -->
     <div class="field">
       <label>Loan Amount (₹) <span class="required">*</span></label>
       <div class="input-wrapper">
         <span class="input-prefix">₹</span>
-        <input
-          type="number"
-          [(ngModel)]="application.requestedAmount"
+        <input type="number" [(ngModel)]="application.requestedAmount"
           placeholder="e.g. 500000"
           [min]="selectedProduct ? selectedProduct.minAmount : null"
           [max]="selectedProduct ? selectedProduct.maxAmount : null">
@@ -107,15 +95,13 @@
       }
     </div>
 
-    <!-- Tenure -->
+    <!-- STEP 2: Tenure -->
     <div class="field">
       <label>Tenure (Months) <span class="required">*</span></label>
       @if (allowedTenureList.length > 0) {
         <div class="tenure-chips">
           @for (t of allowedTenureList; track t) {
-            <button
-              type="button"
-              class="tenure-chip"
+            <button type="button" class="tenure-chip"
               [class.selected]="application.requestedTenureMonths === t"
               (click)="application.requestedTenureMonths = t">
               {{ t }} Mo
@@ -123,11 +109,42 @@
           }
         </div>
       } @else {
-        <input type="number" [(ngModel)]="application.requestedTenureMonths" placeholder="Enter tenure in months">
+        <input type="number" [(ngModel)]="application.requestedTenureMonths"
+          placeholder="Enter tenure in months">
       }
     </div>
 
-    <!-- EMI Preview -->
+    <!-- STEP 3: Monthly Income -->
+    <div class="field">
+      <label>Monthly Income (₹) <span class="required">*</span></label>
+      <div class="input-wrapper">
+        <span class="input-prefix">₹</span>
+        <input type="number" [(ngModel)]="application.monthlyIncome"
+          placeholder="Your net monthly salary / income" min="1">
+      </div>
+      @if (minIncomeRequired) {
+        <div class="field-hint eligibility-hint">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          Minimum income required for this loan: <strong>₹{{ minIncomeRequired | number }}</strong> (3× EMI rule)
+        </div>
+      }
+    </div>
+
+    <!-- STEP 3: Loan Purpose -->
+    <div class="field">
+      <label>Loan Purpose <span class="required">*</span></label>
+      <select [(ngModel)]="application.loanPurpose">
+        <option value="" disabled>Select purpose</option>
+        @for (purpose of loanPurposes; track purpose) {
+          <option [value]="purpose">{{ purpose }}</option>
+        }
+      </select>
+    </div>
+
+    <!-- STEP 4: EMI Preview -->
     @if (emiPreview) {
       <div class="emi-preview-card">
         <div class="emi-left">
@@ -140,16 +157,29 @@
             <strong>₹{{ (emiPreview * (application.requestedTenureMonths ?? 0)) | number:'1.2-2' }}</strong>
           </div>
           <div class="emi-detail">
-            <span>Interest Cost</span>
-            <strong>₹{{ ((emiPreview * (application.requestedTenureMonths ?? 0)) - (application.requestedAmount ?? 0)) | number:'1.2-2' }}</strong>
+            <span>Total Interest</span>
+            <strong>₹{{ totalInterest | number:'1.2-2' }}</strong>
           </div>
+          <div class="emi-detail">
+            <span>Principal Amount</span>
+            <strong>₹{{ application.requestedAmount | number:'1.2-2' }}</strong>
+          </div>
+          @if (application.monthlyIncome && emiPreview) {
+            <div class="emi-detail">
+              <span>EMI / Income Ratio</span>
+              <strong
+                [style.color]="(emiPreview / application.monthlyIncome) > 0.5 ? '#ef4444' : '#22c55e'">
+                {{ ((emiPreview / application.monthlyIncome) * 100) | number:'1.0-1' }}%
+                {{ (emiPreview / application.monthlyIncome) > 0.5 ? '⚠️ High' : '✅ Healthy' }}
+              </strong>
+            </div>
+          }
         </div>
       </div>
     }
 
-    <!-- Disclaimer -->
     <div class="disclaimer">
-      ⚠️ EMI is an estimate based on the reducing balance method. Final terms are subject to approval and credit assessment.
+      ⚠️ EMI is an estimate based on the reducing balance method. Final terms are subject to approval and credit assessment. Loan amount will be credited directly to your NeoBank account upon approval.
     </div>
 
     @if (errorMessage) {
@@ -168,5 +198,7 @@
 </div>
 
 @if (showToast) {
-  <div class="success-toast">✅ Loan application submitted! Redirecting...</div>
+  <div class="success-toast">
+    ✅ Loan application submitted successfully! We'll review it within 24–48 hours.
+  </div>
 }

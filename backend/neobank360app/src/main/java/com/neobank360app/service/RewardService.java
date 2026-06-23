@@ -11,9 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class RewardService {
@@ -30,9 +29,8 @@ public class RewardService {
     }
 
     // =========================================================
-    // CREATE REWARD — upsert pattern
-    // Accumulates amount if reward of same type already exists,
-    // so duplicate-key DB constraint can never crash the app.
+    // CREATE REWARD — always INSERT a NEW row per transaction
+    // Each bill payment = its own separate reward history entry
     // =========================================================
 
     @Transactional
@@ -42,56 +40,42 @@ public class RewardService {
             BigDecimal amount,
             String description
     ) {
-        Optional<Reward> existing =
-                rewardRepository.findByUserAndRewardType(user, rewardType);
-
-        if (existing.isPresent()) {
-            Reward reward = existing.get();
-            reward.setAmount(reward.getAmount().add(amount));
-            reward.setDescription(description);
-            rewardRepository.save(reward);
-        } else {
-            Reward reward = new Reward();
-            reward.setUser(user);
-            reward.setRewardType(rewardType);
-            reward.setAmount(amount);
-            reward.setDescription(description);
-            rewardRepository.save(reward);
-        }
+        Reward reward = new Reward();
+        reward.setUser(user);
+        reward.setRewardType(rewardType);
+        reward.setAmount(amount);
+        reward.setDescription(description);
+        rewardRepository.save(reward);  // ✅ ALWAYS INSERT, never upsert
     }
 
     // =========================================================
-    // GET MY REWARDS
+    // GET MY REWARDS — returns all rows, newest first
     // =========================================================
 
     @Transactional(readOnly = true)
     public List<RewardResponseDTO> getMyRewards() {
-
         User user = getAuthenticatedUser();
-        List<Reward> rewards = rewardRepository.findByUser(user);
-        List<RewardResponseDTO> response = new ArrayList<>();
-
-        for (Reward reward : rewards) {
-            response.add(new RewardResponseDTO(
-                    reward.getId(),
-                    reward.getRewardType(),
-                    reward.getAmount(),
-                    reward.getDescription(),
-                    reward.getCreatedAt()
-            ));
-        }
-
-        return response;
+        return rewardRepository.findByUserOrderByCreatedAtDesc(user)
+                .stream()
+                .map(r -> new RewardResponseDTO(
+                        r.getId(),
+                        r.getRewardType(),
+                        r.getAmount(),
+                        r.getDescription(),
+                        r.getCreatedAt()
+                ))
+                .collect(Collectors.toList());
     }
 
     // =========================================================
-    // TOTAL REWARD POINTS — DB-level SUM, no full fetch
+    // TOTAL REWARD POINTS — DB-level SUM across all rows
     // =========================================================
 
     @Transactional(readOnly = true)
     public BigDecimal getTotalRewards() {
         User user = getAuthenticatedUser();
-        return rewardRepository.sumAmountByUser(user);
+        BigDecimal total = rewardRepository.sumAmountByUser(user);
+        return total != null ? total : BigDecimal.ZERO;
     }
 
     // =========================================================
@@ -99,14 +83,9 @@ public class RewardService {
     // =========================================================
 
     private User getAuthenticatedUser() {
-
         Authentication authentication =
-                SecurityContextHolder
-                        .getContext()
-                        .getAuthentication();
-
+                SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
-
         return userRepository
                 .findByEmail(email)
                 .orElseThrow(() ->

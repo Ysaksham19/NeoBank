@@ -101,18 +101,12 @@
       <button class="tab-btn" [class.active]="activeTab === 'history'"
         (click)="activeTab = 'history'">
         Transaction History
-        <span class="tab-count" [class.active]="activeTab === 'history'">
-          {{ rewards.length }}
-        </span>
       </button>
     </div>
 
-    <!-- ════════════════════════════════════════ -->
-    <!-- OVERVIEW TAB                             -->
-    <!-- ════════════════════════════════════════ -->
+    <!-- ════════════════════ OVERVIEW TAB ════════════════════ -->
     @if (activeTab === 'overview') {
 
-      <!-- Cashback Rate Guide -->
       <div class="section-card">
         <h3 class="section-title">💡 How Cashback is Calculated</h3>
         <div class="rate-table">
@@ -144,7 +138,6 @@
         </div>
       </div>
 
-      <!-- Breakdown by reward type -->
       @if (rewardTypeBreakdown.length > 0) {
         <div class="section-card">
           <h3 class="section-title">Earnings Breakdown</h3>
@@ -166,7 +159,6 @@
         </div>
       }
 
-      <!-- Tier Roadmap -->
       <div class="section-card">
         <h3 class="section-title">Membership Tiers</h3>
         <div class="tiers-list">
@@ -192,83 +184,83 @@
       </div>
     }
 
-    <!-- ════════════════════════════════════════ -->
-    <!-- HISTORY TAB                              -->
-    <!-- ════════════════════════════════════════ -->
+    <!-- ════════════════════ HISTORY TAB ════════════════════ -->
     @if (activeTab === 'history') {
 
+      <!-- Toolbar -->
+      <div class="history-toolbar">
+        <div class="filter-chips">
+          <button class="chip-btn" [class.active]="historyFilter === 'ALL'"
+            (click)="setFilter('ALL')">All</button>
+          @for (type of uniqueTypes; track type) {
+            <button class="chip-btn" [class.active]="historyFilter === type"
+              (click)="setFilter(type)">
+              {{ typeIcon(type) }} {{ typeLabel(type) }}
+            </button>
+          }
+        </div>
+        <select class="sort-select" [(ngModel)]="sortOrder">
+          <option value="newest">Newest first</option>
+          <option value="oldest">Oldest first</option>
+          <option value="highest">Highest amount</option>
+          <option value="lowest">Lowest amount</option>
+        </select>
+      </div>
+
+      <!-- Summary line -->
+      <div class="history-summary-line">
+        <span>{{ filteredHistory.length }} transaction{{ filteredHistory.length !== 1 ? 's' : '' }}</span>
+        <span class="history-summary-total">Total: ₹{{ filteredTotal | number:'1.2-2' }}</span>
+      </div>
+
+      <!-- Empty states -->
       @if (rewards.length === 0) {
         <div class="empty-state">
           <div class="empty-icon">🏅</div>
           <h3>No rewards yet</h3>
           <p>Pay your first bill to earn cashback and start building rewards history.</p>
         </div>
+      } @else if (filteredHistory.length === 0) {
+        <div class="empty-state">
+          <div class="empty-icon">🔍</div>
+          <h3>No results</h3>
+          <p>No transactions match the selected filter.</p>
+        </div>
       } @else {
 
-        <!-- Filter + Sort Bar -->
-        <div class="history-toolbar">
-          <div class="filter-chips">
-
-            <!-- ✅ FIX: use setFilter() — direct assignment to union type is not allowed in templates -->
-            <button class="chip-btn" [class.active]="historyFilter === 'ALL'"
-              (click)="setFilter('ALL')">All</button>
-
-            @for (type of uniqueTypes; track type) {
-              <!-- ✅ FIX: setFilter(type) instead of historyFilter = type -->
-              <button class="chip-btn" [class.active]="historyFilter === type"
-                (click)="setFilter(type)">
-                {{ typeIcon(type) }} {{ typeLabel(type) }}
-              </button>
-            }
-
-          </div>
-          <select class="sort-select" [(ngModel)]="sortOrder">
-            <option value="newest">Newest first</option>
-            <option value="oldest">Oldest first</option>
-            <option value="highest">Highest amount</option>
-            <option value="lowest">Lowest amount</option>
-          </select>
-        </div>
-
-        <!-- Filtered summary line -->
-        <div class="history-summary-line">
-          <span>{{ filteredHistory.length }} transaction{{ filteredHistory.length !== 1 ? 's' : '' }}</span>
-          <span class="history-summary-total">Total: ₹{{ filteredTotal | number:'1.2-2' }}</span>
-        </div>
-
-        <!-- Grouped Transaction List -->
+        <!-- ── Grouped by date ── -->
         @for (group of groupedHistory; track group.label) {
           <div class="history-group">
-
-            <!-- Date Group Header -->
             <div class="group-label">{{ group.label }}</div>
 
-            <!-- Transactions in this group -->
-            @for (reward of group.items; track reward.id) {
+            @for (r of group.items; track r.id) {
               <div class="history-row">
-                <div class="history-icon-wrap">
-                  <span class="history-icon">{{ typeIcon(reward.rewardType) }}</span>
-                </div>
+
+                <!-- Icon -->
+                <div class="history-icon-wrap">{{ typeIcon(r.rewardType) }}</div>
+
+                <!-- Description + meta -->
                 <div class="history-info">
-                  <span class="history-desc">{{ reward.description }}</span>
+                  <span class="history-desc">{{ r.description }}</span>
                   <div class="history-meta">
-                    <span class="history-type-badge">{{ typeLabel(reward.rewardType) }}</span>
+                    <span class="history-type-badge">{{ typeLabel(r.rewardType) }}</span>
                     <span class="history-dot">·</span>
-                    <span class="history-date">{{ formatDate(reward.createdAt) }}</span>
+                    <span class="history-date">{{ formatDate(r.createdAt) }}</span>
                     <span class="history-dot">·</span>
-                    <span class="history-time">{{ formatTime(reward.createdAt) }}</span>
+                    <span class="history-time">{{ formatTime(r.createdAt) }}</span>
                   </div>
                 </div>
+
+                <!-- Amount -->
                 <div class="history-amount-col">
-                  <span class="history-amount">+₹{{ reward.amount | number:'1.2-2' }}</span>
+                  <span class="history-amount">+₹{{ r.amount | number:'1.2-2' }}</span>
                   <span class="history-credited">Credited</span>
                 </div>
+
               </div>
             }
-
           </div>
         }
-
       }
     }
 

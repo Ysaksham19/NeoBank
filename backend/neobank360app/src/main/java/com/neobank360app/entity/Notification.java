@@ -13,15 +13,15 @@ public class Notification {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(
-            name = "user_id",
-            nullable = false
-    )
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private NotificationType type;
+
+    @Column(nullable = false)                   // ← NEW: title column
+    private String title;
 
     @Column(nullable = false, length = 500)
     private String message;
@@ -36,51 +36,24 @@ public class Notification {
         this.createdAt = LocalDateTime.now();
     }
 
-    public Long getId() {
-        return id;
-    }
+    // ── Getters & Setters ──
 
-    public User getUser() {
-        return user;
-    }
+    public Long getId() { return id; }
 
-    public void setUser(
-            User user
-    ) {
-        this.user = user;
-    }
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
 
-    public NotificationType getType() {
-        return type;
-    }
+    public NotificationType getType() { return type; }
+    public void setType(NotificationType type) { this.type = type; }
 
-    public void setType(
-            NotificationType type
-    ) {
-        this.type = type;
-    }
+    public String getTitle() { return title; }          // ← NEW
+    public void setTitle(String title) { this.title = title; }  // ← NEW
 
-    public String getMessage() {
-        return message;
-    }
+    public String getMessage() { return message; }
+    public void setMessage(String message) { this.message = message; }
 
-    public void setMessage(
-            String message
-    ) {
-        this.message = message;
-    }
+    public boolean isRead() { return isRead; }
+    public void setRead(boolean read) { isRead = read; }
 
-    public boolean isRead() {
-        return isRead;
-    }
-
-    public void setRead(
-            boolean read
-    ) {
-        isRead = read;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
+    public LocalDateTime getCreatedAt() { return createdAt; }
 }

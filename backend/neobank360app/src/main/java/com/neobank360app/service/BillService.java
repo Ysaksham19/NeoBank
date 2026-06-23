@@ -41,8 +41,6 @@ public class BillService {
 
     // =========================================================
     // CASHBACK TIER ENGINE
-    // Tiered rate based on bill amount — up to 3% max.
-    //
     //  ₹1     – ₹499    → 1.0%
     //  ₹500   – ₹1,999  → 2.0%
     //  ₹2,000 – ₹4,999  → 2.5%
@@ -51,21 +49,19 @@ public class BillService {
 
     private BigDecimal getCashbackRate(BigDecimal amount) {
         if (amount.compareTo(BigDecimal.valueOf(500)) < 0) {
-            return BigDecimal.valueOf(0.01);   // 1%
+            return BigDecimal.valueOf(0.01);
         } else if (amount.compareTo(BigDecimal.valueOf(2000)) < 0) {
-            return BigDecimal.valueOf(0.02);   // 2%
+            return BigDecimal.valueOf(0.02);
         } else if (amount.compareTo(BigDecimal.valueOf(5000)) < 0) {
-            return BigDecimal.valueOf(0.025);  // 2.5%
+            return BigDecimal.valueOf(0.025);
         } else {
-            return BigDecimal.valueOf(0.03);   // 3%
+            return BigDecimal.valueOf(0.03);
         }
     }
 
     private String getCashbackDescription(BigDecimal amount, BigDecimal rate) {
-        // Convert 0.025 → "2.5%" for human-readable description
         String pct = rate.multiply(BigDecimal.valueOf(100))
-                .stripTrailingZeros()
-                .toPlainString();
+                .stripTrailingZeros().toPlainString();
         return pct + "% cashback on bill payment of ₹" +
                 amount.setScale(2, RoundingMode.HALF_UP).toPlainString();
     }
@@ -89,11 +85,14 @@ public class BillService {
 
         Bill savedBill = billRepository.save(bill);
 
+        // ── Notification ──                    FIXED: title added
         try {
             notificationService.createNotification(
                     user,
                     NotificationType.BILL_REMINDER,
-                    "New bill added for " + bill.getBillerName() + " of ₹" + bill.getAmount()
+                    "Bill Added",
+                    "New bill added for " + bill.getBillerName() +
+                            " of ₹" + bill.getAmount()
             );
         } catch (Exception e) {
             System.err.println("Notification failed on createBill: " + e.getMessage());
@@ -108,15 +107,12 @@ public class BillService {
 
     @Transactional(readOnly = true)
     public List<BillResponseDTO> getMyBills() {
-
         User user = getAuthenticatedUser();
         List<Bill> bills = billRepository.findByUser(user);
         List<BillResponseDTO> response = new ArrayList<>();
-
         for (Bill bill : bills) {
             response.add(mapToResponse(bill));
         }
-
         return response;
     }
 
@@ -126,15 +122,12 @@ public class BillService {
 
     @Transactional(readOnly = true)
     public List<BillResponseDTO> getPendingBills() {
-
         User user = getAuthenticatedUser();
         List<Bill> bills = billRepository.findByUserAndStatus(user, BillStatus.PENDING);
         List<BillResponseDTO> response = new ArrayList<>();
-
         for (Bill bill : bills) {
             response.add(mapToResponse(bill));
         }
-
         return response;
     }
 
@@ -144,15 +137,12 @@ public class BillService {
 
     @Transactional(readOnly = true)
     public List<BillResponseDTO> getOverdueBills() {
-
         User user = getAuthenticatedUser();
         List<Bill> bills = billRepository.findByUserAndStatus(user, BillStatus.OVERDUE);
         List<BillResponseDTO> response = new ArrayList<>();
-
         for (Bill bill : bills) {
             response.add(mapToResponse(bill));
         }
-
         return response;
     }
 
@@ -177,18 +167,14 @@ public class BillService {
             throw new IllegalArgumentException("This bill has already been paid.");
         }
 
-        // Both PENDING and OVERDUE bills can be paid
         bill.setStatus(BillStatus.PAID);
         Bill savedBill = billRepository.save(bill);
 
-        // ── Tiered cashback — isolated so it never blocks payment ──
+        // ── Tiered Cashback ──
         try {
             BigDecimal amount   = bill.getAmount();
             BigDecimal rate     = getCashbackRate(amount);
-            BigDecimal cashback = amount
-                    .multiply(rate)
-                    .setScale(2, RoundingMode.HALF_UP);
-
+            BigDecimal cashback = amount.multiply(rate).setScale(2, RoundingMode.HALF_UP);
             rewardService.createReward(
                     user,
                     RewardType.CASHBACK,
@@ -199,7 +185,7 @@ public class BillService {
             System.err.println("Reward creation failed for bill " + billId + ": " + e.getMessage());
         }
 
-        // ── Notification — isolated so it never blocks payment ──
+        // ── Notification ──                    FIXED: title added
         try {
             BigDecimal rate = getCashbackRate(bill.getAmount());
             String pct = rate.multiply(BigDecimal.valueOf(100))
@@ -207,6 +193,7 @@ public class BillService {
             notificationService.createNotification(
                     user,
                     NotificationType.BILL_REMINDER,
+                    "Bill Payment Successful",
                     "Bill paid for " + bill.getBillerName() +
                             " — " + pct + "% cashback credited!"
             );
@@ -218,7 +205,7 @@ public class BillService {
     }
 
     // =========================================================
-    // DELETE BILL — PAID bills cannot be deleted
+    // DELETE BILL
     // =========================================================
 
     @Transactional
@@ -249,7 +236,6 @@ public class BillService {
     @Scheduled(cron = "0 0 0 * * *")
     @Transactional
     public void updateOverdueBills() {
-
         List<Bill> overdueBills = billRepository
                 .findByStatusAndDueDateBefore(BillStatus.PENDING, LocalDate.now());
 
@@ -257,10 +243,12 @@ public class BillService {
             bill.setStatus(BillStatus.OVERDUE);
             billRepository.save(bill);
 
+            // ── Notification ──                FIXED: title added
             try {
                 notificationService.createNotification(
                         bill.getUser(),
                         NotificationType.BILL_REMINDER,
+                        "Bill Overdue",
                         "Bill overdue for " + bill.getBillerName()
                 );
             } catch (Exception e) {
@@ -289,17 +277,10 @@ public class BillService {
     // =========================================================
 
     private User getAuthenticatedUser() {
-
         Authentication authentication =
-                SecurityContextHolder
-                        .getContext()
-                        .getAuthentication();
-
+                SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
-
-        return userRepository
-                .findByEmail(email)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("User not found."));
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found."));
     }
 }

@@ -22,20 +22,53 @@
       </div>
     } @else {
       <div class="loan-grid">
-        @for (loan of loans; track loan.id) {
+        @for (loan of loans; track loan.loanAccountId) {
           <div class="loan-card" [class.closed]="loan.status === 'CLOSED'">
             <div class="card-top">
-              <h3>{{ loan.loanProductName }}</h3>
-              <span class="status-badge" [class]="loan.status.toLowerCase()">{{ loan.status }}</span>
+              <h3>{{ loan.productName }}</h3>
+              <span class="status-badge" [class]="loan.status.toLowerCase()">
+                {{ loan.status }}
+              </span>
             </div>
-            <div class="info-row"><span>Principal</span>    <strong>₹{{ loan.principalAmount   | number:'1.2-2' }}</strong></div>
-            <div class="info-row"><span>Outstanding</span>  <strong>₹{{ loan.outstandingAmount | number:'1.2-2' }}</strong></div>
-            <div class="info-row"><span>EMI Amount</span>   <strong>₹{{ loan.emiAmount         | number:'1.2-2' }}</strong></div>
-            <div class="info-row"><span>Tenure</span>       <strong>{{ loan.tenureMonths }} Months</strong></div>
+            <div class="info-row">
+              <span>Principal</span>
+              <strong>₹{{ loan.principalAmount | number:'1.2-2' }}</strong>
+            </div>
+            <div class="info-row outstanding">
+              <span>Outstanding Balance</span>
+              <strong>₹{{ loan.outstandingBalance | number:'1.2-2' }}</strong>
+            </div>
+            <div class="info-row">
+              <span>Monthly EMI</span>
+              <strong>₹{{ loan.emiAmount | number:'1.2-2' }}</strong>
+            </div>
+            <div class="info-row">
+              <span>Interest Rate</span>
+              <strong>{{ loan.annualInterestRate }}% p.a.</strong>
+            </div>
+            <div class="info-row">
+              <span>Tenure</span>
+              <strong>{{ loan.tenureMonths }} Months</strong>
+            </div>
+            @if (loan.disbursedAt) {
+              <div class="info-row">
+                <span>Disbursed On</span>
+                <strong>{{ loan.disbursedAt | date:'dd MMM yyyy' }}</strong>
+              </div>
+            }
+            @if (loan.status === 'CLOSED' && loan.closedAt) {
+              <div class="info-row">
+                <span>Closed On</span>
+                <strong>{{ loan.closedAt | date:'dd MMM yyyy' }}</strong>
+              </div>
+            }
             @if (loan.status === 'ACTIVE') {
-              <a [routerLink]="['/loans/repayment-schedule', loan.id]" class="schedule-link">
-                View Repayment Schedule →
+              <a [routerLink]="['/loans/repayment-schedule', loan.loanAccountId]"
+                 class="schedule-link">
+                💳 Pay EMI / View Schedule →
               </a>
+            } @else if (loan.status === 'CLOSED') {
+              <div class="closed-label">🎉 Fully Repaid</div>
             }
           </div>
         }
@@ -60,11 +93,38 @@
               <h3>{{ app.productName }}</h3>
               <span class="status-badge" [class]="app.status.toLowerCase()">{{ app.status }}</span>
             </div>
-            <div class="info-row"><span>Requested Amount</span> <strong>₹{{ app.requestedAmount        | number:'1.2-2' }}</strong></div>
-            <div class="info-row"><span>Tenure</span>           <strong>{{ app.requestedTenureMonths }} Months</strong></div>
-            <div class="info-row"><span>Applied On</span>       <strong>{{ app.appliedAt | date:'dd MMM yyyy' }}</strong></div>
+            <div class="info-row">
+              <span>Requested Amount</span>
+              <strong>₹{{ app.requestedAmount | number:'1.2-2' }}</strong>
+            </div>
+            <div class="info-row">
+              <span>Tenure</span>
+              <strong>{{ app.requestedTenureMonths }} Months</strong>
+            </div>
+            @if (app.monthlyIncome) {
+              <div class="info-row">
+                <span>Monthly Income</span>
+                <strong>₹{{ app.monthlyIncome | number:'1.2-2' }}</strong>
+              </div>
+            }
+            @if (app.loanPurpose) {
+              <div class="info-row">
+                <span>Purpose</span>
+                <strong>{{ app.loanPurpose }}</strong>
+              </div>
+            }
+            <div class="info-row">
+              <span>Applied On</span>
+              <strong>{{ app.appliedAt | date:'dd MMM yyyy' }}</strong>
+            </div>
             @if (app.adminRemarks) {
               <div class="remarks">💬 Remarks: {{ app.adminRemarks }}</div>
+            }
+            @if (app.status === 'PENDING') {
+              <div class="pending-note">⏳ Under review — response within 24–48 hours</div>
+            }
+            @if (app.status === 'APPROVED') {
+              <div class="approved-note">✅ Approved! Amount has been credited to your account.</div>
             }
           </div>
         }

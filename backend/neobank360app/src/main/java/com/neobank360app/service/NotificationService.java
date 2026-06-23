@@ -18,26 +18,15 @@ import java.util.List;
 @Service
 public class NotificationService {
 
-    private final NotificationRepository
-            notificationRepository;
-
-    private final UserRepository
-            userRepository;
+    private final NotificationRepository notificationRepository;
+    private final UserRepository userRepository;
 
     public NotificationService(
-
-            NotificationRepository
-                    notificationRepository,
-
-            UserRepository
-                    userRepository
+            NotificationRepository notificationRepository,
+            UserRepository userRepository
     ) {
-
-        this.notificationRepository =
-                notificationRepository;
-
-        this.userRepository =
-                userRepository;
+        this.notificationRepository = notificationRepository;
+        this.userRepository = userRepository;
     }
 
     // =========================================================
@@ -45,27 +34,13 @@ public class NotificationService {
     // =========================================================
 
     @Transactional
-    public void createNotification(
-
-            User user,
-
-            NotificationType type,
-
-            String message
-    ) {
-
-        Notification notification =
-                new Notification();
-
+    public void createNotification(User user, NotificationType type, String title, String message) {
+        Notification notification = new Notification();
         notification.setUser(user);
-
         notification.setType(type);
-
+        notification.setTitle(title);       // ← FIXED: title now set
         notification.setMessage(message);
-
-        notificationRepository.save(
-                notification
-        );
+        notificationRepository.save(notification);
     }
 
     // =========================================================
@@ -73,30 +48,14 @@ public class NotificationService {
     // =========================================================
 
     @Transactional(readOnly = true)
-    public List<NotificationResponseDTO>
-    getMyNotifications() {
-
-        User user =
-                getAuthenticatedUser();
-
+    public List<NotificationResponseDTO> getMyNotifications() {
+        User user = getAuthenticatedUser();
         List<Notification> notifications =
-                notificationRepository
-                        .findByUserOrderByCreatedAtDesc(
-                                user
-                        );
-
-        List<NotificationResponseDTO>
-                response =
-                new ArrayList<>();
-
-        for (Notification notification
-                : notifications) {
-
-            response.add(
-                    mapToResponse(notification)
-            );
+                notificationRepository.findByUserOrderByCreatedAtDesc(user);
+        List<NotificationResponseDTO> response = new ArrayList<>();
+        for (Notification notification : notifications) {
+            response.add(mapToResponse(notification));
         }
-
         return response;
     }
 
@@ -105,30 +64,14 @@ public class NotificationService {
     // =========================================================
 
     @Transactional(readOnly = true)
-    public List<NotificationResponseDTO>
-    getUnreadNotifications() {
-
-        User user =
-                getAuthenticatedUser();
-
+    public List<NotificationResponseDTO> getUnreadNotifications() {
+        User user = getAuthenticatedUser();
         List<Notification> notifications =
-                notificationRepository
-                        .findByUserAndIsReadFalseOrderByCreatedAtDesc(
-                                user
-                        );
-
-        List<NotificationResponseDTO>
-                response =
-                new ArrayList<>();
-
-        for (Notification notification
-                : notifications) {
-
-            response.add(
-                    mapToResponse(notification)
-            );
+                notificationRepository.findByUserAndIsReadFalseOrderByCreatedAtDesc(user);
+        List<NotificationResponseDTO> response = new ArrayList<>();
+        for (Notification notification : notifications) {
+            response.add(mapToResponse(notification));
         }
-
         return response;
     }
 
@@ -137,43 +80,18 @@ public class NotificationService {
     // =========================================================
 
     @Transactional
-    public NotificationResponseDTO
-    markAsRead(
-            Long notificationId
-    ) {
+    public NotificationResponseDTO markAsRead(Long notificationId) {
+        User user = getAuthenticatedUser();
+        Notification notification = notificationRepository.findById(notificationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Notification not found."));
 
-        User user =
-                getAuthenticatedUser();
-
-        Notification notification =
-                notificationRepository
-                        .findById(notificationId)
-                        .orElseThrow(() ->
-
-                                new ResourceNotFoundException(
-                                        "Notification not found."
-                                )
-                        );
-
-        if (!notification.getUser()
-                .getId()
-                .equals(user.getId())) {
-
+        if (!notification.getUser().getId().equals(user.getId())) {
             throw new IllegalArgumentException(
-                    "You are not authorized to access this notification."
-            );
+                    "You are not authorized to access this notification.");
         }
 
         notification.setRead(true);
-
-        Notification updatedNotification =
-                notificationRepository.save(
-                        notification
-                );
-
-        return mapToResponse(
-                updatedNotification
-        );
+        return mapToResponse(notificationRepository.save(notification));
     }
 
     // =========================================================
@@ -182,24 +100,12 @@ public class NotificationService {
 
     @Transactional
     public void markAllAsRead() {
-
-        User user =
-                getAuthenticatedUser();
-
+        User user = getAuthenticatedUser();
         List<Notification> notifications =
-                notificationRepository
-                        .findByUserAndIsReadFalseOrderByCreatedAtDesc(
-                                user
-                        );
-
-        for (Notification notification
-                : notifications) {
-
+                notificationRepository.findByUserAndIsReadFalseOrderByCreatedAtDesc(user);
+        for (Notification notification : notifications) {
             notification.setRead(true);
-
-            notificationRepository.save(
-                    notification
-            );
+            notificationRepository.save(notification);
         }
     }
 
@@ -208,56 +114,30 @@ public class NotificationService {
     // =========================================================
 
     @Transactional
-    public void deleteNotification(
-            Long notificationId
-    ) {
+    public void deleteNotification(Long notificationId) {
+        User user = getAuthenticatedUser();
+        Notification notification = notificationRepository.findById(notificationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Notification not found."));
 
-        User user =
-                getAuthenticatedUser();
-
-        Notification notification =
-                notificationRepository
-                        .findById(notificationId)
-                        .orElseThrow(() ->
-
-                                new ResourceNotFoundException(
-                                        "Notification not found."
-                                )
-                        );
-
-        if (!notification.getUser()
-                .getId()
-                .equals(user.getId())) {
-
+        if (!notification.getUser().getId().equals(user.getId())) {
             throw new IllegalArgumentException(
-                    "You are not authorized to delete this notification."
-            );
+                    "You are not authorized to delete this notification.");
         }
 
-        notificationRepository.delete(
-                notification
-        );
+        notificationRepository.delete(notification);
     }
 
     // =========================================================
     // RESPONSE MAPPER
     // =========================================================
 
-    private NotificationResponseDTO
-    mapToResponse(
-            Notification notification
-    ) {
-
+    private NotificationResponseDTO mapToResponse(Notification notification) {
         return new NotificationResponseDTO(
-
                 notification.getId(),
-
                 notification.getType(),
-
+                notification.getTitle(),    // ← FIXED: title now included
                 notification.getMessage(),
-
                 notification.isRead(),
-
                 notification.getCreatedAt()
         );
     }
@@ -267,22 +147,10 @@ public class NotificationService {
     // =========================================================
 
     private User getAuthenticatedUser() {
-
         Authentication authentication =
-                SecurityContextHolder
-                        .getContext()
-                        .getAuthentication();
-
-        String email =
-                authentication.getName();
-
-        return userRepository
-                .findByEmail(email)
-                .orElseThrow(() ->
-
-                        new ResourceNotFoundException(
-                                "User not found."
-                        )
-                );
+                SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found."));
     }
 }

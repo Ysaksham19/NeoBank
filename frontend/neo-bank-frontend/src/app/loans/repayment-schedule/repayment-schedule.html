@@ -2,27 +2,81 @@
   <div class="page-header">
     <a [routerLink]="['/loans/my-loans']" class="back-link">← Back to My Loans</a>
     <h1>Repayment Schedule</h1>
-    <p>Loan #{{ loanId }} — EMI breakdown</p>
+    <p>Loan #{{ loanId }} — EMI breakdown &amp; payment</p>
   </div>
 
   @if (loading) {
     <div class="loading-skeleton">
       @for (i of [1,2,3,4,5]; track i) { <div class="skeleton-row"></div> }
     </div>
-  } @else if (errorMsg) {
+  } @else if (errorMsg && !schedule.length) {
     <div class="error-state">{{ errorMsg }}</div>
   } @else {
+
+    <!-- Toast Messages -->
+    @if (successMsg) {
+      <div class="toast toast-success">✅ {{ successMsg }}</div>
+    }
+    @if (errorMsg) {
+      <div class="toast toast-error">⛔ {{ errorMsg }}</div>
+    }
+
+    <!-- Loan Closed Banner -->
+    @if (isLoanClosed) {
+      <div class="closed-banner">
+        🎉 Congratulations! This loan is fully paid and closed.
+      </div>
+    }
+
+    <!-- Summary Cards -->
     <div class="summary-row">
-      <div class="summary-card">         <span class="s-label">Total EMIs</span>  <span class="s-value">{{ schedule.length }}</span></div>
-      <div class="summary-card green">   <span class="s-label">Paid</span>         <span class="s-value">{{ paidCount }}</span></div>
-      <div class="summary-card amber">   <span class="s-label">Pending</span>      <span class="s-value">{{ pendingCount }}</span></div>
+      <div class="summary-card">
+        <span class="s-label">Total EMIs</span>
+        <span class="s-value">{{ schedule.length }}</span>
+      </div>
+      <div class="summary-card green">
+        <span class="s-label">Paid</span>
+        <span class="s-value">{{ paidCount }}</span>
+      </div>
+      <div class="summary-card amber">
+        <span class="s-label">Pending</span>
+        <span class="s-value">{{ pendingCount }}</span>
+      </div>
       @if (overdueCount > 0) {
-        <div class="summary-card red">   <span class="s-label">Overdue</span>      <span class="s-value">{{ overdueCount }}</span></div>
+        <div class="summary-card red">
+          <span class="s-label">Overdue</span>
+          <span class="s-value">{{ overdueCount }}</span>
+        </div>
       }
-      <div class="summary-card blue">    <span class="s-label">Amount Paid</span>  <span class="s-value">₹{{ totalPaid    | number:'1.2-2' }}</span></div>
-      <div class="summary-card orange">  <span class="s-label">Amount Due</span>   <span class="s-value">₹{{ totalPending | number:'1.2-2' }}</span></div>
+      <div class="summary-card blue">
+        <span class="s-label">Amount Paid</span>
+        <span class="s-value">₹{{ totalPaid | number:'1.2-2' }}</span>
+      </div>
+      <div class="summary-card orange">
+        <span class="s-label">Amount Due</span>
+        <span class="s-value">₹{{ totalPending | number:'1.2-2' }}</span>
+      </div>
     </div>
 
+    <!-- Overdue Warning -->
+    @if (overdueCount > 0) {
+      <div class="overdue-warning">
+        ⚠️ You have {{ overdueCount }} overdue instalment(s). A late fee of <strong>₹500</strong> per overdue instalment will be charged on payment.
+      </div>
+    }
+
+    <!-- Sequential Payment Info -->
+    @if (!isLoanClosed && nextDueInstalment) {
+      <div class="next-due-info">
+        📅 Next due: <strong>EMI #{{ nextDueInstalment.instalmentNumber }}</strong>
+        — ₹{{ nextDueInstalment.emiAmount | number:'1.2-2' }}
+        @if (nextDueInstalment.paymentStatus === 'OVERDUE') {
+          <span class="overdue-tag">+ ₹500 late fee</span>
+        }
+      </div>
+    }
+
+    <!-- Repayment Table -->
     <div class="table-wrapper">
       <table class="schedule-table">
         <thead>
@@ -32,22 +86,52 @@
             <th>EMI Amount</th>
             <th>Principal</th>
             <th>Interest</th>
+            <th>Closing Balance</th>
             <th>Status</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
           @for (row of schedule; track row.instalmentNumber) {
             <tr [class.paid-row]="row.paymentStatus === 'PAID'"
-                [class.overdue-row]="row.paymentStatus === 'OVERDUE'">
+                [class.overdue-row]="row.paymentStatus === 'OVERDUE'"
+                [class.next-row]="canPay(row) && !isLoanClosed">
               <td>{{ row.instalmentNumber }}</td>
               <td>{{ row.dueDate | date:'dd MMM yyyy' }}</td>
-              <td>₹{{ row.emiAmount          | number:'1.2-2' }}</td>
+              <td>
+                ₹{{ row.emiAmount | number:'1.2-2' }}
+                @if (row.paymentStatus === 'OVERDUE') {
+                  <span class="late-fee-tag">+₹500 late fee</span>
+                }
+              </td>
               <td>₹{{ row.principalComponent | number:'1.2-2' }}</td>
               <td>₹{{ row.interestComponent  | number:'1.2-2' }}</td>
+              <td>₹{{ (row.closingBalance ?? 0) | number:'1.2-2' }}</td>
               <td>
                 <span class="status-badge" [class]="row.paymentStatus.toLowerCase()">
                   {{ row.paymentStatus }}
                 </span>
+                @if (row.paymentStatus === 'PAID' && row.paidAt) {
+                  <div class="paid-on">{{ row.paidAt | date:'dd MMM' }}</div>
+                }
+              </td>
+              <td>
+                @if (row.paymentStatus === 'PAID') {
+                  <span class="paid-check">✓ Paid</span>
+                } @else if (canPay(row)) {
+                  <button class="pay-btn"
+                    [class.overdue-pay]="row.paymentStatus === 'OVERDUE'"
+                    [disabled]="payingId === row.instalmentNumber"
+                    (click)="payEmi(row)">
+                    @if (payingId === row.instalmentNumber) {
+                      <span class="spinner"></span> Paying…
+                    } @else {
+                      {{ row.paymentStatus === 'OVERDUE' ? '⚠️ Pay + ₹500' : '💳 Pay Now' }}
+                    }
+                  </button>
+                } @else {
+                  <span class="locked-emi" title="Pay previous EMIs first">🔒</span>
+                }
               </td>
             </tr>
           }

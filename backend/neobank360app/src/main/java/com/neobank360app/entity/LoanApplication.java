@@ -1,8 +1,6 @@
 package com.neobank360app.entity;
 
-import com.neobank360app.entity.*;
 import jakarta.persistence.*;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -28,6 +26,12 @@ public class LoanApplication {
     @Column(name = "requested_tenure_months", nullable = false)
     private Integer requestedTenureMonths;
 
+    @Column(name = "monthly_income")                         // ✅ NEW
+    private BigDecimal monthlyIncome;
+
+    @Column(name = "loan_purpose")                           // ✅ NEW
+    private String loanPurpose;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private LoanApplicationStatus status;
@@ -41,80 +45,44 @@ public class LoanApplication {
     @Column(name = "decided_at")
     private LocalDateTime decidedAt;
 
-    public LoanApplication() {
-    }
+    public LoanApplication() {}
 
     @PrePersist
     public void prePersist() {
-
         this.appliedAt = LocalDateTime.now();
-
         if (this.status == null) {
             this.status = LoanApplicationStatus.PENDING;
         }
     }
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
 
-    public User getUser() {
-        return user;
-    }
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
+    public LoanProduct getLoanProduct() { return loanProduct; }
+    public void setLoanProduct(LoanProduct loanProduct) { this.loanProduct = loanProduct; }
 
-    public LoanProduct getLoanProduct() {
-        return loanProduct;
-    }
+    public BigDecimal getRequestedAmount() { return requestedAmount; }
+    public void setRequestedAmount(BigDecimal requestedAmount) { this.requestedAmount = requestedAmount; }
 
-    public void setLoanProduct(LoanProduct loanProduct) {
-        this.loanProduct = loanProduct;
-    }
+    public Integer getRequestedTenureMonths() { return requestedTenureMonths; }
+    public void setRequestedTenureMonths(Integer requestedTenureMonths) { this.requestedTenureMonths = requestedTenureMonths; }
 
-    public BigDecimal getRequestedAmount() {
-        return requestedAmount;
-    }
+    public BigDecimal getMonthlyIncome() { return monthlyIncome; }
+    public void setMonthlyIncome(BigDecimal monthlyIncome) { this.monthlyIncome = monthlyIncome; }
 
-    public void setRequestedAmount(BigDecimal requestedAmount) {
-        this.requestedAmount = requestedAmount;
-    }
+    public String getLoanPurpose() { return loanPurpose; }
+    public void setLoanPurpose(String loanPurpose) { this.loanPurpose = loanPurpose; }
 
-    public Integer getRequestedTenureMonths() {
-        return requestedTenureMonths;
-    }
+    public LoanApplicationStatus getStatus() { return status; }
+    public void setStatus(LoanApplicationStatus status) { this.status = status; }
 
-    public void setRequestedTenureMonths(Integer requestedTenureMonths) {
-        this.requestedTenureMonths = requestedTenureMonths;
-    }
+    public String getAdminRemarks() { return adminRemarks; }
+    public void setAdminRemarks(String adminRemarks) { this.adminRemarks = adminRemarks; }
 
-    public LoanApplicationStatus getStatus() {
-        return status;
-    }
+    public LocalDateTime getAppliedAt() { return appliedAt; }
 
-    public void setStatus(LoanApplicationStatus status) {
-        this.status = status;
-    }
-
-    public String getAdminRemarks() {
-        return adminRemarks;
-    }
-
-    public void setAdminRemarks(String adminRemarks) {
-        this.adminRemarks = adminRemarks;
-    }
-
-    public LocalDateTime getAppliedAt() {
-        return appliedAt;
-    }
-
-    public LocalDateTime getDecidedAt() {
-        return decidedAt;
-    }
-
-    public void setDecidedAt(LocalDateTime decidedAt) {
-        this.decidedAt = decidedAt;
-    }
+    public LocalDateTime getDecidedAt() { return decidedAt; }
+    public void setDecidedAt(LocalDateTime decidedAt) { this.decidedAt = decidedAt; }
 }

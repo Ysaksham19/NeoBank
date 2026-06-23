@@ -1,17 +1,12 @@
 export interface LoanAccount {
-
-  id: number;
-
-  loanProductName: string;
-
-  principalAmount: number;
-
-  emiAmount: number;
-
-  tenureMonths: number;
-
-  outstandingAmount: number;
-
-  status: string;
-
+  loanAccountId:      number;
+  productName:        string;
+  principalAmount:    number;
+  outstandingBalance: number;
+  emiAmount:          number;
+  annualInterestRate: number;
+  tenureMonths:       number;
+  status:             string;
+  disbursedAt:        string | null;
+  closedAt:           string | null;
 }
