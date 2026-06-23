@@ -1,43 +1,164 @@
-<div class="transaction-page">
-  <div class="page-header">
-    <h1>Transaction History</h1>
-    <p>View and filter all your transactions.</p>
-  </div>
+<div class="txn-page">
 
-  <div class="toolbar">
-    <input type="text" placeholder="Search by reference or remarks..." [(ngModel)]="searchText" (input)="onSearch()">
-    <div class="filter-row">
-      <button [class.active]="selectedFilter === 'ALL'" (click)="applyFilter('ALL')">All</button>
-      <button [class.active]="selectedFilter === 'DEPOSIT'" (click)="applyFilter('DEPOSIT')">Deposits</button>
-      <button [class.active]="selectedFilter === 'DEBIT'" (click)="applyFilter('DEBIT')">Debits</button>
-      <button [class.active]="selectedFilter === 'TRANSFER'" (click)="applyFilter('TRANSFER')">Transfers</button>
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <a routerLink="/dashboard" class="back-btn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        Dashboard
+      </a>
+    </div>
+    <div class="header-title">
+      <h1>Transactions</h1>
+      <p>All your account activity</p>
+    </div>
+    <div class="header-right">
+      <button class="refresh-btn" (click)="refresh()" [disabled]="loading">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5"
+             [class.spinning]="loading">
+          <polyline points="23 4 23 10 17 10"/>
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+        </svg>
+        Refresh
+      </button>
     </div>
   </div>
 
-  @if(loading) {
-    <div class="loading">Loading transactions...</div>
-  } @else if(filteredTransactions.length === 0) {
-    <div class="empty-state">No transactions found.</div>
-  } @else {
-    <div class="transaction-list">
-      @for(tx of filteredTransactions; track tx.id) {
-        <div class="transaction-card">
-          <div class="tx-left">
-            <div class="tx-icon" [class.credit]="tx.transactionType === 'DEPOSIT'" [class.debit]="tx.transactionType !== 'DEPOSIT'">
-              {{ tx.transactionType === 'DEPOSIT' ? '↓' : '↑' }}
-            </div>
-            <div>
-              <h3>{{ tx.transactionType }}</h3>
-              <p class="ref">{{ tx.transactionRef }}</p>
-              <p class="remarks">{{ tx.remarks }}</p>
-              <p class="date">{{ tx.createdAt | date:'medium' }}</p>
-            </div>
+  <!-- Quick Actions -->
+  <div class="quick-actions">
+    <a routerLink="/transactions/deposit"  class="qa-btn qa-deposit">↓ Deposit</a>
+    <a routerLink="/transactions/withdraw" class="qa-btn qa-withdraw">↑ Withdraw</a>
+    <a routerLink="/transactions/transfer" class="qa-btn qa-transfer">⇄ Transfer</a>
+  </div>
+
+  <!-- Account Selector -->
+  @if (accounts.length > 1) {
+    <div class="account-selector">
+      <label>Account</label>
+      <select [(ngModel)]="selectedAccountId" (ngModelChange)="onAccountChange()">
+        @for (acc of accounts; track acc.id) {
+          <option [ngValue]="acc.id">
+            <!-- ✅ FIXED: removed ?. since accountNumber is string, not string | undefined -->
+            {{ acc.accountType }} — ****{{ acc.accountNumber.slice(-4) }}
+          </option>
+        }
+      </select>
+    </div>
+  }
+
+  <!-- Filter Pills -->
+  <div class="filter-pills">
+    @for (type of ['ALL','DEPOSIT','WITHDRAWAL','TRANSFER']; track type) {
+      <button class="pill"
+        [class.active]="selectedFilter === type"
+        (click)="applyFilter(type)">
+        {{ type === 'ALL' ? '📋 All' :
+           type === 'DEPOSIT' ? '↓ Deposits' :
+           type === 'WITHDRAWAL' ? '↑ Withdrawals' : '⇄ Transfers' }}
+      </button>
+    }
+  </div>
+
+  <!-- Search -->
+  <div class="search-bar">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+         stroke="#9ca3af" stroke-width="2">
+      <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+    </svg>
+    <input
+      type="text"
+      placeholder="Search by ref or remarks..."
+      [(ngModel)]="searchText"
+      (ngModelChange)="onSearch()" />
+    @if (searchText) {
+      <button class="search-clear" (click)="searchText=''; onSearch()">✕</button>
+    }
+  </div>
+
+  <!-- Error -->
+  @if (errorMessage) {
+    <div class="api-error">⛔ {{ errorMessage }}</div>
+  }
+
+  <!-- Skeleton -->
+  @if (loading) {
+    <div class="txn-list">
+      @for (i of [1,2,3,4,5]; track i) {
+        <div class="txn-row skeleton-row">
+          <div class="skeleton sk-icon"></div>
+          <div class="sk-body">
+            <div class="skeleton sk-line-lg"></div>
+            <div class="skeleton sk-line-sm"></div>
           </div>
-          <div class="tx-amount" [class.credit]="tx.transactionType === 'DEPOSIT'" [class.debit]="tx.transactionType !== 'DEPOSIT'">
-            {{ tx.transactionType === 'DEPOSIT' ? '+' : '-' }}₹{{ tx.amount | number:'1.2-2' }}
-          </div>
+          <div class="skeleton sk-amount"></div>
         </div>
       }
     </div>
   }
+
+  <!-- Empty -->
+  @if (!loading && !errorMessage && filteredTransactions.length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">📭</div>
+      <h3>No transactions found</h3>
+      @if (searchText || selectedFilter !== 'ALL') {
+        <p>Try clearing your search or filter.</p>
+        <button class="clear-btn-lg"
+          (click)="searchText=''; applyFilter('ALL')">
+          Clear Filters
+        </button>
+      } @else {
+        <p>Your transaction history will appear here.</p>
+      }
+    </div>
+  }
+
+  <!-- Transaction List -->
+  @if (!loading && filteredTransactions.length > 0) {
+    <div class="txn-list">
+      @for (txn of filteredTransactions; track txn.id) {
+        <div class="txn-row">
+
+          <div class="txn-icon" [class]="getTypeClass(txn.transactionType)">
+            {{ getTypeIcon(txn.transactionType) }}
+          </div>
+
+          <div class="txn-details">
+            <div class="txn-ref">{{ txn.transactionRef }}</div>
+            <div class="txn-meta">
+              <span class="txn-type-badge" [class]="getTypeClass(txn.transactionType)">
+                {{ txn.transactionType }}
+              </span>
+              @if (txn.accountNo) {
+                <span class="txn-account">{{ maskAccount(txn.accountNo) }}</span>
+              }
+              @if (txn.remarks) {
+                <span class="txn-desc">{{ txn.remarks }}</span>
+              }
+            </div>
+            <div class="txn-date">
+              {{ txn.createdAt | date:'dd MMM yyyy, hh:mm a' }}
+            </div>
+          </div>
+
+          <div class="txn-amount-block">
+            <div class="txn-amount"
+              [class.credit]="isCredit(txn.transactionType)"
+              [class.debit]="!isCredit(txn.transactionType)">
+              {{ isCredit(txn.transactionType) ? '+' : '-' }}₹{{ txn.amount | number:'1.2-2' }}
+            </div>
+            @if (txn.balanceAfter) {
+              <div class="txn-balance">Bal: ₹{{ txn.balanceAfter | number:'1.2-2' }}</div>
+            }
+          </div>
+
+        </div>
+      }
+    </div>
+  }
+
 </div>

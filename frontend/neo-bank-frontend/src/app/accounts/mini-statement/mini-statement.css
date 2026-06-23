@@ -1,89 +1,119 @@
-.statement-page {
+/* ============================================================
+   MINI STATEMENT — light theme
+============================================================ */
 
-    background: var(--color-surface-3);
-
-    min-height: 100vh;
-
-    padding: 40px;
+.mini-page {
+  max-width: 720px; margin: 0 auto; padding: 2rem 1.25rem 4rem;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  color: #111827; box-sizing: border-box;
 }
 
-.page-header h1 {
+.page-header {
+  display: grid; grid-template-columns: auto 1fr auto;
+  align-items: center; gap: 1rem; margin-bottom: 1.75rem;
+}
+.header-title { text-align: center; }
+.header-title h1 { font-size: 1.5rem; font-weight: 700; color: #0f172a; margin: 0 0 0.2rem; }
+.header-title p  { font-size: 0.85rem; color: #6b7280; margin: 0; }
 
-    color: white;
+.back-btn {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  background: none; border: 1.5px solid #e5e7eb; border-radius: 8px;
+  padding: 0.45rem 0.9rem; font-size: 0.82rem; font-weight: 500;
+  color: #374151; text-decoration: none; white-space: nowrap;
+  transition: background 0.15s;
+}
+.back-btn:hover { background: #f9fafb; border-color: #d1d5db; }
 
-    font-size: 34px;
+.refresh-btn {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  background: none; border: 1.5px solid #e5e7eb; border-radius: 8px;
+  padding: 0.45rem 0.9rem; font-size: 0.82rem; font-weight: 500;
+  color: #374151; cursor: pointer; font-family: inherit; white-space: nowrap;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.refresh-btn:hover:not(:disabled) { background: #f0f9f9; border-color: #01696f; color: #01696f; }
+.refresh-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    margin-bottom: 10px;
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinning { animation: spin 0.7s linear infinite; display: inline-block; }
+
+.api-error {
+  background: #fee2e2; color: #991b1b; border: 1px solid #fecaca;
+  border-radius: 10px; padding: 0.85rem 1rem; font-size: 0.875rem; margin-bottom: 1.25rem;
 }
 
-.page-header p {
-
-    color: var(--color-text-secondary);
-
-    margin-bottom: 30px;
+/* ── List ── */
+.tx-list {
+  background: #fff; border: 1.5px solid #e5e7eb; border-radius: 14px;
+  overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.04);
 }
-
-.statement-card {
-
-    background:
-        linear-gradient(
-            180deg,
-            var(--color-surface-1),
-            var(--color-surface-2)
-        );
-
-    border: 1px solid rgba(255,255,255,.06);
-
-    border-radius: 24px;
-
-    overflow: hidden;
+.tx-row {
+  display: flex; align-items: center; gap: 0.85rem;
+  padding: 1rem 1.25rem; border-bottom: 1px solid #f3f4f6;
+  transition: background 0.12s;
 }
+.tx-row:last-child { border-bottom: none; }
+.tx-row:hover { background: #fafafa; }
 
-.transaction-row {
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    padding: 25px;
-
-    border-bottom: 1px solid rgba(255,255,255,.05);
+.tx-icon {
+  width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; font-weight: 700;
 }
+.icon-deposit  { background: #d1fae5; color: #059669; }
+.icon-debit    { background: #fee2e2; color: #dc2626; }
+.icon-transfer { background: #dbeafe; color: #2563eb; }
 
-.transaction-row:last-child {
+.tx-info { flex: 1; display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
+.tx-type    { font-size: 0.875rem; font-weight: 600; color: #0f172a; }
+.tx-remarks { font-size: 0.78rem; color: #374151; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tx-date    { font-size: 0.7rem; color: #9ca3af; }
 
-    border-bottom: none;
+.tx-right { display: flex; flex-direction: column; align-items: flex-end; gap: 0.15rem; flex-shrink: 0; }
+.tx-amount { font-size: 0.9rem; font-weight: 700; }
+.credit { color: #059669; }
+.debit  { color: #dc2626; }
+.tx-bal { font-size: 0.7rem; color: #9ca3af; }
+
+/* ── Skeleton ── */
+@keyframes shimmer { 0% { background-position: -600px 0; } 100% { background-position: 600px 0; } }
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e4e4e4 50%, #f0f0f0 75%);
+  background-size: 600px 100%; animation: shimmer 1.4s ease-in-out infinite; border-radius: 6px;
 }
+.skeleton-row { display: flex; align-items: center; gap: 0.85rem; padding: 1rem 1.25rem; border-bottom: 1px solid #f3f4f6; }
+.sk-icon   { width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0; }
+.sk-lines  { flex: 1; display: flex; flex-direction: column; gap: 0.4rem; }
+.sk-title  { height: 12px; width: 40%; }
+.sk-sub    { height: 10px; width: 60%; }
+.sk-amount { width: 64px; height: 12px; flex-shrink: 0; }
 
-.left-section h3 {
-
-    color: white;
-
-    margin-bottom: 8px;
+/* ── Empty ── */
+.empty-state {
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center; padding: 4rem 2rem; color: #6b7280;
 }
+.empty-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+.empty-state h3 { font-size: 1rem; font-weight: 700; color: #111827; margin: 0 0 0.4rem; }
+.empty-state p  { font-size: 0.85rem; margin: 0; }
 
-.left-section span {
-
-    color: var(--color-text-secondary);
-
-    font-size: 14px;
+/* ── View All ── */
+.view-all-wrap { text-align: center; margin-top: 1.25rem; }
+.view-all-btn {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  background: #01696f; color: #fff; border-radius: 10px;
+  padding: 0.65rem 1.5rem; font-size: 0.875rem; font-weight: 700;
+  text-decoration: none; transition: background 0.15s;
 }
+.view-all-btn:hover { background: #015a60; }
 
-.amount {
-
-    font-size: 18px;
-
-    font-weight: 700;
-}
-
-.credit {
-
-    color: var(--color-success);
-}
-
-.debit {
-
-    color: var(--color-danger);
+/* ── Responsive ── */
+@media (max-width: 480px) {
+  .mini-page  { padding: 1.25rem 0.75rem 3rem; }
+  .page-header { grid-template-columns: 1fr auto; grid-template-rows: auto auto; }
+  .header-left  { grid-column: 1; grid-row: 1; }
+  .header-right { grid-column: 2; grid-row: 1; }
+  .header-title { grid-column: 1 / -1; grid-row: 2; text-align: left; }
+  .tx-row { padding: 0.85rem 1rem; }
 }

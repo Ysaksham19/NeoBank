@@ -26,7 +26,7 @@
       <div class="alert alert--success">{{ successMessage }}</div>
     }
 
-    <!-- Error Message (inline, not blocking) -->
+    <!-- Error Message -->
     @if(errorMessage && !loading) {
       <div class="alert alert--error">{{ errorMessage }}</div>
     }
@@ -100,9 +100,9 @@
               </tr>
             </thead>
             <tbody>
-              @for(app of filtered; track app.id) {
+              @for(app of filtered; track app.applicationId) {
                 <tr>
-                  <td class="mono">#{{ app.id }}</td>
+                  <td class="mono">#{{ app.applicationId }}</td>
                   <td>
                     <div class="customer-cell">
                       <div class="mini-avatar">{{ (app.customerName || '?').charAt(0) }}</div>
@@ -112,10 +112,10 @@
                       </div>
                     </div>
                   </td>
-                  <td><strong>{{ app.loanProductName }}</strong></td>
+                  <td><strong>{{ app.productName }}</strong></td>
                   <td class="amount">₹ {{ app.requestedAmount | number:'1.0-0' }}</td>
-                  <td>{{ app.tenure }} months</td>
-                  <td class="date">{{ app.createdAt | date:'dd MMM yyyy' }}</td>
+                  <td>{{ app.requestedTenureMonths }} months</td>
+                  <td class="date">{{ app.appliedAt | date:'dd MMM yyyy' }}</td>
                   <td>
                     <span class="pill"
                       [class.pill--success]="app.status === 'APPROVED'"
@@ -128,7 +128,7 @@
                     @if(app.status === 'PENDING') {
                       <input
                         class="remarks-input"
-                        [(ngModel)]="remarks[app.id]"
+                        [(ngModel)]="remarks[app.applicationId]"
                         placeholder="Add remarks..." />
                     } @else {
                       <span class="remarks-text">{{ app.adminRemarks || '—' }}</span>
@@ -137,8 +137,19 @@
                   <td>
                     @if(app.status === 'PENDING') {
                       <div class="action-btns">
-                        <button class="btn-action btn-approve" (click)="approve(app.id)">Approve</button>
-                        <button class="btn-action btn-reject"  (click)="reject(app.id)">Reject</button>
+                        <!-- ✅ disabled while processing to prevent double-click -->
+                        <button
+                          class="btn-action btn-approve"
+                          (click)="approve(app.applicationId)"
+                          [disabled]="processing[app.applicationId]">
+                          {{ processing[app.applicationId] ? 'Processing...' : 'Approve' }}
+                        </button>
+                        <button
+                          class="btn-action btn-reject"
+                          (click)="reject(app.applicationId)"
+                          [disabled]="processing[app.applicationId]">
+                          {{ processing[app.applicationId] ? 'Processing...' : 'Reject' }}
+                        </button>
                       </div>
                     } @else {
                       <span class="decided-label"

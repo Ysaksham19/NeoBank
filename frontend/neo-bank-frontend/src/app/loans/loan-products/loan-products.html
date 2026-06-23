@@ -1,89 +1,72 @@
 <div class="loan-products-page">
 
-    <div class="page-header">
-
-        <h1>
-            Loan Products
-        </h1>
-
-        <p>
-            Explore available loan options tailored for you.
-        </p>
-
+  <div class="page-header">
+    <div class="header-title">
+      <h1>Loan Products</h1>
+      <p>Explore available loan options tailored for you.</p>
     </div>
+    <a [routerLink]="['/loans/apply']" class="btn-primary">Apply Now →</a>
+  </div>
 
+  @if (loading) {
     <div class="product-grid">
+      @for (i of [1,2,3]; track i) {
+        <div class="product-card skeleton-card">
+          <div class="skeleton sk-title"></div>
+          <div class="skeleton sk-row"></div>
+          <div class="skeleton sk-row"></div>
+          <div class="skeleton sk-row"></div>
+        </div>
+      }
+    </div>
+  }
 
-        @for(product of products; track product.id){
+  @if (!loading && errorMessage) {
+    <div class="error-banner">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      {{ errorMessage }}
+    </div>
+  }
 
+  @if (!loading && !errorMessage) {
+    <div class="product-grid">
+      @for (product of products; track product.id) {
         <div class="product-card">
 
-            <div class="card-header">
+          <div class="card-top">
+            <div class="card-icon">🏦</div>
+            <span class="rate-badge">{{ product.annualInterestRate }}% p.a.</span>
+          </div>
 
-                <h3>
+          <h3 class="card-title">{{ product.productName }}</h3>
 
-                    {{ product.productName }}
-
-                </h3>
-
-                <div class="rate">
-
-                    {{ product.annualInterestRate }}%
-
-                </div>
-
+          <div class="details">
+            <div class="detail-row">
+              <span class="detail-label">Min Amount</span>
+              <strong class="detail-val">₹{{ product.minAmount | number:'1.0-0' }}</strong>
             </div>
-
-            <div class="details">
-
-                <div class="detail-row">
-
-                    <span>
-                        Minimum Amount
-                    </span>
-
-                    <strong>
-
-                        ₹{{ product.minAmount | number:'1.0-0' }}
-
-                    </strong>
-
-                </div>
-
-                <div class="detail-row">
-
-                    <span>
-                        Maximum Amount
-                    </span>
-
-                    <strong>
-
-                        ₹{{ product.maxAmount | number:'1.0-0' }}
-
-                    </strong>
-
-                </div>
-
-                <div class="detail-row">
-
-                    <span>
-                        Tenure
-                    </span>
-
-                    <strong>
-
-                        {{ product.allowedTenures }} Months
-
-                    </strong>
-
-                </div>
-
+            <div class="detail-row">
+              <span class="detail-label">Max Amount</span>
+              <strong class="detail-val">₹{{ product.maxAmount | number:'1.0-0' }}</strong>
             </div>
+            <div class="detail-row">
+              <span class="detail-label">Tenure Options</span>
+              <strong class="detail-val">{{ product.allowedTenures }} months</strong>
+            </div>
+          </div>
 
+          <a [routerLink]="['/loans/apply']" class="card-apply-btn">Apply Now →</a>
         </div>
-
-        }
-
+      }
     </div>
+
+    @if (products.length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon">🏦</div>
+        <h3>No loan products available</h3>
+        <p>Check back soon for new loan options tailored for you.</p>
+      </div>
+    }
+  }
 
 </div>

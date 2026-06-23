@@ -1,63 +1,122 @@
 <div class="accounts-page">
 
-    <div class="page-header">
-
-        <h1>My Accounts</h1>
-
-        <p>
-            Manage and monitor your accounts.
-        </p>
-
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <a routerLink="/dashboard" class="back-btn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        Back
+      </a>
     </div>
+    <div class="header-title">
+      <h1>My Accounts</h1>
+      <p>View and manage all your bank accounts</p>
+    </div>
+    <div class="header-right">
+      <button class="refresh-btn" (click)="refresh()" [disabled]="loading">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5"
+             [class.spinning]="loading">
+          <polyline points="23 4 23 10 17 10"/>
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+        </svg>
+        Refresh
+      </button>
+      <a routerLink="/accounts/open" class="open-btn">
+        + Open Account
+      </a>
+    </div>
+  </div>
 
+  <!-- Error -->
+  @if (errorMessage) {
+    <div class="api-error">⛔ {{ errorMessage }}</div>
+  }
+
+  <!-- Skeleton -->
+  @if (loading) {
     <div class="accounts-grid">
+      @for (i of [1,2,3]; track i) {
+        <div class="account-card skeleton-card">
+          <div class="skeleton sk-top"></div>
+          <div class="skeleton sk-balance"></div>
+          <div class="skeleton sk-footer"></div>
+        </div>
+      }
+    </div>
+  }
 
-        @for(account of accounts; track account.id){
+  <!-- Empty -->
+  @if (!loading && !errorMessage && accounts.length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">🏦</div>
+      <h3>No accounts found</h3>
+      <p>Open a new account to get started.</p>
+      <a routerLink="/accounts/open" class="open-btn-lg">Open Account</a>
+    </div>
+  }
 
-        <div class="account-card">
+  <!-- Accounts Grid -->
+  @if (!loading && accounts.length > 0) {
+    <div class="accounts-grid">
+      @for (account of accounts; track account.id) {
+        <div class="account-card" [class.card-inactive]="account.status !== 'ACTIVE'">
 
-            <div class="top-row">
-
-                <div>
-
-                    <h3>
-
-                        {{ account.accountType }}
-
-                    </h3>
-
-                    <p>
-
-                        {{ maskAccount(account.accountNumber) }}
-
-                    </p>
-
-                </div>
-
-                <span class="status">
-
-                    {{ account.status }}
-
-                </span>
-
+          <div class="card-top">
+            <div class="card-icon">{{ getAccountIcon(account.accountType) }}</div>
+            <div class="card-meta">
+              <span class="account-type">{{ account.accountType }}</span>
+              <span class="account-number">{{ maskAccount(account.accountNumber) }}</span>
             </div>
+            <span class="status-badge" [class]="getStatusClass(account.status)">
+              {{ account.status }}
+            </span>
+          </div>
 
-            <div class="balance">
-
-                ₹{{ account.availableBalance | number:'1.2-2' }}
-
+          <div class="balance-block">
+            <div class="balance-row">
+              <span class="balance-label">Available Balance</span>
+              <span class="balance-value">₹{{ account.availableBalance | number:'1.2-2' }}</span>
             </div>
-
-            <div class="footer">
-
-                Available Balance
-
+            <div class="balance-row secondary">
+              <span class="balance-label">Ledger Balance</span>
+              <span class="balance-value-sm">₹{{ account.ledgerBalance | number:'1.2-2' }}</span>
             </div>
+          </div>
+
+          <div class="card-details">
+            <div class="detail-row">
+              <span class="detail-label">IFSC</span>
+              <span class="detail-value">{{ account.ifscCode }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Branch</span>
+              <span class="detail-value">{{ account.branchName }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Currency</span>
+              <span class="detail-value">{{ account.currency }}</span>
+            </div>
+          </div>
+
+          <div class="card-actions">
+            <a [routerLink]="['/accounts', account.id]" class="action-link">
+              View Details
+            </a>
+            <a [routerLink]="['/accounts', account.id, 'mini-statement']" class="action-link">
+              Mini Statement
+            </a>
+            <a routerLink="/transactions" class="action-link">
+              Transactions
+            </a>
+          </div>
 
         </div>
-
-        }
-
+      }
     </div>
+  }
 
 </div>

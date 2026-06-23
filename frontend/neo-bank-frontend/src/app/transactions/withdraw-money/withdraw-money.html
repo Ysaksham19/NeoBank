@@ -1,34 +1,86 @@
 <div class="withdraw-page">
+
   <div class="page-header">
-    <h1>Withdraw Money</h1>
-    <p>Withdraw funds securely from your account.</p>
+    <div class="header-left">
+      <a routerLink="/dashboard" class="back-btn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        Back
+      </a>
+    </div>
+    <div class="header-title">
+      <div class="header-icon">🏧</div>
+      <h1>Withdraw Money</h1>
+      <p>Withdraw funds securely from your account</p>
+    </div>
+    <div class="header-right">
+      <button class="refresh-btn" (click)="resetForm()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5">
+          <polyline points="23 4 23 10 17 10"/>
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+        </svg>
+        Reset
+      </button>
+    </div>
   </div>
 
-  <div class="withdraw-card">
+  <div class="form-card">
+
     <div class="field">
-      <label>Select Account</label>
+      <label>Select Account <span class="required">*</span></label>
       <select [(ngModel)]="selectedAccountId">
-        @for(account of accounts; track account.id) {
-          <option [value]="account.id">{{ account.accountType }} — {{ account.accountNumber }}</option>
+        @for (account of accounts; track account.id) {
+          <option [ngValue]="account.id">
+            {{ account.accountType }} — {{ account.accountNumber }}
+            (₹{{ account.availableBalance | number:'1.2-2' }})
+          </option>
         }
       </select>
+      @if (accounts.length === 0) {
+        <span class="field-hint">Loading accounts…</span>
+      }
     </div>
 
     <div class="field">
-      <label>Amount (₹)</label>
-      <input type="number" [(ngModel)]="withdrawRequest.amount" placeholder="Enter amount" min="1">
+      <label>Amount (₹) <span class="required">*</span></label>
+      <div class="input-wrap">
+        <span class="input-prefix">₹</span>
+        <input type="number" [(ngModel)]="withdrawRequest.amount"
+          placeholder="e.g. 5,000" min="1">
+      </div>
     </div>
 
     <div class="field">
-      <label>Remarks (optional)</label>
-      <textarea [(ngModel)]="withdrawRequest.remarks" placeholder="Add a note"></textarea>
+      <label>Remarks <span class="optional">(optional)</span></label>
+      <textarea [(ngModel)]="withdrawRequest.remarks"
+        placeholder="Add a note…" rows="3"></textarea>
     </div>
 
-    @if(errorMessage) { <div class="error-message">{{ errorMessage }}</div> }
+    @if (errorMessage) {
+      <div class="error-card">⛔ {{ errorMessage }}</div>
+    }
 
-    <button class="withdraw-btn" [disabled]="loading" (click)="withdrawMoney()">
-      {{ loading ? 'Processing...' : 'Withdraw Money' }}
+    <button class="action-btn btn-withdraw"
+      [disabled]="loading || accounts.length === 0"
+      (click)="withdrawMoney()">
+      @if (loading) {
+        <span class="spinner"></span> Processing…
+      } @else {
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5">
+          <line x1="12" y1="19" x2="12" y2="5"/>
+          <polyline points="5 12 12 5 19 12"/>
+        </svg>
+        Withdraw Money
+      }
     </button>
+
   </div>
 </div>
-@if(showToast) { <div class="success-toast">✅ Withdrawal successful</div> }
+
+@if (showToast) {
+  <div class="success-toast">✅ Withdrawal successful!</div>
+}

@@ -62,16 +62,17 @@ export const routes: Routes = [
   { path: 'accounts/:id/mini-statement',   component: MiniStatement,  canActivate: [AuthGuard] },
 
   // ── Transactions ──
-  { path: 'transactions',          component: TransactionHistory, canActivate: [AuthGuard] },
-  { path: 'transactions/transfer', component: TransferMoney,      canActivate: [AuthGuard] },
-  { path: 'transactions/deposit',  component: DepositMoney,       canActivate: [AuthGuard] },
-  { path: 'transactions/withdraw', component: WithdrawMoney,      canActivate: [AuthGuard] },
+    { path: 'transactions',          component: TransactionHistory, canActivate: [AuthGuard] },
+    { path: 'transactions/transfer', component: TransferMoney,      canActivate: [AuthGuard] },
+    { path: 'transactions/deposit',  component: DepositMoney,       canActivate: [AuthGuard] },
+    { path: 'transactions/withdraw', component: WithdrawMoney,      canActivate: [AuthGuard] },
 
   // ── Loans ──
   { path: 'loans',             component: MyLoans,                   canActivate: [AuthGuard] },
   { path: 'loans/products',    component: LoanProducts,              canActivate: [AuthGuard] },
   { path: 'loans/apply',       component: ApplyLoan,                 canActivate: [AuthGuard] },
-  { path: 'loans/repayments',  component: RepaymentScheduleComponent, canActivate: [AuthGuard] },
+  // { path: 'loans/repayments',  component: RepaymentScheduleComponent, canActivate: [AuthGuard] },
+  { path: 'loans/repayment-schedule/:id', component: RepaymentScheduleComponent, canActivate: [AuthGuard] },
 
   // ── Bills ──
   { path: 'bills',     component: BillsList, canActivate: [AuthGuard] },

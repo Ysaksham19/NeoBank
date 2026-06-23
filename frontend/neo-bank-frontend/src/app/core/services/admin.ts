@@ -51,13 +51,14 @@ export class AdminService {
     return this.http.get<AdminLoanApplication[]>(`${this.BASE_URL}/loans/applications`);
   }
 
-  decideLoan(
+    decideLoan(
     applicationId: number,
     payload: { decision: string; adminRemarks: string }
   ): Observable<string> {
-    return this.http.put<string>(
+    return this.http.put(
       `${this.BASE_URL}/loans/${applicationId}/decision`,
-      payload
+      payload,
+      { responseType: 'text' }   // ✅ backend returns plain string, not JSON
     );
   }
 

@@ -47,7 +47,6 @@ public class LoanApplicationService {
         LoanProduct loanProduct = loanProductRepository.findById(dto.getLoanProductId())
                 .orElseThrow(() -> new ResourceNotFoundException("Loan product not found."));
 
-        // Amount range validation
         if (dto.getRequestedAmount().compareTo(loanProduct.getMinAmount()) < 0
                 || dto.getRequestedAmount().compareTo(loanProduct.getMaxAmount()) > 0) {
             throw new IllegalArgumentException(
@@ -56,14 +55,12 @@ public class LoanApplicationService {
                     + loanProduct.getMaxAmount() + ".");
         }
 
-        // Tenure validation
         List<String> tenures = Arrays.asList(loanProduct.getAllowedTenures().split(","));
         if (!tenures.contains(String.valueOf(dto.getRequestedTenureMonths()))) {
             throw new IllegalArgumentException(
                     "Invalid tenure. Allowed tenures: " + loanProduct.getAllowedTenures() + " months.");
         }
 
-        // Duplicate pending application check
         boolean alreadyExists = loanApplicationRepository
                 .findByUserIdAndLoanProductIdAndStatus(
                         user.getId(), loanProduct.getId(), LoanApplicationStatus.PENDING)
@@ -78,8 +75,8 @@ public class LoanApplicationService {
         application.setLoanProduct(loanProduct);
         application.setRequestedAmount(dto.getRequestedAmount());
         application.setRequestedTenureMonths(dto.getRequestedTenureMonths());
-        application.setMonthlyIncome(dto.getMonthlyIncome());     // ✅ NEW
-        application.setLoanPurpose(dto.getLoanPurpose());         // ✅ NEW
+        application.setMonthlyIncome(dto.getMonthlyIncome());
+        application.setLoanPurpose(dto.getLoanPurpose());
         application.setStatus(LoanApplicationStatus.PENDING);
 
         return mapToResponse(loanApplicationRepository.save(application));
@@ -115,11 +112,22 @@ public class LoanApplicationService {
         dto.setProductName(application.getLoanProduct().getProductName());
         dto.setRequestedAmount(application.getRequestedAmount());
         dto.setRequestedTenureMonths(application.getRequestedTenureMonths());
-        dto.setMonthlyIncome(application.getMonthlyIncome());     // ✅ NEW
-        dto.setLoanPurpose(application.getLoanPurpose());         // ✅ NEW
+        dto.setMonthlyIncome(application.getMonthlyIncome());
+        dto.setLoanPurpose(application.getLoanPurpose());
         dto.setStatus(application.getStatus().name());
         dto.setAdminRemarks(application.getAdminRemarks());
         dto.setAppliedAt(application.getAppliedAt());
+
+        // ✅ Customer info for admin view
+        if (application.getUser() != null) {
+            User user = application.getUser();
+            String name = user.getFullName() != null && !user.getFullName().isBlank()
+                    ? user.getFullName()
+                    : user.getEmail();
+            dto.setCustomerName(name);
+            dto.setCustomerNo(user.getCustomerNo() != null ? user.getCustomerNo() : user.getEmail());
+        }
+
         return dto;
     }
 }

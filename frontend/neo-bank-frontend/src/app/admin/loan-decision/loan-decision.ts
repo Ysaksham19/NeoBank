@@ -17,13 +17,14 @@ import { AdminLoanApplication } from '../../models/admin-loan-application';
 export class LoanDecision implements OnInit {
 
   applications: AdminLoanApplication[] = [];
-  filtered: AdminLoanApplication[] = [];
-  loading = false;
-  errorMessage = '';
+  filtered:     AdminLoanApplication[] = [];
+  loading        = false;
+  errorMessage   = '';
   successMessage = '';
 
   filterStatus = '';
-  remarks: { [key: number]: string } = {};
+  remarks:     { [key: number]: string }  = {};
+  processing:  { [key: number]: boolean } = {};  // ✅ tracks in-flight requests per row
 
   get pendingCount():  number { return this.applications.filter(a => a.status === 'PENDING').length; }
   get approvedCount(): number { return this.applications.filter(a => a.status === 'APPROVED').length; }
@@ -36,10 +37,12 @@ export class LoanDecision implements OnInit {
 
   ngOnInit(): void { this.loadApplications(); }
 
-  loadApplications(): void {
-    this.loading = true;
+  loadApplications(preserveSuccess = false): void {
+    this.loading      = true;
     this.errorMessage = '';
-    this.successMessage = '';
+    if (!preserveSuccess) {
+      this.successMessage = '';   // ✅ only clear if NOT after an action
+    }
 
     this.adminService.getAllLoanApplications().subscribe({
       next: (res: AdminLoanApplication[]) => {
@@ -61,33 +64,45 @@ export class LoanDecision implements OnInit {
   }
 
   approve(id: number): void {
-    this.errorMessage = '';
+    if (this.processing[id]) return;   // ✅ block double-click
+    this.processing[id] = true;
+    this.errorMessage   = '';
+    this.successMessage = '';
+
     this.adminService.decideLoan(id, {
       decision: 'APPROVED',
       adminRemarks: this.remarks[id] || ''
     }).subscribe({
       next: () => {
-        this.successMessage = `Application #${id} approved successfully.`;
-        this.loadApplications();
+        this.processing[id] = false;
+        this.successMessage  = `Application #${id} approved successfully.`;
+        this.loadApplications(true);   // ✅ preserve success message while refreshing
       },
       error: (err: HttpErrorResponse) => {
-        this.errorMessage = err.error?.message || 'Unable to approve application.';
+        this.processing[id] = false;
+        this.errorMessage   = err.error?.message || 'Unable to approve application.';
       }
     });
   }
 
   reject(id: number): void {
-    this.errorMessage = '';
+    if (this.processing[id]) return;   // ✅ block double-click
+    this.processing[id] = true;
+    this.errorMessage   = '';
+    this.successMessage = '';
+
     this.adminService.decideLoan(id, {
       decision: 'REJECTED',
       adminRemarks: this.remarks[id] || ''
     }).subscribe({
       next: () => {
-        this.successMessage = `Application #${id} rejected.`;
-        this.loadApplications();
+        this.processing[id] = false;
+        this.successMessage  = `Application #${id} rejected successfully.`;
+        this.loadApplications(true);   // ✅ preserve success message while refreshing
       },
       error: (err: HttpErrorResponse) => {
-        this.errorMessage = err.error?.message || 'Unable to reject application.';
+        this.processing[id] = false;
+        this.errorMessage   = err.error?.message || 'Unable to reject application.';
       }
     });
   }

@@ -1,75 +1,128 @@
-@if(account){
-
 <div class="details-page">
 
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <a routerLink="/accounts" class="back-btn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        My Accounts
+      </a>
+    </div>
+    <div class="header-title">
+      <h1>Account Details</h1>
+      <p>Full information for your account</p>
+    </div>
+    <div class="header-right">
+      <button class="refresh-btn" (click)="refresh()" [disabled]="loading">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5"
+             [class.spinning]="loading">
+          <polyline points="23 4 23 10 17 10"/>
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+        </svg>
+        Refresh
+      </button>
+    </div>
+  </div>
+
+  <!-- Error -->
+  @if (errorMessage) {
+    <div class="api-error">⛔ {{ errorMessage }}</div>
+  }
+
+  <!-- Skeleton -->
+  @if (loading) {
+    <div class="skeleton-wrap">
+      <div class="skeleton sk-hero"></div>
+      <div class="skeleton sk-row"></div>
+      <div class="skeleton sk-row"></div>
+      <div class="skeleton sk-row"></div>
+    </div>
+  }
+
+  <!-- Details -->
+  @if (!loading && account) {
     <div class="details-card">
 
-        <h1>
-            Account Details
-        </h1>
-
-        <div class="detail-row">
-
-            <span>Account Type</span>
-
-            <strong>
-
-                {{ account.accountType }}
-
-            </strong>
-
+      <!-- Hero balance panel -->
+      <div class="hero-panel">
+        <div class="hero-left">
+          <div class="account-icon">{{ getAccountIcon(account.accountType) }}</div>
+          <div>
+            <div class="account-type">{{ account.accountType }}</div>
+            <div class="account-number" (click)="toggleNumber()" style="cursor:pointer">
+              {{ numberRevealed ? account.accountNumber : maskAccount(account.accountNumber) }}
+              <span class="eye-toggle">{{ numberRevealed ? '🙈' : '👁' }}</span>
+            </div>
+          </div>
         </div>
+        <span class="status-badge"
+          [class.badge-active]="account.status === 'ACTIVE'"
+          [class.badge-inactive]="account.status !== 'ACTIVE'">
+          {{ account.status }}
+        </span>
+      </div>
 
-        <div class="detail-row">
-
-            <span>Account Number</span>
-
-            <strong>
-
-                {{ maskAccount(account.accountNumber) }}
-
-            </strong>
-
+      <div class="balance-section">
+        <div class="balance-item primary">
+          <span class="bl-label">Available Balance</span>
+          <span class="bl-value">₹{{ account.availableBalance | number:'1.2-2' }}</span>
         </div>
-
-        <div class="detail-row">
-
-            <span>Available Balance</span>
-
-            <strong class="balance">
-
-                ₹{{ account.availableBalance | number:'1.2-2' }}
-
-            </strong>
-
+        <div class="balance-divider"></div>
+        <div class="balance-item">
+          <span class="bl-label">Ledger Balance</span>
+          <span class="bl-value-sm">₹{{ account.ledgerBalance | number:'1.2-2' }}</span>
         </div>
+      </div>
 
-        <div class="detail-row">
-
-            <span>Status</span>
-
-            <strong class="status">
-
-                {{ account.status }}
-
-            </strong>
-
+      <!-- Info grid -->
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="info-label">Account Number</span>
+          <span class="info-value mono">{{ account.accountNumber }}</span>
         </div>
-
-        <div class="detail-row">
-
-            <span>Branch</span>
-
-            <strong>
-
-                NeoBank Main Branch
-
-            </strong>
-
+        <div class="info-item">
+          <span class="info-label">IFSC Code</span>
+          <span class="info-value mono">{{ account.ifscCode }}</span>
         </div>
+        <div class="info-item">
+          <span class="info-label">Branch Name</span>
+          <span class="info-value">{{ account.branchName }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Branch Code</span>
+          <span class="info-value mono">{{ account.branchCode }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Currency</span>
+          <span class="info-value">{{ account.currency }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Account Since</span>
+          <span class="info-value">{{ account.createdAt | date:'dd MMM yyyy' }}</span>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="quick-actions">
+        <a [routerLink]="['/accounts', account.id, 'mini-statement']" class="qa-btn">
+          📋 Mini Statement
+        </a>
+        <a routerLink="/transactions/deposit" class="qa-btn">
+          ↓ Deposit
+        </a>
+        <a routerLink="/transactions/withdraw" class="qa-btn">
+          ↑ Withdraw
+        </a>
+        <a routerLink="/transactions/transfer" class="qa-btn">
+          ⇄ Transfer
+        </a>
+      </div>
 
     </div>
+  }
 
 </div>
-
-}

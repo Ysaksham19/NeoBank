@@ -1,22 +1,29 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { TransactionService } from '../../core/services/transaction';
 import { AccountStateService } from '../../core/services/account-state';
 import { Transaction } from '../../models/transaction.model';
+import { Account } from '../../models/account.model';
 
 @Component({
   selector: 'app-transaction-history',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './transaction-history.html',
   styleUrls: ['./transaction-history.css']
 })
 export class TransactionHistory implements OnInit {
+  accounts: Account[] = [];
+  selectedAccountId!: number;
+
   transactions: Transaction[] = [];
   filteredTransactions: Transaction[] = [];
-  loading = true;
-  searchText = '';
+
+  loading        = false;
+  errorMessage   = '';
+  searchText     = '';
   selectedFilter = 'ALL';
 
   constructor(
@@ -26,40 +33,87 @@ export class TransactionHistory implements OnInit {
 
   ngOnInit(): void {
     if (this.accountState.snapshot.length > 0) {
-      this.loadTransactions(this.accountState.snapshot[0].id);
+      this.accounts          = this.accountState.snapshot;
+      this.selectedAccountId = this.accounts[0].id;
+      this.loadTransactions();
     } else {
       this.accountState.loadAccounts();
       this.accountState.accounts$.subscribe(accounts => {
-        if (accounts.length > 0) this.loadTransactions(accounts[0].id);
+        if (accounts.length > 0 && this.accounts.length === 0) {
+          this.accounts          = accounts;
+          this.selectedAccountId = accounts[0].id;
+          this.loadTransactions();
+        }
       });
     }
   }
 
-  loadTransactions(accountId: number): void {
-    this.transactionService.getAllTransactions(accountId).subscribe({
+  loadTransactions(): void {
+    this.loading      = true;
+    this.errorMessage = '';
+    this.transactionService.getAllTransactions(+this.selectedAccountId).subscribe({
       next: (res) => {
         this.transactions = res;
-        this.filteredTransactions = res;
+        this.applyFilterAndSearch();
         this.loading = false;
       },
-      error: () => { this.loading = false; }
+      error: (err) => {
+        this.loading      = false;
+        this.errorMessage = err?.error?.message || 'Failed to load transactions. Please try again.';
+        console.error('loadTransactions error:', err);
+      }
     });
   }
 
-  applyFilter(type: string): void {
-    this.selectedFilter = type;
-    this.filterTransactions();
+  onAccountChange(): void {
+    this.searchText     = '';
+    this.selectedFilter = 'ALL';
+    this.loadTransactions();
   }
 
-  onSearch(): void { this.filterTransactions(); }
+  refresh(): void { this.loadTransactions(); }
 
-  filterTransactions(): void {
+  applyFilter(type: string): void {
+    this.selectedFilter = type;
+    this.applyFilterAndSearch();
+  }
+
+  onSearch(): void { this.applyFilterAndSearch(); }
+
+  applyFilterAndSearch(): void {
     this.filteredTransactions = this.transactions.filter(tx => {
       const matchesSearch = !this.searchText ||
         tx.transactionRef?.toLowerCase().includes(this.searchText.toLowerCase()) ||
         tx.remarks?.toLowerCase().includes(this.searchText.toLowerCase());
-      const matchesType = this.selectedFilter === 'ALL' || tx.transactionType === this.selectedFilter;
+      const matchesType = this.selectedFilter === 'ALL' ||
+        tx.transactionType?.toUpperCase() === this.selectedFilter.toUpperCase();
       return matchesSearch && matchesType;
     });
+  }
+
+  // ── DB stores DEPOSIT / DEBIT / TRANSFER ─────────────────────────
+  isCredit(type: string): boolean {
+    return (type ?? '').toUpperCase() === 'DEPOSIT';
+  }
+
+  getTypeIcon(type: string): string {
+    const t = (type ?? '').toUpperCase();
+    if (t === 'DEPOSIT')  return '↓';
+    if (t === 'DEBIT')    return '↑';   // ← was WITHDRAWAL, DB stores DEBIT
+    if (t === 'TRANSFER') return '⇄';
+    return '•';
+  }
+
+  getTypeClass(type: string): string {
+    const t = (type ?? '').toUpperCase();
+    if (t === 'DEPOSIT')  return 'type-credit';
+    if (t === 'DEBIT')    return 'type-debit';   // ← was WITHDRAWAL
+    if (t === 'TRANSFER') return 'type-transfer';
+    return 'type-default';
+  }
+
+  maskAccount(accountNo: string): string {
+    if (!accountNo) return '****';
+    return '****' + accountNo.slice(-4);
   }
 }

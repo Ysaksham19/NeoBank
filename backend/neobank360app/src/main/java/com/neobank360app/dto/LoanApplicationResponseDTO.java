@@ -9,11 +9,13 @@ public class LoanApplicationResponseDTO {
     private String        productName;
     private BigDecimal    requestedAmount;
     private Integer       requestedTenureMonths;
-    private BigDecimal    monthlyIncome;        // ✅ NEW
-    private String        loanPurpose;          // ✅ NEW
+    private BigDecimal    monthlyIncome;
+    private String        loanPurpose;
     private String        status;
     private String        adminRemarks;
     private LocalDateTime appliedAt;
+    private String        customerName;
+    private String        customerNo;
 
     public LoanApplicationResponseDTO() {}
 
@@ -43,4 +45,10 @@ public class LoanApplicationResponseDTO {
 
     public LocalDateTime getAppliedAt() { return appliedAt; }
     public void setAppliedAt(LocalDateTime appliedAt) { this.appliedAt = appliedAt; }
+
+    public String getCustomerName() { return customerName; }
+    public void setCustomerName(String customerName) { this.customerName = customerName; }
+
+    public String getCustomerNo() { return customerNo; }
+    public void setCustomerNo(String customerNo) { this.customerNo = customerNo; }
 }

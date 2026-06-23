@@ -1,28 +1,37 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { AccountService } from './account';
 import { Account } from '../../models/account.model';
 
-/**
- * FIX #17 — single shared cache for account list so
- * TransferMoney, DepositMoney, and WithdrawMoney don't each
- * fire a separate HTTP call for the same data.
- */
 @Injectable({ providedIn: 'root' })
 export class AccountStateService {
   private accountsSubject = new BehaviorSubject<Account[]>([]);
   accounts$: Observable<Account[]> = this.accountsSubject.asObservable();
 
+  private _loading = new BehaviorSubject<boolean>(false);
+  loading$: Observable<boolean> = this._loading.asObservable();
+
   constructor(private accountService: AccountService) {}
 
   loadAccounts(): void {
+    this._loading.next(true);
     this.accountService.getMyAccounts().subscribe({
-      next: (accounts) => this.accountsSubject.next(accounts),
-      error: (err) => console.error('Failed to load accounts', err)
+      next: (accounts) => {
+        this.accountsSubject.next(accounts);
+        this._loading.next(false);
+      },
+      error: (err) => {
+        console.error('Failed to load accounts', err);
+        this._loading.next(false);
+      }
     });
   }
 
   get snapshot(): Account[] {
     return this.accountsSubject.getValue();
+  }
+
+  clear(): void {
+    this.accountsSubject.next([]);
   }
 }

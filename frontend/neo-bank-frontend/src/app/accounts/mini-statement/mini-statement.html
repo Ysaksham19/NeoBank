@@ -1,62 +1,100 @@
-<div class="statement-page">
+<div class="mini-page">
 
-    <div class="page-header">
-
-        <h1>
-            Mini Statement
-        </h1>
-
-        <p>
-            Last 5 account transactions
-        </p>
-
+  <div class="page-header">
+    <div class="header-left">
+      <a [routerLink]="['/accounts', accountId]" class="back-btn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        Account Details
+      </a>
     </div>
+    <div class="header-title">
+      <h1>Mini Statement</h1>
+      <p>Last 10 transactions on this account</p>
+    </div>
+    <div class="header-right">
+      <button class="refresh-btn" (click)="refresh()" [disabled]="loading">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5"
+             [class.spinning]="loading">
+          <polyline points="23 4 23 10 17 10"/>
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+        </svg>
+        Refresh
+      </button>
+    </div>
+  </div>
 
-    <div class="statement-card">
+  @if (errorMessage) {
+    <div class="api-error">⛔ {{ errorMessage }}</div>
+  }
 
-        @for(transaction of transactions; track transaction){
+  @if (loading) {
+    <div class="tx-list">
+      @for (i of [1,2,3,4,5]; track i) {
+        <div class="tx-row skeleton-row">
+          <div class="skeleton sk-icon"></div>
+          <div class="sk-lines">
+            <div class="skeleton sk-title"></div>
+            <div class="skeleton sk-sub"></div>
+          </div>
+          <div class="skeleton sk-amount"></div>
+        </div>
+      }
+    </div>
+  }
 
-        <div class="transaction-row">
+  @if (!loading && !errorMessage && transactions.length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">📋</div>
+      <h3>No transactions yet</h3>
+      <p>Your recent transactions will appear here.</p>
+    </div>
+  }
 
-            <div class="left-section">
+  @if (!loading && transactions.length > 0) {
+    <div class="tx-list">
+      @for (tx of transactions; track tx.id) {
+        <div class="tx-row">
 
-                <h3>
+          <div class="tx-icon"
+            [class.icon-deposit]="tx.transactionType === 'DEPOSIT'"
+            [class.icon-debit]="tx.transactionType === 'WITHDRAWAL'"
+            [class.icon-transfer]="tx.transactionType === 'TRANSFER'">
+            {{ getIcon(tx.transactionType) }}
+          </div>
 
-                    {{ transaction.description }}
+          <div class="tx-info">
+            <span class="tx-type">{{ tx.transactionType | titlecase }}</span>
+            @if (tx.remarks) {
+              <span class="tx-remarks">{{ tx.remarks }}</span>
+            }
+            <span class="tx-date">{{ tx.createdAt | date:'dd MMM yyyy, h:mm a' }}</span>
+          </div>
 
-                </h3>
-
-                <span>
-
-                    {{ transaction.date }}
-
-                </span>
-
+          <div class="tx-right">
+            <div class="tx-amount"
+              [class.credit]="tx.transactionType === 'DEPOSIT'"
+              [class.debit]="tx.transactionType !== 'DEPOSIT'">
+              {{ tx.transactionType === 'DEPOSIT' ? '+' : '-' }}₹{{ tx.amount | number:'1.2-2' }}
             </div>
-
-            <div
-                class="amount"
-                [class.credit]="transaction.type === 'CREDIT'"
-                [class.debit]="transaction.type === 'DEBIT'">
-
-                @if(transaction.type === 'CREDIT'){
-
-                    + ₹{{ transaction.amount }}
-
-                }
-
-                @if(transaction.type === 'DEBIT'){
-
-                    - ₹{{ transaction.amount }}
-
-                }
-
-            </div>
+            <!-- ✅ FIXED: was availableBalanceAfter → balanceAfter -->
+            @if (tx.balanceAfter) {
+              <div class="tx-bal">₹{{ tx.balanceAfter | number:'1.2-2' }}</div>
+            }
+          </div>
 
         </div>
-
-        }
-
+      }
     </div>
+
+    <div class="view-all-wrap">
+      <a routerLink="/transactions" class="view-all-btn">
+        View Full History →
+      </a>
+    </div>
+  }
 
 </div>

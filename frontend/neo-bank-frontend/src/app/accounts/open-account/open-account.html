@@ -1,9 +1,152 @@
-<select [(ngModel)]="accountRequest.accountType">
+<div class="open-page">
 
-    <option>Savings Account</option>
+  <div class="page-header">
+    <div class="header-left">
+      <a routerLink="/accounts" class="back-btn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        My Accounts
+      </a>
+    </div>
+    <div class="header-title">
+      <div class="header-icon">🏦</div>
+      <h1>Open New Account</h1>
+      <p>Choose an account type to get started</p>
+    </div>
+    <div class="header-right">
+      <button class="refresh-btn" (click)="resetForm()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5">
+          <polyline points="23 4 23 10 17 10"/>
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+        </svg>
+        Reset
+      </button>
+    </div>
+  </div>
 
-    <option>Current Account</option>
+  <div class="form-card">
 
-    <option>Salary Account</option>
+    <!-- Account Type Cards -->
+    <div class="field">
+      <label>Select Account Type <span class="required">*</span></label>
+      <div class="type-grid">
 
-</select>
+        <div class="type-card"
+          [class.selected]="selectedType === 'SAVINGS'"
+          (click)="selectedType = 'SAVINGS'">
+          <div class="type-icon">🏦</div>
+          <div class="type-name">Savings</div>
+          <div class="type-desc">Earn interest on your balance</div>
+        </div>
+
+        <div class="type-card"
+          [class.selected]="selectedType === 'CURRENT'"
+          (click)="selectedType = 'CURRENT'">
+          <div class="type-icon">💼</div>
+          <div class="type-name">Current</div>
+          <div class="type-desc">Unlimited daily transactions</div>
+        </div>
+
+        <div class="type-card"
+          [class.selected]="selectedType === 'FIXED_DEPOSIT'"
+          (click)="selectedType = 'FIXED_DEPOSIT'">
+          <div class="type-icon">🔒</div>
+          <div class="type-name">Fixed Deposit</div>
+          <div class="type-desc">Higher returns, locked term</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Benefits -->
+    <div class="benefits-box">
+      @if (selectedType === 'SAVINGS') {
+        <ul class="benefits-list">
+          <li>✅ Earn up to 4% annual interest</li>
+          <li>✅ Free debit card included</li>
+          <li>✅ Zero minimum balance</li>
+          <li>✅ Instant account activation</li>
+        </ul>
+      }
+      @if (selectedType === 'CURRENT') {
+        <ul class="benefits-list">
+          <li>✅ Unlimited transactions daily</li>
+          <li>✅ Overdraft facility available</li>
+          <li>✅ Business payment support</li>
+          <li>✅ Dedicated relationship manager</li>
+        </ul>
+      }
+      @if (selectedType === 'FIXED_DEPOSIT') {
+        <ul class="benefits-list">
+          <li>✅ Up to 7.5% interest per annum</li>
+          <li>✅ Flexible tenure options</li>
+          <li>✅ Loan against FD available</li>
+          <li>✅ Auto-renewal option</li>
+        </ul>
+      }
+    </div>
+
+    <!-- Branch Info Card -->
+    <div class="field">
+      <label>Your Branch</label>
+
+      <!-- ✅ FIXED: loadingProfile → loadingBranch everywhere -->
+      @if (loadingBranch) {
+        <div class="branch-loading">
+          <span class="spinner-sm"></span> Loading branch info…
+        </div>
+      } @else if (userBranchId) {
+        <div class="branch-info-box">
+          <div class="branch-icon">🏢</div>
+          <div class="branch-details">
+            <div class="branch-name">
+              {{ userBranchName || 'Branch ID: ' + userBranchId }}
+            </div>
+            @if (userBranchIfsc) {
+              <div class="branch-ifsc">IFSC: {{ userBranchIfsc }}</div>
+            }
+            <div class="branch-note">
+              Your new account will be linked to this branch
+            </div>
+          </div>
+          <div class="branch-check">✅</div>
+        </div>
+      } @else {
+        <div class="branch-warn">
+          ⚠️ Could not load branch info. Please refresh the page.
+        </div>
+      }
+    </div>
+
+    @if (errorMessage) {
+      <div class="error-card">⛔ {{ errorMessage }}</div>
+    }
+
+    <!-- ✅ FIXED: loadingProfile → loadingBranch everywhere -->
+    <button class="action-btn"
+      [disabled]="loading || loadingBranch || !userBranchId"
+      (click)="submitApplication()">
+      @if (loading) {
+        <span class="spinner"></span> Opening Account…
+      } @else if (loadingBranch) {
+        <span class="spinner"></span> Loading branch…
+      } @else {
+        🏦 Open {{ selectedType | titlecase }} Account
+      }
+    </button>
+
+  </div>
+</div>
+
+@if (showToast) {
+  <div class="success-toast">
+    ✅ Account opened successfully!
+    @if (createdAccountNumber) {
+      <div class="toast-sub">Account No: {{ createdAccountNumber }}</div>
+    }
+    <div class="toast-sub">Redirecting to accounts…</div>
+  </div>
+}

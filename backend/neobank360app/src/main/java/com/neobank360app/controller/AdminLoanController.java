@@ -9,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/admin/loans")   // ← fixed: was /api/v1/loans
@@ -33,11 +34,18 @@ public class AdminLoanController {
     }
 
     // PUT /api/v1/admin/loans/{loanApplicationId}/decision
+//    @PutMapping("/{loanApplicationId}/decision")
+//    public ResponseEntity<String> decideLoan(
+//            @PathVariable Long loanApplicationId,
+//            @RequestBody LoanDecisionDTO dto) {
+//        return ResponseEntity.ok(
+//                loanDecisionService.decideLoan(loanApplicationId, dto));
+//    }
     @PutMapping("/{loanApplicationId}/decision")
-    public ResponseEntity<String> decideLoan(
+    public ResponseEntity<Map<String, String>> decideLoan(
             @PathVariable Long loanApplicationId,
             @RequestBody LoanDecisionDTO dto) {
-        return ResponseEntity.ok(
-                loanDecisionService.decideLoan(loanApplicationId, dto));
+        String result = loanDecisionService.decideLoan(loanApplicationId, dto);
+        return ResponseEntity.ok(Map.of("message", result));
     }
 }
