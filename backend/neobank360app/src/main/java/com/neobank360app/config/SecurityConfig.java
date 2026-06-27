@@ -18,7 +18,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.client.RestTemplate;
 
 @Configuration
 @EnableWebSecurity
@@ -37,7 +36,6 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
         http
             .csrf(AbstractHttpConfigurer::disable)
             .cors(Customizer.withDefaults())
@@ -46,26 +44,33 @@ public class SecurityConfig {
 
             .authorizeHttpRequests(auth -> auth
 
+                // ── Public endpoints ───────────────────────────────────────────
                 .requestMatchers(
-                        // ── Auth & OTP ──────────────────────────────
-                        "/api/v1/auth/register/account-type",
-                        "/api/v1/auth/register",
-                        "/api/v1/auth/login",
-                        "/api/v1/otp/send",
-                        "/api/v1/otp/verify",
+                    // Auth & OTP
+                    "/api/v1/auth/register/account-type",
+                    "/api/v1/auth/register",
+                    "/api/v1/auth/login",
+                    "/api/v1/otp/send",
+                    "/api/v1/otp/verify",
 
-                        // ── Public data ─────────────────────────────
-                        "/api/v1/branches",
-                        "/api/v1/loans/products",    // ✅ ADDED — loan products are public
-                        "/api/v1/loans/products/**", // ✅ ADDED — single product by id
+                    // Public reference data
+                    "/api/v1/branches",
+                    "/api/v1/loans/products",
+                    "/api/v1/loans/products/**",
 
-                        // ── Swagger ──────────────────────────────────
-                        "/swagger-ui/**",
-                        "/swagger-ui.html",
-                        "/v3/api-docs/**"
+                    // Swagger — disable in prod by setting springdoc.api-docs.enabled=false
+                    "/swagger-ui/**",
+                    "/swagger-ui.html",
+                    "/v3/api-docs/**",
 
+                    // Actuator — only /health is public
+                    "/actuator/health"
                 ).permitAll()
 
+                // ── Actuator management endpoints — ADMIN only ────────────────
+                .requestMatchers("/actuator/**").hasRole("ADMIN")
+
+                // ── Everything else requires authentication ───────────────────
                 .anyRequest().authenticated()
             )
 
@@ -93,10 +98,5 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
     }
 }
