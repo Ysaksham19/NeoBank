@@ -7,6 +7,9 @@ import com.neobank360app.entity.User;
 import com.neobank360app.exception.ResourceNotFoundException;
 import com.neobank360app.repository.NotificationRepository;
 import com.neobank360app.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -14,33 +17,51 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class NotificationService {
+
+    private static final Logger log = LoggerFactory.getLogger(NotificationService.class);
 
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
 
     public NotificationService(
             NotificationRepository notificationRepository,
-            UserRepository userRepository
-    ) {
+            UserRepository userRepository) {
         this.notificationRepository = notificationRepository;
         this.userRepository = userRepository;
     }
 
     // =========================================================
-    // CREATE NOTIFICATION
+    // CREATE NOTIFICATION  — @Async so it never blocks the caller
     // =========================================================
 
+    /**
+     * Persists a notification asynchronously on the emailTaskExecutor pool.
+     * Callers (TransactionService, BillService, etc.) fire-and-forget.
+     * If this method throws, it does NOT roll back the caller's transaction.
+     */
+    @Async("emailTaskExecutor")
     @Transactional
-    public void createNotification(User user, NotificationType type, String title, String message) {
-        Notification notification = new Notification();
-        notification.setUser(user);
-        notification.setType(type);
-        notification.setTitle(title);       // ← FIXED: title now set
-        notification.setMessage(message);
-        notificationRepository.save(notification);
+    public CompletableFuture<Void> createNotification(
+            User user, NotificationType type, String title, String message) {
+        try {
+            Notification notification = new Notification();
+            notification.setUser(user);
+            notification.setType(type);
+            notification.setTitle(title);
+            notification.setMessage(message);
+            notificationRepository.save(notification);
+            log.debug("[Notification] Created for user={} type={} title={}",
+                    user.getId(), type, title);
+        } catch (Exception e) {
+            // Never let notification failure propagate to caller
+            log.error("[Notification] Failed to create notification for user={}: {}",
+                    user.getId(), e.getMessage());
+        }
+        return CompletableFuture.completedFuture(null);
     }
 
     // =========================================================
@@ -101,12 +122,12 @@ public class NotificationService {
     @Transactional
     public void markAllAsRead() {
         User user = getAuthenticatedUser();
-        List<Notification> notifications =
+        List<Notification> unread =
                 notificationRepository.findByUserAndIsReadFalseOrderByCreatedAtDesc(user);
-        for (Notification notification : notifications) {
-            notification.setRead(true);
-            notificationRepository.save(notification);
+        for (Notification n : unread) {
+            n.setRead(true);
         }
+        notificationRepository.saveAll(unread);
     }
 
     // =========================================================
@@ -128,29 +149,25 @@ public class NotificationService {
     }
 
     // =========================================================
-    // RESPONSE MAPPER
-    // =========================================================
-
-    private NotificationResponseDTO mapToResponse(Notification notification) {
-        return new NotificationResponseDTO(
-                notification.getId(),
-                notification.getType(),
-                notification.getTitle(),    // ← FIXED: title now included
-                notification.getMessage(),
-                notification.isRead(),
-                notification.getCreatedAt()
-        );
-    }
-
-    // =========================================================
-    // AUTH USER
+    // HELPERS
     // =========================================================
 
     private User getAuthenticatedUser() {
-        Authentication authentication =
-                SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found."));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Authenticated user not found: " + email));
+    }
+
+    private NotificationResponseDTO mapToResponse(Notification notification) {
+        NotificationResponseDTO dto = new NotificationResponseDTO();
+        dto.setId(notification.getId());
+        dto.setType(notification.getType());
+        dto.setTitle(notification.getTitle());
+        dto.setMessage(notification.getMessage());
+        dto.setRead(notification.isRead());
+        dto.setCreatedAt(notification.getCreatedAt());
+        return dto;
     }
 }
