@@ -6,29 +6,20 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface TransactionRepository
-        extends JpaRepository<Transaction, Long> {
+public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 
-    List<Transaction> findByAccountOrderByCreatedAtDesc(
-            Account account
-    );
+    List<Transaction> findByAccountOrderByCreatedAtDesc(Account account);
 
-    List<Transaction> findTop10ByAccountOrderByCreatedAtDesc(
-            Account account
-    );
+    List<Transaction> findTop10ByAccountOrderByCreatedAtDesc(Account account);
 
-    Optional<Transaction> findByTransactionRef(
-            String transactionRef
-    );
+    Optional<Transaction> findByTransactionRef(String transactionRef);
 
-    Page<Transaction> findByAccount(
-            Account account,
-            Pageable pageable
-    );
+    Page<Transaction> findByAccount(Account account, Pageable pageable);
 
     List<Transaction> findByAccountUserId(Long userId);
 
@@ -38,4 +29,16 @@ public interface TransactionRepository
             "receiverAccount"
     })
     List<Transaction> findAllByOrderByCreatedAtDesc();
+
+    // Sprint 4 — platformSavingsRate (active accounts only, BR-02)
+    @Query("SELECT SUM(t.amount) FROM Transaction t JOIN t.account a " +
+           "WHERE t.transactionType = 'CREDIT' AND a.status = 'ACTIVE'")
+    Double sumCreditFromActiveAccounts();
+
+    @Query("SELECT SUM(t.amount) FROM Transaction t JOIN t.account a " +
+           "WHERE t.transactionType = 'DEBIT' AND a.status = 'ACTIVE'")
+    Double sumDebitFromActiveAccounts();
+
+    // Sprint 4 — User activity: last 20 transactions
+    List<Transaction> findTop20ByAccount_User_IdOrderByCreatedAtDesc(Long userId);
 }

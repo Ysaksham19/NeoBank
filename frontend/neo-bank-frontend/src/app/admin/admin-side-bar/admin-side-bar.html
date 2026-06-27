@@ -98,6 +98,32 @@
       <span class="as-tooltip">Transactions</span>
     </button>
 
+        <!-- Pending Approvals -->
+    <button type="button" class="as-rail-btn"
+      routerLink="/admin/pending-approvals"
+      routerLinkActive="as-rail-btn--active"
+      (click)="closeMobile()">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      <span class="as-tooltip">Pending Approvals</span>
+    </button>
+
+    <!-- System Health -->
+    <button type="button" class="as-rail-btn"
+      routerLink="/admin/system-health"
+      routerLinkActive="as-rail-btn--active"
+      (click)="closeMobile()">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+      </svg>
+      <span class="as-tooltip">System Health</span>
+    </button>
+
     <div class="as-rail-sep" style="margin-top: 4px;"></div>
 
     <!-- Settings -->
@@ -168,19 +194,34 @@
         }
       </a>
 
-      <a routerLink="/admin/transactions-management" routerLinkActive="as-nav-item--active"
+           <a routerLink="/admin/transactions-management" routerLinkActive="as-nav-item--active"
          class="as-nav-item" (click)="closeMobile()">
         Transactions
       </a>
 
+      <!-- ── Sprint 4 ─────────────────────────────── -->
+      <p class="as-section-label">Sprint 4</p>
+
+      <a routerLink="/admin/pending-approvals" routerLinkActive="as-nav-item--active"
+         class="as-nav-item" (click)="closeMobile()">
+        Pending Approvals
+      </a>
+
+      <a routerLink="/admin/system-health" routerLinkActive="as-nav-item--active"
+         class="as-nav-item" (click)="closeMobile()">
+        System Health
+      </a>
+      <!-- ─────────────────────────────────────────── -->
+
       <p class="as-section-label">System</p>
 
-      <a routerLink="src\app\shared\components\settings" routerLinkActive="as-nav-item--active"
+      <a routerLink="/admin/settings" routerLinkActive="as-nav-item--active"
          class="as-nav-item" (click)="closeMobile()">
         Settings
       </a>
 
     </nav>
+
 
     <!-- Bottom -->
     <div class="as-bottom">

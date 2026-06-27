@@ -1,0 +1,34 @@
+.page-container { padding: 24px; }
+.page-header { margin-bottom: 24px; }
+.page-header h2 { font-size: 1.75rem; font-weight: 600; margin: 0; }
+.subtitle { color: #6c757d; margin: 4px 0 0; }
+
+.approvals-table { width: 100%; }
+.type-chip {
+  background: #e3f2fd;
+  color: #1565c0;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.loading-center {
+  display: flex;
+  justify-content: center;
+  padding: 48px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 64px 24px;
+  color: #9e9e9e;
+}
+.empty-state mat-icon {
+  font-size: 56px;
+  width: 56px;
+  height: 56px;
+  color: #66bb6a;
+  margin-bottom: 16px;
+}
+.empty-state h3 { font-size: 1.25rem; color: #424242; margin-bottom: 8px; }

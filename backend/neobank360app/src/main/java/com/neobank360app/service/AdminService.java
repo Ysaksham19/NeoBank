@@ -208,4 +208,13 @@ public class AdminService {
         }
         return dto;
     }
+    
+    public void logAdminAction(Long adminId, String action, String resourceType, Long resourceId) {
+        // Logs to application log — replace with audit_log table insert if required
+        System.out.printf("[AUDIT] adminId=%d | action=%s | resource=%s | resourceId=%d | time=%s%n",
+            adminId, action, resourceType, resourceId,
+            java.time.Instant.now().toString());
+    }
+    
+    
 }

@@ -1,0 +1,60 @@
+<div class="page-container">
+
+  <div class="page-header">
+    <h2>System Health</h2>
+    <p class="subtitle">Real-time platform monitoring</p>
+    <button mat-stroked-button (click)="fetchHealth()" [disabled]="loading">
+      <mat-icon>refresh</mat-icon> Refresh
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="loading-center">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <div *ngIf="!loading && health" class="health-grid">
+
+    <!-- DB Status -->
+    <mat-card [ngClass]="health.dbStatus === 'UP' ? 'status-up' : 'status-down'">
+      <mat-card-content>
+        <div class="health-item">
+          <mat-icon>storage</mat-icon>
+          <div class="health-info">
+            <span class="health-label">Database</span>
+            <span class="health-value">{{ health.dbStatus }}</span>
+          </div>
+          <mat-icon class="status-icon">
+            {{ health.dbStatus === 'UP' ? 'check_circle' : 'cancel' }}
+          </mat-icon>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Active Sessions -->
+    <mat-card>
+      <mat-card-content>
+        <div class="health-item">
+          <mat-icon>people</mat-icon>
+          <div class="health-info">
+            <span class="health-label">Active Sessions</span>
+            <span class="health-value">{{ health.activeSessions }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Uptime -->
+    <mat-card>
+      <mat-card-content>
+        <div class="health-item">
+          <mat-icon>schedule</mat-icon>
+          <div class="health-info">
+            <span class="health-label">Server Uptime</span>
+            <span class="health-value">{{ formatUptime(health.serverUptimeSeconds) }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+  </div>
+</div>

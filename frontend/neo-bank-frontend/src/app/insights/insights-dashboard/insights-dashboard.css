@@ -1,0 +1,148 @@
+.insights-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: 24px;
+}
+
+.page-header h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin: 0;
+}
+
+.subtitle {
+  color: #6c757d;
+  margin: 4px 0 0;
+}
+
+/* KPI Grid */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.kpi-card mat-card-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px !important;
+}
+
+.kpi-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kpi-icon mat-icon {
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+}
+
+.kpi-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.kpi-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #6c757d;
+}
+
+.kpi-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+/* Income card */
+.income-card .kpi-icon {
+  background: rgba(46, 125, 50, 0.12);
+}
+.income-card .kpi-icon mat-icon { color: #2E7D32; }
+.income-value { color: #2E7D32; }
+
+/* Expense card */
+.expense-card .kpi-icon {
+  background: rgba(198, 40, 40, 0.12);
+}
+.expense-card .kpi-icon mat-icon { color: #C62828; }
+.expense-value { color: #C62828; }
+
+/* Savings positive */
+.savings-card .kpi-icon {
+  background: rgba(13, 71, 161, 0.12);
+}
+.savings-card .kpi-icon mat-icon { color: #0D47A1; }
+.savings-positive { color: #0D47A1; }
+
+/* Savings negative */
+.savings-negative-card .kpi-icon {
+  background: rgba(198, 40, 40, 0.12);
+}
+.savings-negative-card .kpi-icon mat-icon { color: #C62828; }
+.savings-negative { color: #C62828; }
+
+/* Chart */
+.chart-card {
+  margin-top: 8px;
+}
+
+.chart-wrapper {
+  height: 350px;
+  padding: 16px 8px;
+}
+
+/* Skeleton loader */
+.skeleton-wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.skeleton-card {
+  height: 100px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.skeleton-chart {
+  grid-column: 1 / -1;
+  height: 380px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+/* Error */
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fdecea;
+  color: #c62828;
+  padding: 12px 16px;
+  border-radius: 8px;
+}

@@ -18,4 +18,6 @@ public interface LoanApplicationRepository extends JpaRepository<LoanApplication
             Long loanProductId,
             LoanApplicationStatus status
     );
+    
+//    List<LoanApplication> findByStatusOrderByAppliedAtAsc(String status);
 }

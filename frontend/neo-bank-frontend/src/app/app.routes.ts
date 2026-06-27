@@ -43,6 +43,10 @@ import { LoanDecision } from './admin/loan-decision/loan-decision';
 import { TransactionsManagement } from './admin/transactions-management/transactions-management';
 import { AccountsManagement } from './admin/accounts-management/accounts-management';
 
+import { InsightsDashboard } from './insights/insights-dashboard/insights-dashboard';
+import { PendingApprovals } from './admin/pending-approvals/pending-approvals';
+import { SystemHealthComponent } from './admin/system-health/system-health';
+
 
 export const routes: Routes = [
 
@@ -112,6 +116,14 @@ export const routes: Routes = [
       { path: 'accounts-management',     component: AccountsManagement      },
     ]
   },
+
+
+  // ── Insights (customer) ──
+  { path: 'insights', component: InsightsDashboard, canActivate: [AuthGuard] },
+
+  // ── Inside the admin children array, add: ──
+  { path: 'pending-approvals', component: PendingApprovals },
+  { path: 'system-health',     component: SystemHealthComponent },
 
   // ── Fallback ──
   { path: '**', redirectTo: '' }

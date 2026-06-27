@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-
 import { AuthService } from '../../../core/services/auth';
 
 @Component({
@@ -22,9 +21,6 @@ export class Sidebar {
   ) {}
 
   logout(): void {
-
     this.authService.logout();
-
   }
-
 }

@@ -1,0 +1,93 @@
+<div class="insights-container">
+
+  <div class="page-header">
+    <h2>Financial Insights</h2>
+    <p class="subtitle">Your personalized financial summary</p>
+  </div>
+
+  <!-- Loading Skeleton -->
+  <div *ngIf="loading" class="skeleton-wrapper">
+    <div class="skeleton-card"></div>
+    <div class="skeleton-card"></div>
+    <div class="skeleton-card"></div>
+    <div class="skeleton-chart"></div>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="error && !loading" class="error-banner">
+    <mat-icon>error_outline</mat-icon>
+    <span>{{ error }}</span>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!loading && insights && !error">
+
+    <!-- KPI Summary Cards -->
+    <div class="kpi-grid">
+
+      <!-- Total Income -->
+      <mat-card class="kpi-card income-card">
+        <mat-card-content>
+          <div class="kpi-icon">
+            <mat-icon>trending_up</mat-icon>
+          </div>
+          <div class="kpi-info">
+            <span class="kpi-label">Total Income</span>
+            <span class="kpi-value income-value">
+              {{ formatCurrency(insights.totalIncome) }}
+            </span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Total Expense -->
+      <mat-card class="kpi-card expense-card">
+        <mat-card-content>
+          <div class="kpi-icon">
+            <mat-icon>trending_down</mat-icon>
+          </div>
+          <div class="kpi-info">
+            <span class="kpi-label">Total Expense</span>
+            <span class="kpi-value expense-value">
+              {{ formatCurrency(insights.totalExpense) }}
+            </span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Savings -->
+      <mat-card class="kpi-card" [ngClass]="savingsIsNegative ? 'savings-negative-card' : 'savings-card'">
+        <mat-card-content>
+          <div class="kpi-icon">
+            <mat-icon>{{ savingsIsNegative ? 'arrow_downward' : 'savings' }}</mat-icon>
+          </div>
+          <div class="kpi-info">
+            <span class="kpi-label">Net Savings</span>
+            <span class="kpi-value" [ngClass]="savingsIsNegative ? 'savings-negative' : 'savings-positive'">
+              {{ formatCurrency(insights.savings) }}
+            </span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+    </div>
+
+    <!-- Trend Chart -->
+    <mat-card class="chart-card">
+      <mat-card-header>
+        <mat-card-title>Income vs Expense Trend</mat-card-title>
+        <mat-card-subtitle>Last 6 months breakdown</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="chart-wrapper">
+          <canvas baseChart
+            [data]="chartData"
+            [options]="chartOptions"
+            type="bar">
+          </canvas>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+  </div>
+</div>
