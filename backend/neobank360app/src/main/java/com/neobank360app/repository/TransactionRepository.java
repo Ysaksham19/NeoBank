@@ -13,24 +13,33 @@ import java.util.Optional;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 
+    // ── Non-paginated (kept for mini-statement / internal use) ──────────────
     List<Transaction> findByAccountOrderByCreatedAtDesc(Account account);
 
     List<Transaction> findTop10ByAccountOrderByCreatedAtDesc(Account account);
 
     Optional<Transaction> findByTransactionRef(String transactionRef);
 
-    Page<Transaction> findByAccount(Account account, Pageable pageable);
-
     List<Transaction> findByAccountUserId(Long userId);
 
-    @EntityGraph(attributePaths = {
-            "account",
-            "account.user",
-            "receiverAccount"
-    })
-    List<Transaction> findAllByOrderByCreatedAtDesc();
+    List<Transaction> findTop20ByAccount_User_IdOrderByCreatedAtDesc(Long userId);
 
-    // Sprint 4 — platformSavingsRate (active accounts only, BR-02)
+    // ── Paginated ────────────────────────────────────────────────────────────
+
+    /**
+     * Full paginated statement for one account.
+     * Usage: PageRequest.of(page, size, Sort.by("createdAt").descending())
+     */
+    Page<Transaction> findByAccountOrderByCreatedAtDesc(Account account, Pageable pageable);
+
+    /**
+     * Admin: paginated view of ALL transactions across all accounts.
+     */
+    @EntityGraph(attributePaths = {"account", "account.user", "receiverAccount"})
+    Page<Transaction> findAllByOrderByCreatedAtDesc(Pageable pageable);
+
+    // ── Aggregate queries (Admin Dashboard) ─────────────────────────────────
+
     @Query("SELECT SUM(t.amount) FROM Transaction t JOIN t.account a " +
            "WHERE t.transactionType = 'CREDIT' AND a.status = 'ACTIVE'")
     Double sumCreditFromActiveAccounts();
@@ -38,7 +47,4 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     @Query("SELECT SUM(t.amount) FROM Transaction t JOIN t.account a " +
            "WHERE t.transactionType = 'DEBIT' AND a.status = 'ACTIVE'")
     Double sumDebitFromActiveAccounts();
-
-    // Sprint 4 — User activity: last 20 transactions
-    List<Transaction> findTop20ByAccount_User_IdOrderByCreatedAtDesc(Long userId);
 }

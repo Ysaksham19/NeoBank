@@ -2,110 +2,65 @@ package com.neobank360app.controller;
 
 import com.neobank360app.dto.NotificationResponseDTO;
 import com.neobank360app.service.NotificationService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/notifications")
 public class NotificationController {
 
-    private final NotificationService
-            notificationService;
+    private final NotificationService notificationService;
 
-    public NotificationController(
-            NotificationService notificationService
-    ) {
-
-        this.notificationService =
-                notificationService;
+    public NotificationController(NotificationService notificationService) {
+        this.notificationService = notificationService;
     }
 
-    // =========================================================
-    // GET ALL NOTIFICATIONS
-    // =========================================================
+    // ─── GET ALL (paginated) ──────────────────────────────────────────────
+    // GET /api/v1/notifications?page=0&size=20
 
     @GetMapping
-    public ResponseEntity<List<NotificationResponseDTO>>
-    getMyNotifications() {
-
+    public ResponseEntity<Page<NotificationResponseDTO>> getMyNotifications(
+            @RequestParam(defaultValue = "0")  int page,
+            @RequestParam(defaultValue = "20") int size) {
         return ResponseEntity.ok(
-
-                notificationService
-                        .getMyNotifications()
-        );
+                notificationService.getMyNotifications(page, size));
     }
 
-    // =========================================================
-    // GET UNREAD NOTIFICATIONS
-    // =========================================================
+    // ─── GET UNREAD (paginated) ────────────────────────────────────────────
+    // GET /api/v1/notifications/unread?page=0&size=20
 
     @GetMapping("/unread")
-    public ResponseEntity<List<NotificationResponseDTO>>
-    getUnreadNotifications() {
-
+    public ResponseEntity<Page<NotificationResponseDTO>> getUnreadNotifications(
+            @RequestParam(defaultValue = "0")  int page,
+            @RequestParam(defaultValue = "20") int size) {
         return ResponseEntity.ok(
-
-                notificationService
-                        .getUnreadNotifications()
-        );
+                notificationService.getUnreadNotifications(page, size));
     }
 
-    // =========================================================
-    // MARK AS READ
-    // =========================================================
+    // ─── MARK AS READ ─────────────────────────────────────────────────────
 
     @PutMapping("/{notificationId}/read")
-    public ResponseEntity<NotificationResponseDTO>
-    markAsRead(
-
-            @PathVariable
-            Long notificationId
-    ) {
-
+    public ResponseEntity<NotificationResponseDTO> markAsRead(
+            @PathVariable Long notificationId) {
         return ResponseEntity.ok(
-
-                notificationService
-                        .markAsRead(
-                                notificationId
-                        )
-        );
+                notificationService.markAsRead(notificationId));
     }
 
-    // =========================================================
-    // MARK ALL AS READ
-    // =========================================================
+    // ─── MARK ALL AS READ ─────────────────────────────────────────────────
 
     @PutMapping("/read-all")
-    public ResponseEntity<String>
-    markAllAsRead() {
-
+    public ResponseEntity<String> markAllAsRead() {
         notificationService.markAllAsRead();
-
-        return ResponseEntity.ok(
-                "All notifications marked as read."
-        );
+        return ResponseEntity.ok("All notifications marked as read.");
     }
 
-    // =========================================================
-    // DELETE NOTIFICATION
-    // =========================================================
+    // ─── DELETE ───────────────────────────────────────────────────────────
 
     @DeleteMapping("/{notificationId}")
-    public ResponseEntity<String>
-    deleteNotification(
-
-            @PathVariable
-            Long notificationId
-    ) {
-
-        notificationService.deleteNotification(
-                notificationId
-        );
-
-        return ResponseEntity.ok(
-                "Notification deleted successfully."
-        );
+    public ResponseEntity<String> deleteNotification(
+            @PathVariable Long notificationId) {
+        notificationService.deleteNotification(notificationId);
+        return ResponseEntity.ok("Notification deleted successfully.");
     }
 }

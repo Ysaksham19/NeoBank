@@ -1,51 +1,62 @@
 package com.neobank360app.controller;
 
-import com.neobank360app.dto.LoanApplicationResponseDTO;
-import com.neobank360app.dto.LoanDecisionDTO;
-import com.neobank360app.service.LoanApplicationService;
-import com.neobank360app.service.LoanDecisionService;
+import com.neobank360app.dto.AdminLoanResponseDTO;
+import com.neobank360app.service.AdminLoanService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
-
 @RestController
-@RequestMapping("/api/v1/admin/loans")   // ← fixed: was /api/v1/loans
+@RequestMapping("/api/v1/admin/loans")
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminLoanController {
 
-    private final LoanDecisionService loanDecisionService;
-    private final LoanApplicationService loanApplicationService;
+    private final AdminLoanService adminLoanService;
 
-    public AdminLoanController(
-            LoanDecisionService loanDecisionService,
-            LoanApplicationService loanApplicationService) {
-        this.loanDecisionService = loanDecisionService;
-        this.loanApplicationService = loanApplicationService;
+    public AdminLoanController(AdminLoanService adminLoanService) {
+        this.adminLoanService = adminLoanService;
     }
 
-    // GET /api/v1/admin/loans/applications
-    @GetMapping("/applications")          // ← fixed: was /admin/applications
-    public ResponseEntity<List<LoanApplicationResponseDTO>> getAllApplications() {
+    // ─── ALL APPLICATIONS (paginated) ─────────────────────────────────────
+    // GET /api/v1/admin/loans?page=0&size=20
+
+    @GetMapping
+    public ResponseEntity<Page<AdminLoanResponseDTO>> getAllApplications(
+            @RequestParam(defaultValue = "0")  int page,
+            @RequestParam(defaultValue = "20") int size) {
         return ResponseEntity.ok(
-                loanApplicationService.getAllApplications());
+                adminLoanService.getAllApplications(page, size));
     }
 
-    // PUT /api/v1/admin/loans/{loanApplicationId}/decision
-//    @PutMapping("/{loanApplicationId}/decision")
-//    public ResponseEntity<String> decideLoan(
-//            @PathVariable Long loanApplicationId,
-//            @RequestBody LoanDecisionDTO dto) {
-//        return ResponseEntity.ok(
-//                loanDecisionService.decideLoan(loanApplicationId, dto));
-//    }
-    @PutMapping("/{loanApplicationId}/decision")
-    public ResponseEntity<Map<String, String>> decideLoan(
-            @PathVariable Long loanApplicationId,
-            @RequestBody LoanDecisionDTO dto) {
-        String result = loanDecisionService.decideLoan(loanApplicationId, dto);
-        return ResponseEntity.ok(Map.of("message", result));
+    // ─── PENDING APPLICATIONS (paginated) ─────────────────────────────────
+    // GET /api/v1/admin/loans/pending?page=0&size=20
+
+    @GetMapping("/pending")
+    public ResponseEntity<Page<AdminLoanResponseDTO>> getPendingApplications(
+            @RequestParam(defaultValue = "0")  int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return ResponseEntity.ok(
+                adminLoanService.getPendingApplications(page, size));
+    }
+
+    // ─── APPROVE ──────────────────────────────────────────────────────────
+
+    @PutMapping("/{applicationId}/approve")
+    public ResponseEntity<AdminLoanResponseDTO> approveLoan(
+            @PathVariable Long applicationId,
+            @RequestParam(required = false) String remarks) {
+        return ResponseEntity.ok(
+                adminLoanService.approveLoan(applicationId, remarks));
+    }
+
+    // ─── REJECT ───────────────────────────────────────────────────────────
+
+    @PutMapping("/{applicationId}/reject")
+    public ResponseEntity<AdminLoanResponseDTO> rejectLoan(
+            @PathVariable Long applicationId,
+            @RequestParam(required = false) String remarks) {
+        return ResponseEntity.ok(
+                adminLoanService.rejectLoan(applicationId, remarks));
     }
 }

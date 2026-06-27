@@ -4,6 +4,7 @@ import com.neobank360app.dto.AdminAccountResponseDTO;
 import com.neobank360app.dto.AdminTransactionResponseDTO;
 import com.neobank360app.dto.AdminUserResponseDTO;
 import com.neobank360app.service.AdminService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -21,11 +22,14 @@ public class AdminController {
         this.adminService = adminService;
     }
 
-    // ─── USERS ──────────────────────────────────────────
+    // ─── USERS ────────────────────────────────────────────────────────────
+    // GET /api/v1/admin/users?page=0&size=20
 
     @GetMapping("/users")
-    public ResponseEntity<List<AdminUserResponseDTO>> getAllUsers() {
-        return ResponseEntity.ok(adminService.getAllUsers());
+    public ResponseEntity<Page<AdminUserResponseDTO>> getAllUsers(
+            @RequestParam(defaultValue = "0")  int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return ResponseEntity.ok(adminService.getAllUsers(page, size));
     }
 
     @GetMapping("/users/{userId}")
@@ -38,30 +42,34 @@ public class AdminController {
     public ResponseEntity<AdminUserResponseDTO> updateUserStatus(
             @PathVariable Long userId,
             @RequestParam String status) {
-        return ResponseEntity.ok(
-                adminService.updateUserStatus(userId, status));
+        return ResponseEntity.ok(adminService.updateUserStatus(userId, status));
     }
 
-    // ─── KYC ────────────────────────────────────────────
+    // ─── KYC ──────────────────────────────────────────────────────────────
+    // GET /api/v1/admin/kyc/pending?page=0&size=20
 
     @GetMapping("/kyc/pending")
-    public ResponseEntity<List<AdminUserResponseDTO>> getPendingKycUsers() {
-        return ResponseEntity.ok(adminService.getPendingKycUsers());
+    public ResponseEntity<Page<AdminUserResponseDTO>> getPendingKycUsers(
+            @RequestParam(defaultValue = "0")  int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return ResponseEntity.ok(adminService.getPendingKycUsers(page, size));
     }
 
     @PutMapping("/kyc/{userId}/status")
     public ResponseEntity<AdminUserResponseDTO> updateKycStatus(
             @PathVariable Long userId,
             @RequestParam String kycStatus) {
-        return ResponseEntity.ok(
-                adminService.updateKycStatus(userId, kycStatus));
+        return ResponseEntity.ok(adminService.updateKycStatus(userId, kycStatus));
     }
 
-    // ─── ACCOUNTS ───────────────────────────────────────
+    // ─── ACCOUNTS ─────────────────────────────────────────────────────────
+    // GET /api/v1/admin/accounts?page=0&size=20
 
     @GetMapping("/accounts")
-    public ResponseEntity<List<AdminAccountResponseDTO>> getAllAccounts() {
-        return ResponseEntity.ok(adminService.getAllAccounts());
+    public ResponseEntity<Page<AdminAccountResponseDTO>> getAllAccounts(
+            @RequestParam(defaultValue = "0")  int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return ResponseEntity.ok(adminService.getAllAccounts(page, size));
     }
 
     @GetMapping("/users/{userId}/accounts")
@@ -74,14 +82,16 @@ public class AdminController {
     public ResponseEntity<AdminAccountResponseDTO> updateAccountStatus(
             @PathVariable Long accountId,
             @RequestParam String status) {
-        return ResponseEntity.ok(
-                adminService.updateAccountStatus(accountId, status));
+        return ResponseEntity.ok(adminService.updateAccountStatus(accountId, status));
     }
 
-    // ─── TRANSACTIONS ────────────────────────────────────
+    // ─── TRANSACTIONS ─────────────────────────────────────────────────────
+    // GET /api/v1/admin/transactions?page=0&size=20
 
     @GetMapping("/transactions")
-    public ResponseEntity<List<AdminTransactionResponseDTO>> getAllTransactions() {
-        return ResponseEntity.ok(adminService.getAllTransactions());
+    public ResponseEntity<Page<AdminTransactionResponseDTO>> getAllTransactions(
+            @RequestParam(defaultValue = "0")  int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return ResponseEntity.ok(adminService.getAllTransactions(page, size));
     }
 }

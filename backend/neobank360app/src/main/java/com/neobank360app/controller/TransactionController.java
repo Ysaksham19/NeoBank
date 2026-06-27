@@ -24,7 +24,7 @@ public class TransactionController {
         this.transactionService = transactionService;
     }
 
-    // ───────────────── DEPOSIT MONEY ─────────────────
+    // ─── DEPOSIT ──────────────────────────────────────────────────────────
 
     @PostMapping("/deposit/{accountId}")
     public ResponseEntity<TransactionResponseDTO> depositMoney(
@@ -32,26 +32,22 @@ public class TransactionController {
             @RequestParam @NotNull(message = "Amount is required")
             @DecimalMin(value = "0.01", message = "Amount must be greater than zero")
             BigDecimal amount,
-            @RequestParam(required = false) String remarks
-    ) {
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
+            @RequestParam(required = false) String remarks) {
+        return ResponseEntity.status(HttpStatus.CREATED)
                 .body(transactionService.deposit(accountId, amount, remarks));
     }
 
-    // ───────────────── TRANSFER MONEY ─────────────────
+    // ─── TRANSFER ─────────────────────────────────────────────────────────
 
     @PostMapping("/transfer/{accountId}")
     public ResponseEntity<TransactionResponseDTO> transferMoney(
             @PathVariable Long accountId,
-            @Valid @RequestBody TransferRequestDTO requestDTO
-    ) {
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
+            @Valid @RequestBody TransferRequestDTO requestDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED)
                 .body(transactionService.transferMoney(accountId, requestDTO));
     }
 
-    // ───────────────── WITHDRAW MONEY ─────────────────
+    // ─── WITHDRAW ─────────────────────────────────────────────────────────
 
     @PostMapping("/withdraw/{accountId}")
     public ResponseEntity<TransactionResponseDTO> withdrawMoney(
@@ -59,39 +55,32 @@ public class TransactionController {
             @RequestParam @NotNull(message = "Amount is required")
             @DecimalMin(value = "0.01", message = "Amount must be greater than zero")
             BigDecimal amount,
-            @RequestParam(required = false) String remarks
-    ) {
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
+            @RequestParam(required = false) String remarks) {
+        return ResponseEntity.status(HttpStatus.CREATED)
                 .body(transactionService.withdraw(accountId, amount, remarks));
     }
 
-    // ───────────────── GET ACCOUNT TRANSACTIONS ─────────────────
-
-    @GetMapping("/{accountId}")
-    public ResponseEntity<List<TransactionResponseDTO>> getTransactions(
-            @PathVariable Long accountId
-    ) {
-        return ResponseEntity.ok(transactionService.getAccountTransactions(accountId));
-    }
-
-    // ───────────────── MINI STATEMENT ─────────────────
+    // ─── MINI STATEMENT (last 10 — no pagination needed) ──────────────────
 
     @GetMapping("/mini-statement/{accountId}")
     public ResponseEntity<List<TransactionResponseDTO>> miniStatement(
-            @PathVariable Long accountId
-    ) {
+            @PathVariable Long accountId) {
         return ResponseEntity.ok(transactionService.getMiniStatement(accountId));
     }
 
-    // ───────────────── PAGINATED TRANSACTIONS ─────────────────
+    // ─── FULL STATEMENT — PAGINATED (replaces old non-paginated /{accountId}) ─
+    //
+    // GET /api/v1/transactions/{accountId}?page=0&size=20
+    //
+    // page  : 0-based page number (default 0)
+    // size  : records per page   (default 20, max capped at 100 in service)
+    // Returns: Page<TransactionResponseDTO> with totalElements, totalPages, etc.
 
-    @GetMapping("/paginated/{accountId}")
-    public ResponseEntity<Page<TransactionResponseDTO>> getPaginatedTransactions(
+    @GetMapping("/{accountId}")
+    public ResponseEntity<Page<TransactionResponseDTO>> getTransactions(
             @PathVariable Long accountId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
-    ) {
+            @RequestParam(defaultValue = "0")  int page,
+            @RequestParam(defaultValue = "20") int size) {
         return ResponseEntity.ok(
                 transactionService.getPaginatedTransactions(accountId, page, size));
     }
